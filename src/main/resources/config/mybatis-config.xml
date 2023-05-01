@@ -8,7 +8,6 @@
 	</settings>
 	
 	<mappers>
-
-
+<!--		<mapper resource="mapper/board_query.xml"/>-->
 	</mappers>
 </configuration>
