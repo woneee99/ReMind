@@ -18,11 +18,12 @@ public class LoginServiceImpl implements LoginService{
     public UserDto login(UserDto userDto) {
         if(userDto.getUserPassword() == null || userDto.getUserEmail() == null) return null;
 
-        String encodePwd = loginDao.login(userDto).getUserPassword();
+        UserDto loginUser = loginDao.login(userDto);
+
+        String encodePwd = loginUser.getUserPassword();
         System.out.println(encodePwd);
         if(passwordEncoder.matches(userDto.getUserPassword(), encodePwd)){
-            userDto.setUserPassword(encodePwd);
-            return userDto;
+            return loginUser;
         }
         else return null;
 

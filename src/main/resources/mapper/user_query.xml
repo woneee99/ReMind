@@ -9,9 +9,18 @@
         values ( #{userEmail}, #{userPassword}, #{userName}, #{userPhone}, now(), now() )
     </insert>
 
+    <update id="updateInfo" parameterType="com.example.enjoytrip.dto.UserDto">
+        UPDATE users
+           set userEmail = #{userEmail},
+               userPassword = #{userPassword},
+               userPhone = #{userPhone},
+               updatedAt = now()
+         where userId = #{userId}
+    </update>
 
-
-
+    <delete id="withdraw" parameterType="int">
+        delete from users where userId = #{userId}
+    </delete>
 
 
 </mapper>
