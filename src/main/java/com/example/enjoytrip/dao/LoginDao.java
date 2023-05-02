@@ -6,4 +6,6 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface LoginDao {
     UserDto login(UserDto userDto);
+    int updatePwd(UserDto userDto);
+    UserDto findEmail(String userEmail);
 }

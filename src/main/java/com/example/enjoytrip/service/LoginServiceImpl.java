@@ -28,4 +28,16 @@ public class LoginServiceImpl implements LoginService{
         else return null;
 
     }
+
+    @Override
+    public int findPwd(String userEmail) {
+        UserDto userDto = loginDao.findEmail(userEmail);
+        System.out.println(userDto);
+        if(userDto == null) return 0;
+        int pwd = (int) (Math.random() * 99 ) + 1;
+        userDto.setUserPassword(String.valueOf(pwd));
+
+        loginDao.updatePwd(userDto);
+        return pwd;
+    }
 }

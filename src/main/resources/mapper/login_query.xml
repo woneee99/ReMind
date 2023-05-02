@@ -11,8 +11,17 @@
     </select>
 
 
+    <update id="updatePwd" parameterType="com.example.enjoytrip.dto.UserDto">
+        UPDATE users
+        set userPassword = #{userPassword}
+        where userId = #{userId}
+    </update>
 
-
-
+    <select id="findEmail"
+            parameterType="String" resultType="com.example.enjoytrip.dto.UserDto">
+        select userId, userEmail, userPassword, userName, userPhone, createdAt, updatedAt
+        from users
+        where userEmail = #{userEmail}
+    </select>
 
 </mapper>

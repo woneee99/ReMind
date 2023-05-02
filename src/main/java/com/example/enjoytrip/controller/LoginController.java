@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/login")
@@ -32,5 +33,11 @@ public class LoginController {
     public ResponseEntity<Integer> logout(HttpSession session){
         session.invalidate();
         return ResponseEntity.ok().body(1);
+    }
+
+    @PutMapping
+    public ResponseEntity<Integer> findPwd(@RequestBody Map<String, String> map){
+
+        return ResponseEntity.ok().body(service.findPwd(map.get("userEmail")));
     }
 }
