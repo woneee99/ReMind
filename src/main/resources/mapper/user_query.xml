@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.enjoytrip.dao.UserDao">
+
+    <insert id="register"
+            parameterType="com.example.enjoytrip.dto.UserDto">
+        insert into users ( userEmail, userPassword, userName, userPhone, createdAt, updatedAt )
+        values ( #{userEmail}, #{userPassword}, #{userName}, #{userPhone}, now(), now() )
+    </insert>
+
+    <update id="updateInfo" parameterType="com.example.enjoytrip.dto.UserDto">
+        UPDATE users
+           set userEmail = #{userEmail},
+               userPassword = #{userPassword},
+               userPhone = #{userPhone},
+               updatedAt = now()
+         where userId = #{userId}
+    </update>
+
+    <delete id="withdraw" parameterType="int">
+        delete from users where userId = #{userId}
+    </delete>
+
+
+</mapper>

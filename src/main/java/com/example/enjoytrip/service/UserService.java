@@ -1,4 +1,9 @@
 package com.example.enjoytrip.service;
 
-public class UserService {
+import com.example.enjoytrip.dto.UserDto;
+
+public interface UserService {
+    int register(UserDto userDto);
+    UserDto updateInfo(UserDto userDto);
+    int withdraw(int userId);
 }
