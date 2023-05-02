@@ -5,12 +5,10 @@ import com.example.enjoytrip.dto.UserDto;
 import com.example.enjoytrip.service.HotPlaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @RestController
 @RequestMapping("/hotplace")
@@ -26,6 +24,20 @@ public class HotPlaceController {
 
 //        hotPlaceDto.setUserId(10);
         return ResponseEntity.ok().body(hotPlaceService.hotPlaceInsert(hotPlaceDto));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<HotPlaceDto>> hotplaceGet(HttpSession session){
+        UserDto userDto = (UserDto) session.getAttribute("userDto");
+
+        return ResponseEntity.ok().body(hotPlaceService.hotPlaceSelect(userDto.getUserId()));
+    }
+
+    @DeleteMapping("/{hotplaceId}")
+    public ResponseEntity<Integer> hotplaceDelete(@PathVariable int hotplaceId, HttpSession session){
+        UserDto userDto = (UserDto) session.getAttribute("userDto");
+
+        return ResponseEntity.ok().body(hotPlaceService.hotPlaceDelete(hotplaceId));
     }
 
 }

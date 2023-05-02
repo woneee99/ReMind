@@ -8,4 +8,15 @@
         insert into hotplace ( userId, hotplaceName, hotplaceMap, type, hotplaceImg )
         values ( #{userId}, #{hotplaceName}, #{hotplaceMap}, #{type}, #{hotplaceImg} )
     </insert>
+
+    <select id="hotPlaceSelect" parameterType="int"
+            resultType="com.example.enjoytrip.dto.HotPlaceDto">
+        select userId, hotplaceName, hotplaceMap, type, hotplaceImg
+          from hotplace
+         where userId = #{userId}
+    </select>
+
+    <delete id="hotPlaceDelete" parameterType="int">
+        delete from hotplace where hotplaceId = #{hotplaceId}
+    </delete>
 </mapper>
