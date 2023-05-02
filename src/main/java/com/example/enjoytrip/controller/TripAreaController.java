@@ -14,6 +14,7 @@ import java.net.URL;
 @RestController
 @RequestMapping("/trip")
 public class TripAreaController {
+
     @GetMapping("/area")
     public String callArea(@RequestParam("areaCode") String areaCode) {
         String jsonPrintString;
