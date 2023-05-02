@@ -37,7 +37,6 @@ public class LoginController {
 
     @PutMapping
     public ResponseEntity<Integer> findPwd(@RequestBody Map<String, String> map){
-
         return ResponseEntity.ok().body(service.findPwd(map.get("userEmail")));
     }
 }
