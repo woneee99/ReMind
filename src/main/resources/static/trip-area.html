@@ -409,13 +409,36 @@
                 // 지도 중심을 부드럽게 이동시킵니다
                 // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
                 map.panTo(moveLatLon);
+
+                let newCat = `${cat1}`;
+                if(window.confirm("즐겨찾기에 등록하겠습니까?")){
+                    let urlParams = JSON.stringify({
+                        hotplaceName: item.title,
+                        hotplaceMap: item.addr1,
+                        type: item.cat1,
+                        hotplaceImg: item.firstimage
+                    });
+                    console.log("url " + urlParams);
+                    insertHotplace(urlParams);
+                }
             });
         }
 
         // 테이블을 HTML에 삽입
         tableContainer.appendChild(table);
     }
+    async function insertHotplace(urlParams){
+        let fetchOptions = {
+            method: "POST",
+            body: urlParams,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
 
+        let response = await fetch("/hotplace", fetchOptions );
+        let data = await response.json();
+    }
     function displayMarker() {
         // 마커 이미지의 이미지 주소입니다
         var imageSrc =

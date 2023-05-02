@@ -23,6 +23,8 @@ public class HotPlaceController {
     public ResponseEntity<Integer> hotplaceInsert(@RequestBody HotPlaceDto hotPlaceDto, HttpSession session){
         UserDto userDto = (UserDto) session.getAttribute("userDto");
         hotPlaceDto.setUserId(userDto.getUserId());
+
+//        hotPlaceDto.setUserId(10);
         return ResponseEntity.ok().body(hotPlaceService.hotPlaceInsert(hotPlaceDto));
     }
 

@@ -12,6 +12,6 @@ public class HotPlaceDto {
     private int userId;
     private String hotplaceName;
     private String hotplaceMap;
-    private int type;
+    private String type;
     private String hotplaceImg;
 }
