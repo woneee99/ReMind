@@ -20,7 +20,7 @@ public class TripAreaController {
         String mobileApp = "TripApp";
         String _type = "json";
         String numOfRows = "10";
-        String pageNo = "1";
+        String pageNo = "2";
 
         return "https://apis.data.go.kr/B551011/KorService1/" + serviceId + "?serviceKey=" + serviceKey + "&numOfRows=" + numOfRows +
                 "&pageNo=" + pageNo + "&MobileOS=" + mobileOS + "&MobileOS=" +
