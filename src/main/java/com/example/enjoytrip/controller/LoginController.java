@@ -10,13 +10,12 @@ import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/login")
 public class LoginController {
 
     @Autowired
     LoginService service;
 
-    @PostMapping
+    @PostMapping("/login")
     public ResponseEntity<UserDto> login(@RequestBody UserDto userDto, HttpSession session){
         UserDto dto = service.login(userDto);
 
@@ -29,13 +28,13 @@ public class LoginController {
         return ResponseEntity.ok().body(dto);
     }
 
-    @GetMapping
+    @GetMapping("/out")
     public ResponseEntity<Integer> logout(HttpSession session){
         session.invalidate();
         return ResponseEntity.ok().body(1);
     }
 
-    @PutMapping
+    @PutMapping("/login")
     public ResponseEntity<Integer> findPwd(@RequestBody Map<String, String> map){
 
         return ResponseEntity.ok().body(service.findPwd(map.get("userEmail")));
