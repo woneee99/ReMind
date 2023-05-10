@@ -22,10 +22,11 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 8
-      - name: Copy Secret
-        env:
-          OCCUPY_SECRET: ${{ secrets.OCCUPY_SECRET }}
-        run: echo $OCCUPY_SECRET | base64 --decode > ./src/main/resources/application.properties
+      - uses: actions/checkout@v3
+      - run: touch ./src/main/resources/application.properties
+      - run: echo "${{ secrets.OCCUPY_SECRET }}" > ./src/main/resources/application.properties
+      - run: cat ./src/main/resources/application.properties
+      
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build with Gradle
