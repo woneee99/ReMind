@@ -46,7 +46,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4.0.1
         with:
-          images: woneee99/trip-back
+          images: woneee99/trip
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -65,5 +65,5 @@ jobs:
     steps:
       - name: Docker run
         run: |
-          docker stop trip-back && docker rm trip-back && docker rmi woneee99/trip-back:main
+          docker stop trip && docker rm trip && docker rmi woneee99/trip:main
           docker-compose up -d
