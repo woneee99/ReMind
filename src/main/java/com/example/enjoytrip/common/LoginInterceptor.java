@@ -22,6 +22,10 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         String async = request.getHeader("async");
 
+        if (isSwaggerRequest(request)) {
+            return true;
+        }
+
         HttpSession session = request.getSession();
         UserDto userDto = (UserDto) session.getAttribute("userDto");
 
@@ -40,5 +44,10 @@ public class LoginInterceptor implements HandlerInterceptor {
         }
 
         return true;
+    }
+
+    private boolean isSwaggerRequest(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        return uri.contains("swagger") || uri.contains("api-docs") || uri.contains("webjars");
     }
 }
