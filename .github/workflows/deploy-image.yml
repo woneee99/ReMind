@@ -1,10 +1,6 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     branches: [ "master" ]
   pull_request:
@@ -58,11 +54,3 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-  deploy:
-    needs: build
-    runs-on: [ self-hosted ]
-    steps:
-      - name: Docker run
-        run: |
-          docker stop trip && docker rm trip && docker rmi woneee99/trip:main
-          docker-compose up -d
