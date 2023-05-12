@@ -28,7 +28,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         HttpSession session = request.getSession();
         UserDto userDto = (UserDto) session.getAttribute("userDto");
-
+                
         if (userDto == null) {
             if ("true".equals(async)) {
                 Gson gson = new Gson();

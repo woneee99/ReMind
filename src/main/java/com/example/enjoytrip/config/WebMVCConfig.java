@@ -17,7 +17,9 @@ public class WebMVCConfig implements WebMvcConfigurer {
         registry.addInterceptor(loginInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/swagger-resources/**", "/swagger-ui/**", "/v3/api-docs", "/error")
-                .excludePathPatterns("/login/**", "/trip/**", "/users/register", "/css/**", "/js/**", "/img/**");
+                .excludePathPatterns("/", "/login/**", "/trip/**", "/users/register")
+                .excludePathPatterns("/*.html", "/assets/**");
+
     }
 
 }
