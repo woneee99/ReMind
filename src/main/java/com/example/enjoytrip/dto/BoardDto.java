@@ -2,6 +2,9 @@ package com.example.enjoytrip.dto;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Getter
 @Setter
 @ToString
@@ -12,6 +15,8 @@ public class BoardDto {
     private int userId;
     private String title;
     private String content;
-    private String createdAt;
-    private String updatedAt;
+    private LocalDateTime createdAt;
+    private int readCount;
+    private boolean sameUser;
+    private List<BoardFileDto> fileList;
 }
