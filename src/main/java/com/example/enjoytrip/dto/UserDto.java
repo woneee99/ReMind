@@ -12,7 +12,10 @@ public class UserDto {
     private String userEmail;
     private String userPassword;
     private String userName;
-    private String userPhone;
+
+    private String emailVerifiedYn;
+    private String profileImageUrl;
+
     private String createdAt;
     private String updatedAt;
 }
