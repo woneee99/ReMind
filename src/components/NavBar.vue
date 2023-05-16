@@ -1,0 +1,40 @@
+<template>
+    <header id="header" class="header d-flex align-items-center fixed-top">
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+
+      <router-link to="/" class="logo d-flex align-items-center">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="assets/img/logo.png" alt=""> -->
+        <h1>Enjoy Trip</h1>
+      </router-link>
+
+      <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+      <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li><router-link to="/">여행계획</router-link></li>
+          <li><router-link to="/trip">지역 관광지</router-link></li>
+          <li class="dropdown"><a href="/"><span>홍길동</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
+            <ul>
+              <li><a href="/">프로필 관리</a></li>
+              <li><a href="/">내 여행</a></li>
+              <li><a href="/">공지사항 / FAQ</a></li>
+            </ul>
+          </li>
+          <li><router-link to="/login" class="get-a-quote" >Log In / Sign Up</router-link></li>
+        </ul>
+      </nav><!-- .navbar -->
+
+    </div>
+  </header>
+</template>
+
+<script>
+export default {
+
+}
+</script>
+
+<style>
+
+</style>
