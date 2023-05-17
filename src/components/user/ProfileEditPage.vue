@@ -1,11 +1,6 @@
 <template>
   <main id="main">
-    <div v-if="!editingAbout">
-      <breadcrumb-section title="내 프로필" description="내 프로필" />
-    </div>
-    <div v-else>
-      <breadcrumb-section title="내 프로필 수정" description="내 프로필 수정" />
-    </div>
+    <breadcrumb-section title="내 프로필" description="내 프로필" />
     <section class="h-80 gradient-custom-2">
       <div class="container">
         <div class="row d-flex justify-content-center align-items-center h-100">
@@ -14,14 +9,6 @@
               <div class="rounded-top text-white d-flex flex-row" style="background-color: #273f55; height: 200px">
                 <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px">
                   <img :src="imageSrc" alt="Generic placeholder image" class="img-fluid img-thumbnail mt-4 mb-2" style="width: 150px; z-index: 1" />
-                  <template v-if="!editingAbout">
-                    <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark" style="z-index: 1" @click="editingAbout = true">
-                      Edit profile
-                    </button>
-                  </template>
-                  <template v-else>
-                    <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark" style="z-index: 1" @click="saveAbout">Save</button>
-                  </template>
                 </div>
                 <div class="ms-3" style="margin-top: 130px">
                   <h5>{{ name }}</h5>
@@ -48,18 +35,12 @@
                 <div class="mb-5">
                   <p class="lead fw-normal mb-1">About</p>
                   <div class="p-4" style="background-color: #f8f9fa">
-                    <div v-if="!editingAbout">
-                      <p class="font-italic mb-1">{{ aboutText1 }}</p>
-                    </div>
-                    <div v-else>
-                      <!-- <input type="text" v-model="aboutText1" class="form-control" placeholder="자기소개를 입력하세요" /> -->
-                      <textarea v-model="aboutText1" class="form-control" rows="5" placeholder="자기소개를 입력하세요"></textarea>
-                    </div>
+                    <input type="text" v-model="aboutText1" class="form-control" placeholder="자기소개를 입력하세요" />
                   </div>
                 </div>
                 <div class="d-flex justify-content-between align-items-center mb-4">
                   <p class="lead fw-normal mb-0">Recent photos</p>
-                  <p class="mb-0"><a href="#!" class="text-muted">Show all</a></p>
+                  <p class="mb- 0"><a href="#!" class="text-muted">Show all</a></p>
                 </div>
                 <div class="row g-2">
                   <div class="col mb-2" v-for="photo in recentPhotos" :key="photo.id">
@@ -74,7 +55,6 @@
     </section>
   </main>
 </template>
-
 <script>
 import BreadcrumbSection from "@/components/BreadcrumbSection.vue";
 
@@ -92,19 +72,20 @@ export default {
       followersCount: 1026,
       followingCount: 478,
       aboutText1: "자기소개 칸입니다.",
+      oldPassword: "",
+      newPassword: "",
+      confirmPassword: "",
       recentPhotos: [
         { id: 1, src: "https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(112).webp", alt: "image 1" },
         { id: 2, src: "https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(107).webp", alt: "image 2" },
         { id: 3, src: "https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(108).webp", alt: "image 3" },
         { id: 4, src: "https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(114).webp", alt: "image 4" },
       ],
-      editingAbout: false,
     };
   },
   methods: {
     editProfile() {
       // Edit profile 버튼에 대한 동작
-      this.$router.push("/profile/edit");
     },
     changePassword() {
       // Change Password 버튼에 대한 동작
@@ -114,13 +95,7 @@ export default {
         // 비밀번호 일치하지 않음 처리
       }
     },
-    saveAbout() {
-      // Save the edited about text
-      this.editingAbout = false; // Exit edit mode
-      // Perform any additional logic you need to save the updated about text
-    },
   },
 };
 </script>
-
 <style></style>
