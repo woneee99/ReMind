@@ -1,67 +1,59 @@
 <template>
   <main id="main">
-    <breadcrumb-section title="로그인" description="임시 로그인창" />
+    <breadcrumb-section title="로그인" description="등록하신 이메일, 패스워드로 로그인해주세요."/>
 
     <!-- ======= Contact Section ======= -->
     <section id="contact" class="contact">
       <div class="container" data-aos="fade-up">
-        <div class="row gy-4 mt-4">
-          <div class="col-lg-4">
-            <div class="info-item d-flex">
-              <i class="bi bi-geo-alt flex-shrink-0"></i>
-              <div>
-                <h4>Location:</h4>
-                <p>A108 Adam Street, New York, NY 535022</p>
-              </div>
-            </div>
-            <!-- End Info Item -->
-
-            <div class="info-item d-flex">
-              <i class="bi bi-envelope flex-shrink-0"></i>
-              <div>
-                <h4>Email:</h4>
-                <p>info@example.com</p>
-              </div>
-            </div>
-            <!-- End Info Item -->
-
-            <div class="info-item d-flex">
-              <i class="bi bi-phone flex-shrink-0"></i>
-              <div>
-                <h4>Call:</h4>
-                <p>+1 5589 55488 55</p>
-              </div>
-            </div>
-            <!-- End Info Item -->
-          </div>
-
-          <div class="col-lg-8">
+          <div class="wrap-container">
             <form action="forms/contact.php" method="post" role="form" class="php-email-form">
-              <div class="row">
-                <div class="col-md-6 form-group">
-                  <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" required />
-                </div>
-                <div class="col-md-6 form-group mt-3 mt-md-0">
-                  <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" required />
-                </div>
+              <div class="text">
+                  <input type="text" name="name" class="form-control" id="name" placeholder="Email" required />
               </div>
-              <div class="form-group mt-3">
-                <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject" required />
-              </div>
-              <div class="form-group mt-3">
-                <textarea class="form-control" name="message" rows="5" placeholder="Message" required></textarea>
+              <div class="text">
+                <input type="password" class="form-control" name="subject" id="subject" placeholder="Password" required />
               </div>
               <div class="my-3">
                 <div class="loading">Loading</div>
                 <div class="error-message"></div>
                 <div class="sent-message">Your message has been sent. Thank you!</div>
               </div>
-              <div class="text-center"><button type="submit">Send Message</button></div>
+              <div id="login-btn">
+                <button type="submit" style="width: 100%">로그인</button>
+              </div>
+
             </form>
+          <div id="forgot-pwd"> 비밀번호를 잊었나요?
+            <router-link to="/register">
+              비밀번호 찾기
+            </router-link>
           </div>
-          <!-- End Contact Form -->
+          <hr />
+
+          <div class="bottom-container">
+            <div class="text-center"> 다른 계정으로 로그인 하기</div>
+            <div class="img-container"> 
+              <div>
+                <img src="https://d1nuzc1w51n1es.cloudfront.net/d99d8628713bb69bd142.png" style="width: 94px; height: 94px">
+                <div class="img-text">Google</div>
+              </div>
+              <div>
+                <img src="https://d1nuzc1w51n1es.cloudfront.net/7edcff9c01ccc20d1ef6.png" style="width: 94px; height: 94px">
+                <div class="img-text">Kakao</div>
+              </div>
+              <div>
+                <img src="@/assets/naverLogo.png" style="width: 94px; height: 94px">
+                <div class="img-text">Naver</div>
+              </div>
+            </div>
+            </div>
+          </div>
+          <div class="text-center" style="margin-top: 30px"> 계정이 없으신가요? 
+            <router-link to="/register">
+              회원 가입
+            </router-link>
+          </div>
         </div>
-      </div>
     </section>
     <!-- End Contact Section -->
   </main>
@@ -78,4 +70,43 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.wrap-container {
+  width: 460px;
+  margin: 0 auto;
+}
+
+.text {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+  border-radius: 6px 6px 0 0;
+  padding: 10px 30px 10px;
+}
+
+#login-btn {
+  border-radius: 6px 6px;
+  padding: 10px 30px 10px;
+}
+
+#forgot-pwd {
+  text-align: right;
+  padding: 10px 30px 10px;
+  font-size: 14px;
+}
+
+.bottom-container {
+  margin-top: 20px;
+}
+
+.img-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  margin-top: 10px;
+}
+
+.img-container .img-text{
+  text-align: center;
+}
+</style>
