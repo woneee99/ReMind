@@ -2,12 +2,13 @@ import Vue from "vue"; // defalut module
 import VueRouter from "vue-router"; // installed module
 import MainPage from "@/components/main/MainPage.vue";
 import LoginPage from "@/components/user/LoginPage";
-import ProfilePage from "@/components/user/ProfilePage";
+import registerPage from "@/components/user/RegisterPage";
 import TripPage from "@/components/trip/TripPage";
 
 Vue.use(VueRouter);
 
 export default new VueRouter({
+  mode: "history",
   routes: [
     {
       path: "/",
@@ -22,8 +23,8 @@ export default new VueRouter({
       component: TripPage,
     },
     {
-      path: "/profile",
-      component: ProfilePage,
+      path: "/register",
+      component: registerPage,
     },
   ],
 });
