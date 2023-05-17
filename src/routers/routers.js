@@ -4,12 +4,9 @@ import MainPage from "@/components/main/MainPage.vue";
 import LoginPage from "@/components/user/LoginPage";
 import ProfilePage from "@/components/user/ProfilePage";
 import registerPage from "@/components/user/RegisterPage";
-<<<<<<< HEAD
 import findPwdPage from "@/components/user/FindPwd";
 import TripPage from "@/components/trip/TripPage";
-=======
 import FaqPage from "@/components/FAQ/FaqPage";
->>>>>>> f32afa1fb55857b3f11257a44b079862f4f24846
 
 Vue.use(VueRouter);
 
@@ -31,6 +28,10 @@ export default new VueRouter({
     {
       path: "/find",
       component: findPwdPage,
+    },
+    {
+      path: "/trip",
+      component: TripPage,
     },
     {
       path: "/profile",
