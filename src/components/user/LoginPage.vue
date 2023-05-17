@@ -24,7 +24,7 @@
 
             </form>
           <div id="forgot-pwd"> 비밀번호를 잊었나요?
-            <router-link to="/register">
+            <router-link to="/find">
               비밀번호 찾기
             </router-link>
           </div>
