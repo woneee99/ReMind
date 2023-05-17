@@ -51,18 +51,18 @@
           </tbody>
         </table>
       </div>
-        <!-- End 관광지 table -->
-          <!-- kakao map start -->
-        <div id="map" class="mt-3" style="width: 100%; height: 400px"></div>
-        <!-- kakao map end -->
+      <!-- End 관광지 table -->
+      <!-- kakao map start -->
+      <div id="map" class="mt-3" style="width: 100%; height: 400px"></div>
+      <!-- kakao map end -->
     </div>
     <!-- End Map Section -->
-</div>
+  </div>
 </template>
 
 <script>
 import BreadcrumbSection from "@/components/BreadcrumbSection.vue";
-import http from '../../assets/axios.js'
+import http from "../../assets/axios.js";
 // import key from '../common/key'
 // import MainCss from '../common/js/main'
 
@@ -73,11 +73,11 @@ export default {
   },
   data() {
     return {
-      areaCode: '',
-      sigunguCode: '',
-      cat1: '',
-      cat2: '',
-      cat3: '',
+      areaCode: "",
+      sigunguCode: "",
+      cat1: "",
+      cat2: "",
+      cat3: "",
       positions: [],
       area1List: [],
       area2List: [],
@@ -87,41 +87,40 @@ export default {
       itemList: [],
       map: null,
       markers: [],
-    }
+    };
   },
   async mounted() {
-    if(window.kakao && window.kakao.maps) {
+    if (window.kakao && window.kakao.maps) {
       this.loadMap();
-    }
-    else {
+    } else {
       this.loadScript();
     }
 
     this.getAreaCodeList();
     this.getCat1List();
-
   },
   methods: {
     loadScript() {
       const script = document.createElement("script");
-      script.type="text/javascript";
+      script.type = "text/javascript";
       script.src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=308a4ca7d5a55fd0776a21c032574dbe&autoload=false";
       script.onload = () => window.kakao.maps.load(this.loadMap);
       document.head.appendChild(script);
     },
     loadMap() {
-        const mapContainer = document.getElementById("map"); // 지도를 표시할 div
-        const mapOption = {
-            center: new window.kakao.maps.LatLng(37.500613, 127.036431), // 지도의 중심좌표
-            level: 3,
-        };
-        this.map = new window.kakao.maps.Map(mapContainer, mapOption);
+      const mapContainer = document.getElementById("map"); // 지도를 표시할 div
+      const mapOption = {
+        center: new window.kakao.maps.LatLng(37.500613, 127.036431), // 지도의 중심좌표
+        level: 3,
+      };
+      this.map = new window.kakao.maps.Map(mapContainer, mapOption);
     },
     getAreaCodeList() {
       http
         .get("/trip/area?areaCode=")
         .then((response) => {
           this.area1List = response.data.response.body.items.item;
+          console.log(response);
         })
         .catch((error) => {
           console.log(error);
@@ -227,17 +226,17 @@ export default {
       this.markers = [];
     },
     makeList(data) {
-        let trips = data.response.body.items.item;
-        this.positions = [];
-        trips.forEach((area) => {
-            let markerInfo = {
-                title: area.title,
-                latlng: new window.kakao.maps.LatLng(area.mapy, area.mapx),
-            };
-            this.positions.push(markerInfo);
-        });
-        this.displayMarker();
+      let trips = data.response.body.items.item;
+      this.positions = [];
+      trips.forEach((area) => {
+        let markerInfo = {
+          title: area.title,
+          latlng: new window.kakao.maps.LatLng(area.mapy, area.mapx),
+        };
+        this.positions.push(markerInfo);
+      });
+      this.displayMarker();
     },
-  }
+  },
 };
 </script>
