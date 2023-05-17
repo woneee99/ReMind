@@ -16,7 +16,7 @@ import java.net.URL;
 public class TripAreaController {
 
     @GetMapping("/area")
-    public String callArea(@RequestParam("areaCode") String areaCode) {
+    public String callArea(@RequestParam(value = "areaCode", required = false) String areaCode) {
         String jsonPrintString;
 
         try {
@@ -34,7 +34,7 @@ public class TripAreaController {
     }
 
     @GetMapping("/category")
-    public String callCategory(@RequestParam("cat1") String cat1, @RequestParam("cat2") String cat2) {
+    public String callCategory(@RequestParam(value = "cat1", required = false) String cat1, @RequestParam(value = "cat2", required = false) String cat2) {
         String jsonPrintString;
 
         try {
@@ -53,7 +53,7 @@ public class TripAreaController {
     }
 
     @GetMapping("/list")
-    public String callList(@RequestParam("areaCode") String areaCode, @RequestParam("sigunguCode") String sigunguCode, @RequestParam("cat1") String cat1, @RequestParam("cat2") String cat2, @RequestParam("cat3") String cat3) {
+    public String callList(@RequestParam(value = "areaCode", required = false) String areaCode, @RequestParam(value = "sigunguCode", required = false) String sigunguCode, @RequestParam(value = "cat1", required = false) String cat1, @RequestParam(value = "cat2", required = false) String cat2, @RequestParam(value = "cat3", required = false) String cat3) {
         String jsonPrintString;
 
         try {
@@ -77,7 +77,7 @@ public class TripAreaController {
     private String getServiceURL(String areaCode) {
         String serviceId = "areaCode1";
         String serviceKey = "euAYup8VHKXrkrAglwBW1BsRkftXXCRhRyG2JTrFxIRQiwnOJ425JgNtNXNfvWuh0JHjfFNzr%2FZHPN4%2FDCjHXQ%3D%3D";
-        String numOfRows = "100";
+        String numOfRows = "10";
         String pageNo = "1";
         String mobileOS = "ETC";
         String mobileApp = "TripApp";
@@ -92,7 +92,7 @@ public class TripAreaController {
     private String getServiceURL(String cat1, String cat2) {
         String serviceId = "categoryCode1";
         String serviceKey = "euAYup8VHKXrkrAglwBW1BsRkftXXCRhRyG2JTrFxIRQiwnOJ425JgNtNXNfvWuh0JHjfFNzr%2FZHPN4%2FDCjHXQ%3D%3D";
-        String numOfRows = "100";
+        String numOfRows = "10";
         String pageNo = "1";
         String mobileOS = "ETC";
         String mobileApp = "TripApp";
@@ -107,7 +107,7 @@ public class TripAreaController {
     private String getServiceURL(String areaCode, String sigunguCode, String cat1, String cat2, String cat3) {
         String serviceId = "areaBasedList1";
         String serviceKey = "euAYup8VHKXrkrAglwBW1BsRkftXXCRhRyG2JTrFxIRQiwnOJ425JgNtNXNfvWuh0JHjfFNzr%2FZHPN4%2FDCjHXQ%3D%3D";
-        String numOfRows = "100";
+        String numOfRows = "10";
         String pageNo = "1";
         String mobileOS = "ETC";
         String mobileApp = "TripApp";
