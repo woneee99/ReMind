@@ -2,6 +2,7 @@ import Vue from "vue"; // defalut module
 import VueRouter from "vue-router"; // installed module
 import MainPage from "@/components/main/MainPage.vue";
 import LoginPage from "@/components/user/LoginPage";
+import ProfilePage from "@/components/user/ProfilePage";
 import TripPage from "@/components/trip/TripPage";
 
 Vue.use(VueRouter);
@@ -19,6 +20,10 @@ export default new VueRouter({
     {
       path: "/trip",
       component: TripPage,
+    },
+    {
+      path: "/profile",
+      component: ProfilePage,
     },
   ],
 });
