@@ -1,7 +1,6 @@
 <template>
   <main id="main">
     <breadcrumb-section title="비밀번호 찾기" description="가입하신 이메일로 임시 비밀번호를 전송해드립니다."/>
-
     <section id="contact" class="contact">
       <div class="container" data-aos="fade-up">
           <div class="wrap-container">
