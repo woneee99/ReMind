@@ -1,9 +1,6 @@
 package com.example.enjoytrip.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -77,7 +74,7 @@ public class TripAreaController {
     private String getServiceURL(String areaCode) {
         String serviceId = "areaCode1";
         String serviceKey = "euAYup8VHKXrkrAglwBW1BsRkftXXCRhRyG2JTrFxIRQiwnOJ425JgNtNXNfvWuh0JHjfFNzr%2FZHPN4%2FDCjHXQ%3D%3D";
-        String numOfRows = "100";
+        String numOfRows = "10";
         String pageNo = "1";
         String mobileOS = "ETC";
         String mobileApp = "TripApp";
@@ -92,7 +89,7 @@ public class TripAreaController {
     private String getServiceURL(String cat1, String cat2) {
         String serviceId = "categoryCode1";
         String serviceKey = "euAYup8VHKXrkrAglwBW1BsRkftXXCRhRyG2JTrFxIRQiwnOJ425JgNtNXNfvWuh0JHjfFNzr%2FZHPN4%2FDCjHXQ%3D%3D";
-        String numOfRows = "100";
+        String numOfRows = "10";
         String pageNo = "1";
         String mobileOS = "ETC";
         String mobileApp = "TripApp";
@@ -107,7 +104,7 @@ public class TripAreaController {
     private String getServiceURL(String areaCode, String sigunguCode, String cat1, String cat2, String cat3) {
         String serviceId = "areaBasedList1";
         String serviceKey = "euAYup8VHKXrkrAglwBW1BsRkftXXCRhRyG2JTrFxIRQiwnOJ425JgNtNXNfvWuh0JHjfFNzr%2FZHPN4%2FDCjHXQ%3D%3D";
-        String numOfRows = "100";
+        String numOfRows = "10";
         String pageNo = "1";
         String mobileOS = "ETC";
         String mobileApp = "TripApp";
