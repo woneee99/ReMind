@@ -68,6 +68,7 @@
                 </div>
               </div>
             </div>
+            <button type="button" class="btn btn-sm text-secondary">탈퇴하기</button>
           </div>
         </div>
       </div>
