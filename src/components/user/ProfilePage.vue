@@ -102,22 +102,9 @@ export default {
     };
   },
   methods: {
-    editProfile() {
-      // Edit profile 버튼에 대한 동작
-      this.$router.push("/profile/edit");
-    },
-    changePassword() {
-      // Change Password 버튼에 대한 동작
-      if (this.newPassword === this.confirmPassword) {
-        // 비밀번호 변경 로직
-      } else {
-        // 비밀번호 일치하지 않음 처리
-      }
-    },
     saveAbout() {
-      // Save the edited about text
-      this.editingAbout = false; // Exit edit mode
-      // Perform any additional logic you need to save the updated about text
+      this.editingAbout = false;
+      // TODO: 현재는 프론트에서만 수정되어있음. 수정된 값을 백엔드로 넘겨줘야함.
     },
   },
 };

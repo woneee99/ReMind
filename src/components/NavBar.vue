@@ -16,9 +16,9 @@
           <li class="dropdown">
             <a href="/"><span>홍길동</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
             <ul>
-              <li><a href="/profile">프로필 관리</a></li>
+              <li><router-link to="/profile">프로필 관리</router-link></li>
               <li><a href="/">내 여행</a></li>
-              <li><a href="/">공지사항 / FAQ</a></li>
+              <li><router-link to="/faq">공지사항 / FAQ</router-link></li>
             </ul>
           </li>
           <li><router-link to="/login" class="get-a-quote">Log In / Sign Up</router-link></li>

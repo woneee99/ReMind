@@ -3,9 +3,8 @@ import VueRouter from "vue-router"; // installed module
 import MainPage from "@/components/main/MainPage.vue";
 import LoginPage from "@/components/user/LoginPage";
 import ProfilePage from "@/components/user/ProfilePage";
-import ProfileEditPage from "@/components/user/ProfileEditPage";
 import registerPage from "@/components/user/RegisterPage";
-import TripPage from "@/components/trip/TripPage";
+import FaqPage from "@/components/FAQ/FaqPage";
 
 Vue.use(VueRouter);
 
@@ -21,10 +20,6 @@ export default new VueRouter({
       component: LoginPage,
     },
     {
-      path: "/trip",
-      component: TripPage,
-    },
-    {
       path: "/register",
       component: registerPage,
     },
@@ -33,8 +28,8 @@ export default new VueRouter({
       component: ProfilePage,
     },
     {
-      path: "/profile/edit",
-      component: ProfileEditPage,
+      path: "/faq",
+      component: FaqPage,
     },
   ],
 });
