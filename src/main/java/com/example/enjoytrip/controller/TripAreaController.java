@@ -13,7 +13,7 @@ import java.net.URL;
 public class TripAreaController {
 
     @GetMapping("/area")
-    public String callArea(@RequestParam("areaCode") String areaCode) {
+    public String callArea(@RequestParam(value = "areaCode", required = false) String areaCode) {
         String jsonPrintString;
 
         try {
@@ -31,7 +31,7 @@ public class TripAreaController {
     }
 
     @GetMapping("/category")
-    public String callCategory(@RequestParam("cat1") String cat1, @RequestParam("cat2") String cat2) {
+    public String callCategory(@RequestParam(value = "cat1", required = false) String cat1, @RequestParam(value = "cat2", required = false) String cat2) {
         String jsonPrintString;
 
         try {
@@ -50,7 +50,7 @@ public class TripAreaController {
     }
 
     @GetMapping("/list")
-    public String callList(@RequestParam("areaCode") String areaCode, @RequestParam("sigunguCode") String sigunguCode, @RequestParam("cat1") String cat1, @RequestParam("cat2") String cat2, @RequestParam("cat3") String cat3) {
+    public String callList(@RequestParam(value = "areaCode", required = false) String areaCode, @RequestParam(value = "sigunguCode", required = false) String sigunguCode, @RequestParam(value = "cat1", required = false) String cat1, @RequestParam(value = "cat2", required = false) String cat2, @RequestParam(value = "cat3", required = false) String cat3) {
         String jsonPrintString;
 
         try {
