@@ -5,7 +5,7 @@
 
     <select id="login"
             parameterType="String" resultType="com.example.enjoytrip.dto.UserDto">
-        select userId, userEmail, userPassword, userName, userPhone, createdAt, updatedAt
+        select userId, userEmail, userPassword, userName, createdAt, updatedAt
           from users
          where userEmail = #{userEmail}
     </select>
@@ -19,7 +19,7 @@
 
     <select id="findEmail"
             parameterType="String" resultType="com.example.enjoytrip.dto.UserDto">
-        select userId, userEmail, userPassword, userName, userPhone, createdAt, updatedAt
+        select userId, userEmail, userPassword, userName, createdAt, updatedAt
         from users
         where userEmail = #{userEmail}
     </select>
