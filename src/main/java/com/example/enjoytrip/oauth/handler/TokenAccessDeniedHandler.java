@@ -19,6 +19,8 @@ public class TokenAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+        System.out.println(request.toString());
+        System.out.println(response.toString());
         handlerExceptionResolver.resolveException(request, response, null, accessDeniedException);
     }
 }

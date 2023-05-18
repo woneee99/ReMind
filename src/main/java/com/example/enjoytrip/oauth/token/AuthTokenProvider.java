@@ -1,18 +1,14 @@
 package com.example.enjoytrip.oauth.token;
 
-import com.example.enjoytrip.dto.UserDto;
 import com.example.enjoytrip.oauth.exception.TokenValidFailedException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;

@@ -5,16 +5,27 @@ import com.example.enjoytrip.service.UserService;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/v1/users")
 public class UserController {
 
     @Autowired
     UserService userService;
+
+    @GetMapping
+    public ResponseEntity<UserDto> getUser() {
+        System.out.println("여기");
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        UserDto user = userService.getUser(principal.getUsername());
+        System.out.println(user);
+        return ResponseEntity.ok().body(user);
+    }
 
     @PostMapping("/register")
     public ResponseEntity<Integer> register(@RequestBody UserDto userDto){
@@ -34,7 +45,7 @@ public class UserController {
         UserDto dto = (UserDto) session.getAttribute("userDto");
         if(dto == null) ResponseEntity.notFound().build();
 
-        userDto.setUserId(dto.getUserId());
+        userDto.setUserSeq(dto.getUserSeq());
         userDto.setUserName(dto.getUserName());
         userDto.setCreatedAt(dto.getCreatedAt());
 
@@ -48,7 +59,7 @@ public class UserController {
     public ResponseEntity<Integer> withdraw(HttpSession session){
         UserDto dto = (UserDto) session.getAttribute("userDto");
 
-        int ret = userService.withdraw(dto.getUserId());
+        int ret = userService.withdraw(dto.getUserSeq());
         if(ret == 1) {
             session.invalidate();
             return ResponseEntity.ok().body(ret);

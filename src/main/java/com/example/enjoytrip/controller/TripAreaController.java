@@ -12,7 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 @RestController
-@RequestMapping("/trip")
+@RequestMapping("/api/v1/trip")
 public class TripAreaController {
 
     @GetMapping("/area")

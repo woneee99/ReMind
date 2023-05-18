@@ -45,13 +45,13 @@ public class BoardController {
     public ResponseEntity<BoardResultDto> boardDetail(@PathVariable int boardId, HttpSession session) {
 
         BoardParamDto boardParamDto = new BoardParamDto();
-        boardParamDto.setUserId(((UserDto) session.getAttribute("userDto")).getUserId());
+        boardParamDto.setUserId(((UserDto) session.getAttribute("userDto")).getUserSeq());
         boardParamDto.setBoardId(boardId);
 
         BoardResultDto boardResultDto = boardService.getBoardDetail(boardParamDto);
 
         // 게시글 작성자와 현 사용자가 동일
-        if (((UserDto) session.getAttribute("userDto")).getUserId() == boardResultDto.getBoard().getUserId()) {
+        if (((UserDto) session.getAttribute("userDto")).getUserSeq() == boardResultDto.getBoard().getUserId()) {
             boardResultDto.getBoard().setSameUser(true);
         }
 
@@ -65,7 +65,7 @@ public class BoardController {
     @PostMapping(value = "")
     public ResponseEntity<BoardResultDto> boardInsert(BoardDto boardDto, MultipartHttpServletRequest request) {
 
-        boardDto.setUserId(((UserDto) request.getSession().getAttribute("userDto")).getUserId());
+        boardDto.setUserId(((UserDto) request.getSession().getAttribute("userDto")).getUserSeq());
         BoardResultDto boardResultDto = boardService.insertBoard(boardDto, request);
 
         if (boardResultDto.getResult() == SUCCESS) {
@@ -83,7 +83,7 @@ public class BoardController {
     @PostMapping("/{boardId}")
     public ResponseEntity<BoardResultDto> boardUpdate(BoardDto boardDto, MultipartHttpServletRequest request) {
 
-        boardDto.setUserId(((UserDto) request.getSession().getAttribute("userDto")).getUserId());
+        boardDto.setUserId(((UserDto) request.getSession().getAttribute("userDto")).getUserSeq());
         BoardResultDto boardResultDto = boardService.updateBoard(boardDto, request);
 
         if (boardResultDto.getResult() == SUCCESS) {

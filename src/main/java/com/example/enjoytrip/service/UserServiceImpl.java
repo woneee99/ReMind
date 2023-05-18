@@ -17,6 +17,10 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    public UserDto getUser(String userId) {
+        return userDao.findUser(userId);
+    }
+
     @Override
     public int register(UserDto userDto) {
 

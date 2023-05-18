@@ -20,7 +20,7 @@ public class HotPlaceController {
     @PostMapping
     public ResponseEntity<Integer> hotplaceInsert(@RequestBody HotPlaceDto hotPlaceDto, HttpSession session){
         UserDto userDto = (UserDto) session.getAttribute("userDto");
-        hotPlaceDto.setUserId(userDto.getUserId());
+        hotPlaceDto.setUserId(userDto.getUserSeq());
 
 //        hotPlaceDto.setUserId(10);
         return ResponseEntity.ok().body(hotPlaceService.hotPlaceInsert(hotPlaceDto));
@@ -30,7 +30,7 @@ public class HotPlaceController {
     public ResponseEntity<List<HotPlaceDto>> hotplaceGet(HttpSession session){
         UserDto userDto = (UserDto) session.getAttribute("userDto");
 
-        return ResponseEntity.ok().body(hotPlaceService.hotPlaceSelect(userDto.getUserId()));
+        return ResponseEntity.ok().body(hotPlaceService.hotPlaceSelect(userDto.getUserSeq()));
     }
 
     @DeleteMapping("/{hotplaceId}")

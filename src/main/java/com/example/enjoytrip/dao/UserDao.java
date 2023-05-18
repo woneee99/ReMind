@@ -8,4 +8,5 @@ public interface UserDao {
     int register(UserDto userDto);
     int updateInfo(UserDto userDto);
     int withdraw(int userId);
+    UserDto findUser(String userId);
 }

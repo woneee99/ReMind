@@ -26,11 +26,14 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         String tokenStr = HeaderUtil.getAccessToken(request);
         AuthToken token = tokenProvider.convertAuthToken(tokenStr);
 
+        System.out.println("token: "  +token.getToken());
         if (token.validate()) {
+            System.out.println("who");
             Authentication authentication = tokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-
+        System.out.println("req: " + request);
+        System.out.println("res: " + response);
         filterChain.doFilter(request, response);
     }
 }

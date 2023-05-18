@@ -21,5 +21,11 @@
         delete from users where userId = #{userId}
     </delete>
 
+    <select id="findUser"
+            parameterType="String" resultType="com.example.enjoytrip.dto.UserDto">
+        select *
+        from users
+        where userId = #{userId}
+    </select>
 
 </mapper>
