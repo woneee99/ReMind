@@ -33,15 +33,15 @@
           <div class="bottom-container">
             <div class="text-center"> 다른 계정으로 로그인 하기</div>
             <div class="img-container"> 
-              <div>
+              <a :href="socialLogin('google')">
                 <img src="https://d1nuzc1w51n1es.cloudfront.net/d99d8628713bb69bd142.png" style="width: 94px; height: 94px">
                 <div class="img-text">Google</div>
-              </div>
-              <div>
+              </a>
+              <a :href="socialLogin('kakao')">
                 <img src="https://d1nuzc1w51n1es.cloudfront.net/7edcff9c01ccc20d1ef6.png" style="width: 94px; height: 94px">
                 <div class="img-text">Kakao</div>
-              </div>
-              <div>
+              </a>
+              <div @click="socialLogin('naver')">
                 <img src="@/assets/naverLogo.png" style="width: 94px; height: 94px">
                 <div class="img-text">Naver</div>
               </div>
@@ -67,6 +67,16 @@ export default {
   components: {
     BreadcrumbSection,
   },
+  data() {
+    return {
+      token: ""
+    }
+  },
+  methods: {
+    socialLogin(socialType) {
+      return `http://localhost:8080/oauth2/authorization/${socialType}?redirect_uri=http://localhost:5500/oauth/redirect`;
+    }
+  }
 };
 </script>
 
