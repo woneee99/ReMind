@@ -1,7 +1,0 @@
-package com.example.enjoytrip.oauth.exception;
-
-public class OAuthProviderMissMatchException extends RuntimeException{
-    public OAuthProviderMissMatchException(String message) {
-        super(message);
-    }
-}

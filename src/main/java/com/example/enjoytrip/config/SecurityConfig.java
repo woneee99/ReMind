@@ -1,30 +1,26 @@
 package com.example.enjoytrip.config;
 
-import com.example.enjoytrip.dao.UserRefreshTokenDao;
-import com.example.enjoytrip.oauth.entity.RoleType;
-import com.example.enjoytrip.oauth.exception.RestAuthenticationEntryPoint;
-import com.example.enjoytrip.oauth.filter.TokenAuthenticationFilter;
-import com.example.enjoytrip.oauth.handler.OAuth2AuthenticationFailureHandler;
-import com.example.enjoytrip.oauth.handler.OAuth2AuthenticationSuccessHandler;
-import com.example.enjoytrip.oauth.handler.TokenAccessDeniedHandler;
-import com.example.enjoytrip.oauth.respository.OAuth2AuthorizationRequestBasedOnCookieRepository;
-import com.example.enjoytrip.oauth.service.CustomOAuth2UserService;
-import com.example.enjoytrip.oauth.service.CustomUserDetailsService;
-import com.example.enjoytrip.oauth.token.AuthTokenProvider;
+import com.example.enjoytrip.api.dao.UserRefreshTokenDao;
+import com.example.enjoytrip.oauth2.entity.RoleType;
+import com.example.enjoytrip.oauth2.exception.RestAuthenticationEntryPoint;
+import com.example.enjoytrip.oauth2.filter.TokenAuthenticationFilter;
+import com.example.enjoytrip.oauth2.handler.OAuth2AuthenticationFailureHandler;
+import com.example.enjoytrip.oauth2.handler.OAuth2AuthenticationSuccessHandler;
+import com.example.enjoytrip.oauth2.handler.TokenAccessDeniedHandler;
+import com.example.enjoytrip.oauth2.respository.OAuth2AuthorizationRequestBasedOnCookieRepository;
+import com.example.enjoytrip.oauth2.service.CustomOAuth2UserService;
+import com.example.enjoytrip.oauth2.service.CustomUserDetailsService;
+import com.example.enjoytrip.oauth2.token.AuthTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -32,7 +28,7 @@ import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
-import java.util.List;
+
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
