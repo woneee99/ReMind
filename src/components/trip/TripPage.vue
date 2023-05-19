@@ -69,7 +69,6 @@ import http from "../../assets/axios.js";
 export default {
   components: {
     BreadcrumbSection,
-    // MainCss
   },
   data() {
     return {
