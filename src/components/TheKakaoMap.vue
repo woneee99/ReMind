@@ -6,7 +6,7 @@
       <div id="menu_wrap" class="bg_white">
         <div class="option">
           <div>
-            키워드 : <input type="text" value="나다" id="keyword" size="15" />
+            키워드 : <input type="text" v-model="keyword" size="15" />
             <button type="button" @click="searchPlaces()">검색하기</button>
           </div>
         </div>
@@ -26,6 +26,8 @@ export default {
     return {
       map: null,
       ps: null,
+      infowindow: null,
+      keyword: "",
       positions: [],
       markers: [],
     };
@@ -70,26 +72,29 @@ export default {
       this.map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
 
       // 키워드로 장소를 검색합니다
-      this.searchPlaces();
+      // this.searchPlaces();
     },
 
     // 키워드 검색을 요청하는 함수입니다
     searchPlaces() {
-      var keyword = document.getElementById("keyword").value;
+      // var keyword = document.getElementById("keyword").value;
 
-      if (!keyword.replace(/^\s+|\s+$/g, "")) {
+      if (!this.keyword.replace(/^\s+|\s+$/g, "")) {
         alert("키워드를 입력해주세요!");
         return false;
       }
       // 장소검색 객체를 통해 키워드로 장소검색을 요청합니다
-      this.ps.keywordSearch(keyword, this.placesSearchCB);
+      this.ps.keywordSearch(this.keyword, this.placesSearchCB);
     },
 
     // 키워드 검색 완료 시 호출되는 콜백함수
-    placesSearchCB(data, status) {
+    placesSearchCB(data, status, pagination) {
       if (status === window.kakao.maps.services.Status.OK) {
         // 검색 목록과 마커를 표출합니다
         this.displayPlaces(data);
+
+        // 페이지 번호를 표출합니다
+        this.displayPagination(pagination);
       } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
         alert("검색 결과가 존재하지 않습니다.");
         return;
@@ -123,27 +128,27 @@ export default {
         // LatLngBounds 객체에 좌표를 추가합니다
         bounds.extend(placePosition);
 
-        // TODO: 인포윈도우 해야해!!!!!!!!!!!!
         // 마커와 검색결과 항목에 mouseover 했을때
         // 해당 장소에 인포윈도우에 장소명을 표시합니다
         // mouseout 했을 때는 인포윈도우를 닫습니다
+        const $this = this;
         (function (marker, title) {
-          console.log(marker + title);
-          // kakao.maps.event.addListener(marker, "mouseover", function () {
-          //   displayInfowindow(marker, title);
+          // console.log(marker + title);
+          kakao.maps.event.addListener(marker, "mouseover", function () {
+            $this.displayInfowindow(marker, title);
+          });
+          kakao.maps.event.addListener(marker, "mouseout", function () {
+            $this.infowindow.close();
+          });
+          itemEl.onmouseover = function () {
+            $this.displayInfowindow(marker, title);
+          };
+          itemEl.onmouseout = function () {
+            $this.infowindow.close();
+          };
           // });
-          // kakao.maps.event.addListener(marker, "mouseout", function () {
-          //   infowindow.close();
-          // });
-          // itemEl.onmouseover = function () {
-          //   displayInfowindow(marker, title);
-          // };
-          // itemEl.onmouseout = function () {
-          //   infowindow.close();
-          // };
-        });
-        // })(marker, places[i].place_name);
-        console.log(marker);
+        })(marker, places[i].place_name);
+        // console.log(marker);
 
         fragment.appendChild(itemEl);
       }
@@ -177,7 +182,7 @@ export default {
 
     // 마커를 생성하고 지도 위에 마커를 표시하는 함수입니다
     addMarker(position, idx) {
-      var imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png", // 마커 이미지 url, 스프라이트 이미지를 씁니다
+      const imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png", // 마커 이미지 url, 스프라이트 이미지를 씁니다
         imageSize = new kakao.maps.Size(36, 37), // 마커 이미지의 크기
         imgOptions = {
           spriteSize: new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
@@ -201,6 +206,46 @@ export default {
         this.markers[i].setMap(null);
       }
       this.markers = [];
+    },
+
+    // 검색결과 목록 하단에 페이지번호를 표시는 함수입니다
+    displayPagination(pagination) {
+      var paginationEl = document.getElementById("pagination"),
+        fragment = document.createDocumentFragment(),
+        i;
+
+      // 기존에 추가된 페이지번호를 삭제합니다
+      while (paginationEl.hasChildNodes()) {
+        paginationEl.removeChild(paginationEl.lastChild);
+      }
+
+      for (i = 1; i <= pagination.last; i++) {
+        var el = document.createElement("a");
+        el.href = "#";
+        el.innerHTML = i;
+
+        if (i === pagination.current) {
+          el.className = "on";
+        } else {
+          el.onclick = (function (i) {
+            return function () {
+              pagination.gotoPage(i);
+            };
+          })(i);
+        }
+
+        fragment.appendChild(el);
+      }
+      paginationEl.appendChild(fragment);
+    },
+
+    // 검색결과 목록 또는 마커를 클릭했을 때 호출되는 함수입니다
+    // 인포윈도우에 장소명을 표시합니다
+    displayInfowindow(marker, title) {
+      var content = '<div style="padding:5px;z-index:1;">' + title + "</div>";
+
+      this.infowindow.setContent(content);
+      this.infowindow.open(this.map, marker);
     },
 
     removeAllChildNods(el) {
