@@ -43,7 +43,8 @@ public class SecurityConfig {
 
     private final String[] swaggerPermitUrl = { "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**",
             "/webjars/**", "/api-docs/**", "/configuration/**" };
-
+    private final String[] permitUrl = { "boards/**", "hotplace/**",
+            "trip/**", "users/**"};
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
@@ -53,40 +54,42 @@ public class SecurityConfig {
         AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
 
         http
-                .cors()
+                    .cors()
                 .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .csrf().disable()
-                .formLogin().disable()
-                .httpBasic().disable()
-                .exceptionHandling()
-                .authenticationEntryPoint(new RestAuthenticationEntryPoint())
-                .accessDeniedHandler(tokenAccessDeniedHandler)
+                    .csrf().disable()
+                    .formLogin().disable()
+                    .httpBasic().disable()
+                    .exceptionHandling()
+                    .authenticationEntryPoint(new RestAuthenticationEntryPoint())
+                    .accessDeniedHandler(tokenAccessDeniedHandler)
                 .and()
-                .authorizeRequests()
-                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .antMatchers(swaggerPermitUrl).permitAll()
-                .antMatchers("/api/**").hasAnyAuthority(RoleType.USER.getCode())
-                .antMatchers("/api/**/admin/**").hasAnyAuthority(RoleType.ADMIN.getCode())
-                .anyRequest().authenticated()
+                    .authorizeRequests()
+                    .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                    .antMatchers(swaggerPermitUrl).permitAll()
+                    .antMatchers(permitUrl).permitAll()
+                .antMatchers("/**").permitAll()
+                    .antMatchers("/api/**").hasAnyAuthority(RoleType.USER.getCode())
+                    .antMatchers("/api/**/admin/**").hasAnyAuthority(RoleType.ADMIN.getCode())
+                    .anyRequest().authenticated()
                 .and()
-                .oauth2Login()
-                .authorizationEndpoint()
-                .baseUri("/oauth2/authorization")
-                .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository())
+                    .oauth2Login()
+                    .authorizationEndpoint()
+                    .baseUri("/oauth2/authorization")
+                    .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository())
                 .and()
-                .redirectionEndpoint()
-                .baseUri("/*/oauth2/code/*")
+                    .redirectionEndpoint()
+                    .baseUri("/*/oauth2/code/*")
                 .and()
-                .userInfoEndpoint()
-                .userService(oAuth2UserService)
+                    .userInfoEndpoint()
+                    .userService(oAuth2UserService)
                 .and()
-                .successHandler(oAuth2AuthenticationSuccessHandler())
-                .failureHandler(oAuth2AuthenticationFailureHandler())
+                    .successHandler(oAuth2AuthenticationSuccessHandler())
+                    .failureHandler(oAuth2AuthenticationFailureHandler())
                 .and()
-                .authenticationManager(authenticationManager);
+                    .authenticationManager(authenticationManager);
 
         http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
