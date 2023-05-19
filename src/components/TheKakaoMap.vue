@@ -1,18 +1,39 @@
 <template>
   <div class="col-md-9 mx-auto container mb-5">
-    <div class="map_wrap">
-      <div id="map"></div>
+    <div class="row">
+      <div class="col-9">
+        <div class="map_wrap">
+          <div id="map"></div>
 
-      <div id="menu_wrap" class="bg_white">
-        <div class="option">
-          <div>
-            키워드 : <input type="text" v-model="keyword" size="15" />
-            <button type="button" @click="searchPlaces()">검색하기</button>
+          <div id="menu_wrap" class="bg_white">
+            <div class="option">
+              <div>
+                키워드 : <input type="text" v-model="keyword" size="15" />
+                <button type="button" @click="searchPlaces()">검색하기</button>
+              </div>
+            </div>
+            <hr />
+            <ul id="placesList"></ul>
+            <div id="pagination"></div>
           </div>
         </div>
-        <hr />
-        <ul id="placesList"></ul>
-        <div id="pagination"></div>
+      </div>
+      <div class="col-3">
+        <div class="card" v-for="plan in myPlan" :key="plan.place.id">
+          <div class="card-body d-flex justify-content-between">
+            <h5 class="card-title">{{ plan.place.place_name }}</h5>
+            <button type="button" class="btn-close" aria-label="Close" @click="removePlan(plan)"></button>
+          </div>
+          <div class="card-body" @click="movePlacePosition(plan.placePosition)">
+            <h6 class="card-subtitle mb-2 text-muted">{{ plan.place.road_address_name }}</h6>
+            <h6 class="card-subtitle mb-2 text-muted">(지번) {{ plan.place.address_name }}</h6>
+            <h6 class="card-subtitle mb-2 text-muted">{{ plan.place.address_name }}</h6>
+            <h6 class="card-subtitle mb-2 text-muted">{{ plan.place.phone }}</h6>
+            <p class="card-text">머물 시간: {{ plan.stayTime }}</p>
+            <a href="#" class="card-link">링크입니다.</a>
+            <a href="#" class="card-link">다른 링크입니다.</a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -30,6 +51,8 @@ export default {
       keyword: "",
       positions: [],
       markers: [],
+      myPlan: [],
+      selectMarkers: [],
     };
   },
   props: {},
@@ -123,7 +146,6 @@ export default {
         var placePosition = new kakao.maps.LatLng(places[i].y, places[i].x),
           marker = this.addMarker(placePosition, i),
           itemEl = this.getListItem(i, places[i]); // 검색 결과 항목 Element를 생성합니다
-
         // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
         // LatLngBounds 객체에 좌표를 추가합니다
         bounds.extend(placePosition);
@@ -132,22 +154,31 @@ export default {
         // 해당 장소에 인포윈도우에 장소명을 표시합니다
         // mouseout 했을 때는 인포윈도우를 닫습니다
         const $this = this;
-        (function (marker, title) {
+        (function (marker, place, placePosition) {
           // console.log(marker + title);
           kakao.maps.event.addListener(marker, "mouseover", function () {
-            $this.displayInfowindow(marker, title);
+            $this.displayInfowindow(marker, place, placePosition);
           });
           kakao.maps.event.addListener(marker, "mouseout", function () {
-            $this.infowindow.close();
+            // $this.infowindow.close();
+          });
+          kakao.maps.event.addListener(marker, "click", function () {
+            console.log(place.place_name + " placePosition=" + placePosition.La + ", " + placePosition.Ma);
+            console.log(place);
+            alert("마커를 눌렀습니다.");
           });
           itemEl.onmouseover = function () {
-            $this.displayInfowindow(marker, title);
+            $this.displayInfowindow(marker, place, placePosition);
           };
           itemEl.onmouseout = function () {
-            $this.infowindow.close();
+            // $this.infowindow.close();
+          };
+          itemEl.onclick = function () {
+            console.log(place.place_name + " placePosition=" + placePosition.La + ", " + placePosition.Ma);
+            alert("리스트 elements를 눌렀습니다.");
           };
           // });
-        })(marker, places[i].place_name);
+        })(marker, places[i], placePosition);
         // console.log(marker);
 
         fragment.appendChild(itemEl);
@@ -201,11 +232,34 @@ export default {
       return marker;
     },
 
+    addSelectMarker(placePosition, placeId) {
+      const marker = new kakao.maps.Marker({
+        position: placePosition,
+      });
+
+      marker.setMap(this.map); // 지도 위에 마커 표출
+      this.selectMarkers.push({ marker, placeId }); // 배열에 생성된 마커 추가
+      console.log(placeId);
+    },
+
     removeMarker() {
       for (var i = 0; i < this.markers.length; i++) {
         this.markers[i].setMap(null);
       }
       this.markers = [];
+    },
+
+    // FIX: 선택된 마커 제거 안되는 중!!!!!!!!!!!!!
+    removeSelectMarker(placeId) {
+      const index = this.selectMarkers.findIndex((marker) => marker.placeId == placeId);
+      console.log(this.selectMarkers[0].placeId);
+      console.log(placeId);
+      console.log(index);
+      if (index !== -1) {
+        let marker = this.selectMarkers[index];
+        marker.setMap(null); // 마커 제거
+        this.selectMarkers.splice(index, 1);
+      }
     },
 
     // 검색결과 목록 하단에 페이지번호를 표시는 함수입니다
@@ -241,17 +295,81 @@ export default {
 
     // 검색결과 목록 또는 마커를 클릭했을 때 호출되는 함수입니다
     // 인포윈도우에 장소명을 표시합니다
-    displayInfowindow(marker, title) {
-      var content = '<div style="padding:5px;z-index:1;">' + title + "</div>";
+    displayInfowindow(marker, place, placePosition) {
+      // var content = '<div style="padding:5px;z-index:1;">' + title + "</div>" + '<div><button @click="showCard(markerInfo)">자세히 보기</button></div>';
+      // const content =
+      //   '<div style="padding: 10px;">' +
+      //   '<div style="font-weight: bold;">' +
+      //   place.place_name +
+      //   "</div>" +
+      //   '<div style="margin-top: 5px;">' +
+      //   '<input type="text" id="stayTimeInput" placeholder="머물 시간">' +
+      //   '<button id="planAddButton">내 여행에 추가</button>' +
+      //   "</div>" +
+      //   "</div>";
+
+      const content =
+        '<div class="wrap">' +
+        '    <div class="info">' +
+        '        <div class="title">' +
+        place.place_name +
+        '            <div class="close" onclick="closeOverlay()" title="닫기"></div>' +
+        "        </div>" +
+        '        <div class="body">' +
+        '            <div class="desc">' +
+        '                <div class="ellipsis">' +
+        place.road_address_name +
+        "</div>" +
+        '                <div class="jibun ellipsis">(지번) ' +
+        place.address_name +
+        "</div>" +
+        '                <div><a href="' +
+        place.place_url +
+        '" target="_blank" class="link">홈페이지</a></div>' +
+        '<div style="margin-top: 5px;">' +
+        '<input type="text" id="stayTimeInput" placeholder="머물 시간">' +
+        '<button id="planAddButton">내 여행에 추가</button>' +
+        "</div>" +
+        "            </div>" +
+        "        </div>" +
+        "    </div>" +
+        "</div>";
 
       this.infowindow.setContent(content);
       this.infowindow.open(this.map, marker);
+
+      // 인포윈도우가 열린 후 버튼 클릭 이벤트 처리
+      const planAddButton = document.getElementById("planAddButton");
+      planAddButton.addEventListener("click", () => {
+        const stayTimeInput = document.getElementById("stayTimeInput");
+        const stayTime = stayTimeInput.value; // 입력된 머물 시간 값 가져오기
+        this.showCard(place, placePosition, stayTime);
+        this.addSelectMarker(placePosition, place.id);
+      });
+    },
+
+    showCard(place, placePosition, stayTime) {
+      this.myPlan.push({ place, placePosition, stayTime });
+      console.log(place.place_name + " " + placePosition + " " + stayTime);
+      console.log(this.myPlan);
     },
 
     removeAllChildNods(el) {
       while (el.hasChildNodes()) {
         el.removeChild(el.lastChild);
       }
+    },
+    removePlan(plan) {
+      const index = this.myPlan.indexOf(plan);
+      if (index !== -1) {
+        this.myPlan.splice(index, 1);
+      }
+      this.removeSelectMarker(plan.place.id);
+    },
+
+    movePlacePosition(placePosition) {
+      console.log(placePosition);
+      this.map.setCenter(placePosition);
     },
   },
 };
@@ -411,5 +529,98 @@ export default {
   font-weight: bold;
   cursor: default;
   color: #777;
+}
+/* infowindow css */
+.wrap {
+  position: absolute;
+  left: 0;
+  bottom: 40px;
+  width: 288px;
+  height: 132px;
+  margin-left: -144px;
+  text-align: left;
+  overflow: hidden;
+  font-size: 12px;
+  font-family: "Malgun Gothic", dotum, "돋움", sans-serif;
+  line-height: 1.5;
+}
+.wrap * {
+  padding: 0;
+  margin: 0;
+}
+.wrap .info {
+  width: 286px;
+  height: 120px;
+  border-radius: 5px;
+  border-bottom: 2px solid #ccc;
+  border-right: 1px solid #ccc;
+  overflow: hidden;
+  background: #fff;
+}
+.wrap .info:nth-child(1) {
+  border: 0;
+  box-shadow: 0px 1px 2px #888;
+}
+.info .title {
+  padding: 5px 0 0 10px;
+  height: 30px;
+  background: #eee;
+  border-bottom: 1px solid #ddd;
+  font-size: 18px;
+  font-weight: bold;
+}
+.info .close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #888;
+  width: 17px;
+  height: 17px;
+  background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/overlay_close.png");
+}
+.info .close:hover {
+  cursor: pointer;
+}
+.info .body {
+  position: relative;
+  overflow: hidden;
+}
+.info .desc {
+  position: relative;
+  margin: 13px 0 0 90px;
+  height: 75px;
+}
+.desc .ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.desc .jibun {
+  font-size: 11px;
+  color: #888;
+  margin-top: -2px;
+}
+.info .img {
+  position: absolute;
+  top: 6px;
+  left: 5px;
+  width: 73px;
+  height: 71px;
+  border: 1px solid #ddd;
+  color: #888;
+  overflow: hidden;
+}
+.info:after {
+  content: "";
+  position: absolute;
+  margin-left: -12px;
+  left: 50%;
+  bottom: 0;
+  width: 22px;
+  height: 12px;
+  background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png");
+}
+.info .link {
+  color: #5085bb;
 }
 </style>
