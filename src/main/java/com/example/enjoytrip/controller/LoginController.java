@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
-@RestController
+@RestController("/api/v1")
 public class LoginController {
 
     @Autowired

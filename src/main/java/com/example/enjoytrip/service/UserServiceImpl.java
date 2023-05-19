@@ -5,6 +5,7 @@ import com.example.enjoytrip.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -17,11 +18,16 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+
+    @Override
+    @Transactional(readOnly = true)
     public UserDto getUser(String userId) {
         return userDao.findUser(userId);
     }
 
+
     @Override
+    @Transactional
     public int register(UserDto userDto) {
 
         if(userDto.getUserPassword() != null) {
@@ -30,7 +36,9 @@ public class UserServiceImpl implements UserService {
         return userDao.register(userDto);
     }
 
+
     @Override
+    @Transactional
     public UserDto updateInfo(UserDto userDto) {
         userDto.setUserPassword(passwordEncoder.encode(userDto.getUserPassword()));
         userDao.updateInfo(userDto);
@@ -38,7 +46,9 @@ public class UserServiceImpl implements UserService {
         return userDto;
     }
 
+
     @Override
+    @Transactional
     public int withdraw(int userId) {
         return userDao.withdraw(userId);
     }

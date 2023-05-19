@@ -16,4 +16,10 @@
         from user_refresh_token
         where userId = #{userId} and refreshToken = #{refreshToken}
     </select>
+
+    <insert id="register"
+            parameterType="com.example.enjoytrip.oauth.token.UserRefreshToken">
+        insert into user_refresh_token ( userId, refreshToken )
+        values ( #{userId}, #{refreshToken} )
+    </insert>
 </mapper>

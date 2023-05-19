@@ -19,7 +19,6 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<UserDto> getUser() {
-        System.out.println("여기");
         org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         UserDto user = userService.getUser(principal.getUsername());

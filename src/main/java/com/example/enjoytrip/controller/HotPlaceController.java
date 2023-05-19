@@ -11,7 +11,7 @@ import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
-@RequestMapping("/hotplace")
+@RequestMapping("/api/v1/hotplace")
 public class HotPlaceController {
 
     @Autowired

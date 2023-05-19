@@ -37,7 +37,6 @@ public class AuthTokenProvider {
     }
 
     public Authentication getAuthentication(AuthToken authToken) {
-
         if(authToken.validate()) {
 
             Claims claims = authToken.getTokenClaims();

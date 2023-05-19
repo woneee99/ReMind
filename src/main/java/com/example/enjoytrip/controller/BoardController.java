@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping("/boards")
+@RequestMapping("/api/v1/boards")
 public class BoardController {
 
     @Autowired
