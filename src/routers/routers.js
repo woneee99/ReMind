@@ -2,6 +2,7 @@ import Vue from "vue"; // defalut module
 import VueRouter from "vue-router"; // installed module
 import MainPage from "@/components/main/MainPage.vue";
 import LoginPage from "@/components/user/LoginPage";
+import OauthRedirect from "@/components/user/OauthRedirect";
 import ProfilePage from "@/components/user/ProfilePage";
 import registerPage from "@/components/user/RegisterPage";
 import findPwdPage from "@/components/user/FindPwd";
@@ -20,6 +21,10 @@ export default new VueRouter({
     {
       path: "/login",
       component: LoginPage,
+    },
+    {
+      path: "/oauth/redirect",
+      component: OauthRedirect,
     },
     {
       path: "/register",

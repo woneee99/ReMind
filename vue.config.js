@@ -1,5 +1,8 @@
 const { defineConfig } = require('@vue/cli-service')
 module.exports = defineConfig({
-  outputDir: "C:/Users/SSAFY/Documents/SpringBoot/EnjoyTrip/src/main/resources/static",
-  transpileDependencies: true
+  devServer: {
+    proxy: 'http://localhost:8080'
+  },
+  transpileDependencies: true,
+  lintOnSave:false
 })
