@@ -1,42 +1,47 @@
 <template>
-  <div class="col-md-9 mx-auto container mb-5">
-    <div class="row">
-      <div class="col-9">
-        <div class="map_wrap">
-          <div id="map"></div>
+  <!-- <div class="col-md-9 mx-auto container mb-5"> -->
+  <div class="row">
+    <div class="col-10">
+      <div class="map_wrap">
+        <div id="map"></div>
 
-          <div id="menu_wrap" class="bg_white">
-            <div class="option">
-              <div>
-                키워드 : <input type="text" v-model="keyword" size="15" />
-                <button type="button" @click="searchPlaces()">검색하기</button>
-              </div>
+        <div id="menu_wrap" class="bg_white">
+          <div class="option">
+            <div>
+              키워드 : <input type="text" v-model="keyword" size="15" />
+              <button type="button" @click="searchPlaces()">검색하기</button>
             </div>
-            <hr />
-            <ul id="placesList"></ul>
-            <div id="pagination"></div>
           </div>
-        </div>
-      </div>
-      <div class="col-3">
-        <div class="card" v-for="plan in myPlan" :key="plan.place.id">
-          <div class="card-body d-flex justify-content-between">
-            <h5 class="card-title">{{ plan.place.place_name }}</h5>
-            <button type="button" class="btn-close" aria-label="Close" @click="removePlan(plan)"></button>
-          </div>
-          <div class="card-body" @click="movePlacePosition(plan.placePosition)">
-            <h6 class="card-subtitle mb-2 text-muted">{{ plan.place.road_address_name }}</h6>
-            <h6 class="card-subtitle mb-2 text-muted">(지번) {{ plan.place.address_name }}</h6>
-            <h6 class="card-subtitle mb-2 text-muted">{{ plan.place.address_name }}</h6>
-            <h6 class="card-subtitle mb-2 text-muted">{{ plan.place.phone }}</h6>
-            <p class="card-text">머물 시간: {{ plan.stayTime }}</p>
-            <a href="#" class="card-link">링크입니다.</a>
-            <a href="#" class="card-link">다른 링크입니다.</a>
-          </div>
+          <hr />
+          <ul id="placesList"></ul>
+          <div id="pagination"></div>
         </div>
       </div>
     </div>
+    <div class="col-2 border border-secondary rounded d-flex flex-column p-0">
+      <div class="card p-1" v-for="plan in myPlan" :key="plan.place.id">
+        <div class="card-body" @click="movePlacePosition(plan.selectMarker, plan.place, plan.placePosition)">
+          <div class="d-flex justify-content-between">
+            <h5 class="card-title">{{ plan.place.place_name }}</h5>
+            <button type="button" class="btn-close" aria-label="Close" @click="removePlan(plan)"></button>
+          </div>
+          <h6 class="card-subtitle mb-2 text-muted">{{ plan.place.road_address_name }}</h6>
+          <h6 class="card-subtitle mb-2 text-muted">{{ plan.place.phone }}</h6>
+          <p class="card-text">머물 시간: {{ plan.stayTime }} 시간</p>
+        </div>
+        <!-- <div class="card-body"> -->
+        <!-- <h6 class="card-subtitle mb-2 text-muted">(지번) {{ plan.place.address_name }}</h6> -->
+
+        <!-- <a href="#" class="card-link">링크입니다.</a> -->
+        <!-- <a href="#" class="card-link">다른 링크입니다.</a> -->
+        <!-- </div> -->
+      </div>
+      <div class="mt-auto m-0">
+        <button class="btn btn-primary" type="button" style="width: 100%">여행 계획 저장</button>
+      </div>
+    </div>
   </div>
+  <!-- </div> -->
 </template>
 
 <script>
@@ -81,7 +86,7 @@ export default {
       const container = document.getElementById("map");
       const options = {
         center: new window.kakao.maps.LatLng(33.450701, 126.570667),
-        level: 3,
+        level: 5,
       };
 
       this.map = new window.kakao.maps.Map(container, options);
@@ -232,14 +237,16 @@ export default {
       return marker;
     },
 
-    addSelectMarker(placePosition, placeId) {
-      const marker = new kakao.maps.Marker({
+    addSelectMarker(placePosition) {
+      var selectMarker = new kakao.maps.Marker({
         position: placePosition,
       });
-
-      marker.setMap(this.map); // 지도 위에 마커 표출
-      this.selectMarkers.push({ marker, placeId }); // 배열에 생성된 마커 추가
-      console.log(placeId);
+      selectMarker.setMap(this.map); // 지도 위에 마커 표출
+      this.selectMarkers.push(selectMarker); // 배열에 생성된 마커 추가
+      console.log("선택된 마커들");
+      console.log(selectMarker);
+      console.log(this.selectMarkers);
+      return selectMarker;
     },
 
     removeMarker() {
@@ -250,15 +257,20 @@ export default {
     },
 
     // FIX: 선택된 마커 제거 안되는 중!!!!!!!!!!!!!
-    removeSelectMarker(placeId) {
-      const index = this.selectMarkers.findIndex((marker) => marker.placeId == placeId);
-      console.log(this.selectMarkers[0].placeId);
-      console.log(placeId);
+    removeSelectMarker(plan) {
+      console.log("마커 지우자!");
+      const index = this.selectMarkers.findIndex((marker) => marker === plan.selectMarker);
+      console.log(this.selectMarkers[0] === plan.selectMarker);
+      console.log(this.selectMarkers[0]);
+      console.log(plan.selectMarker);
+      console.log("인덱스결과!");
       console.log(index);
       if (index !== -1) {
         let marker = this.selectMarkers[index];
-        marker.setMap(null); // 마커 제거
+        console.log(marker);
         this.selectMarkers.splice(index, 1);
+        console.log(this.selectMarkers);
+        marker.setMap(null); // 마커 제거
       }
     },
 
@@ -343,14 +355,14 @@ export default {
       planAddButton.addEventListener("click", () => {
         const stayTimeInput = document.getElementById("stayTimeInput");
         const stayTime = stayTimeInput.value; // 입력된 머물 시간 값 가져오기
-        this.showCard(place, placePosition, stayTime);
-        this.addSelectMarker(placePosition, place.id);
+        var selectMarker = this.addSelectMarker(placePosition);
+        this.showCard(selectMarker, place, placePosition, stayTime);
       });
     },
 
-    showCard(place, placePosition, stayTime) {
-      this.myPlan.push({ place, placePosition, stayTime });
-      console.log(place.place_name + " " + placePosition + " " + stayTime);
+    showCard(selectMarker, place, placePosition, stayTime) {
+      this.myPlan.push({ selectMarker, place, placePosition, stayTime });
+      console.log(selectMarker + " " + place.place_name + " " + placePosition + " " + stayTime);
       console.log(this.myPlan);
     },
 
@@ -361,15 +373,20 @@ export default {
     },
     removePlan(plan) {
       const index = this.myPlan.indexOf(plan);
+      console.log("plan");
+      console.log(plan);
       if (index !== -1) {
         this.myPlan.splice(index, 1);
       }
-      this.removeSelectMarker(plan.place.id);
+      console.log("지워지는 객체는!");
+      console.log(plan);
+      this.removeSelectMarker(plan);
     },
 
-    movePlacePosition(placePosition) {
+    movePlacePosition(selectMarker, place, placePosition) {
       console.log(placePosition);
       this.map.setCenter(placePosition);
+      this.displayInfowindow(selectMarker, place, placePosition);
     },
   },
 };
