@@ -6,7 +6,7 @@
     <section id="contact" class="contact">
       <div class="container" data-aos="fade-up">
           <div class="wrap-container">
-            <form action="forms/contact.php" method="post" role="form" class="php-email-form">
+            <form role="form" class="php-email-form">
               <div class="text">
                   <input type="text" name="name" class="form-control" id="name" placeholder="Email" required />
               </div>
@@ -34,17 +34,13 @@
             <div class="text-center"> 다른 계정으로 로그인 하기</div>
             <div class="img-container"> 
               <a :href="socialLogin('google')">
-                <img src="https://d1nuzc1w51n1es.cloudfront.net/d99d8628713bb69bd142.png" style="width: 94px; height: 94px">
+                <img src="https://d1nuzc1w51n1es.cloudfront.net/d99d8628713bb69bd142.png" style="width: 75px; height: 75px">
                 <div class="img-text">Google</div>
               </a>
-              <a :href="socialLogin('kakao')">
-                <img src="https://d1nuzc1w51n1es.cloudfront.net/7edcff9c01ccc20d1ef6.png" style="width: 94px; height: 94px">
+              <a :href="socialLogin('kakao')" >
+                <img src="https://d1nuzc1w51n1es.cloudfront.net/7edcff9c01ccc20d1ef6.png" style="width: 75px; height: 75px">
                 <div class="img-text">Kakao</div>
               </a>
-              <div @click="socialLogin('naver')">
-                <img src="@/assets/naverLogo.png" style="width: 94px; height: 94px">
-                <div class="img-text">Naver</div>
-              </div>
             </div>
             </div>
           </div>
@@ -76,7 +72,7 @@ export default {
     socialLogin(socialType) {
       return `http://localhost:8080/oauth2/authorization/${socialType}?redirect_uri=http://localhost:5500/oauth/redirect`;
     }
-  }
+  },
 };
 </script>
 
@@ -118,5 +114,6 @@ export default {
 
 .img-container .img-text{
   text-align: center;
+  color: #000000;
 }
 </style>
