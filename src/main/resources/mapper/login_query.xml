@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.example.enjoytrip.dao.LoginDao">
+<mapper namespace="com.example.enjoytrip.api.dao.LoginDao">
 
     <select id="login"
-            parameterType="String" resultType="com.example.enjoytrip.dto.UserDto">
+            parameterType="String" resultType="com.example.enjoytrip.api.dto.UserDto">
         select userId, userEmail, userPassword, userName, createdAt, updatedAt
           from users
          where userEmail = #{userEmail}
     </select>
 
 
-    <update id="updatePwd" parameterType="com.example.enjoytrip.dto.UserDto">
+    <update id="updatePwd" parameterType="com.example.enjoytrip.api.dto.UserDto">
         UPDATE users
         set userPassword = #{userPassword}
         where userId = #{userId}
     </update>
 
     <select id="findEmail"
-            parameterType="String" resultType="com.example.enjoytrip.dto.UserDto">
+            parameterType="String" resultType="com.example.enjoytrip.api.dto.UserDto">
         select userId, userEmail, userPassword, userName, createdAt, updatedAt
         from users
         where userEmail = #{userEmail}
