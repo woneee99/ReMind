@@ -1,50 +1,52 @@
 <template>
-  <!-- <div class="col-md-9 mx-auto container mb-5"> -->
-  <div class="row">
-    <div class="col-10">
-      <div class="map_wrap">
-        <div id="map"></div>
-
-        <div id="menu_wrap" class="bg_white">
-          <div class="option">
-            <div>
-              키워드 : <input type="text" v-model="keyword" size="15" />
-              <button type="button" @click="searchPlaces()">검색하기</button>
+  <div class="col-md-11 container-fluid mx-auto mb-3">
+    <div class="row">
+      <div class="col-10 p-0">
+        <div class="map_wrap" style="position: relative; width: 100%; height: 700px">
+          <div id="map"></div>
+          <div id="menu_wrap" class="bg_white">
+            <div class="option">
+              <div class="d-flex justify-content-between p-2">
+                <input class="form-control form-control-sm p-2" type="text" v-model="keyword" size="15" placeholder="검색어를 입력하세요" />
+                <button class="btn btn-sm" type="button" @click="searchPlaces()"><i class="bi bi-search"></i></button>
+              </div>
             </div>
+            <hr />
+            <ul id="placesList"></ul>
+            <div id="pagination" style="margin: 10px auto; text-align: center"></div>
           </div>
-          <hr />
-          <ul id="placesList"></ul>
-          <div id="pagination"></div>
         </div>
       </div>
-    </div>
-    <div class="col-2 border border-secondary rounded d-flex flex-column p-0">
-      <div class="card p-1" v-for="plan in myPlan" :key="plan.place.id">
-        <div class="card-body" @click="movePlacePosition(plan.selectMarker, plan.place, plan.placePosition)">
-          <div class="d-flex justify-content-between">
-            <h5 class="card-title">{{ plan.place.place_name }}</h5>
-            <button type="button" class="btn-close" aria-label="Close" @click="removePlan(plan)"></button>
+      <div class="col-2 rounded d-flex flex-column p-0" style="background-color: #fafafa">
+        <div class="card p-2 m-1" v-for="(plan, index) in myPlan" :key="plan.place.id">
+          <div class="card-body" @click="movePlacePosition(plan.selectMarker, plan.place, plan.placePosition)">
+            <div class="d-flex justify-content-between">
+              <h6 class="card-title fs-6 fw-bold"><i :class="'fs-6 fw-bold bi bi-' + (index + 1) + '-square'"></i> {{ plan.place.place_name }}</h6>
+              <button type="button" class="btn-close" aria-label="Close" @click="removePlan(plan)"></button>
+            </div>
+            <!-- <h6 class="card-subtitle mb-2 text-muted">{{ plan.place.road_address_name }}</h6> -->
+            <!-- <h6 class="card-subtitle mb-2 text-muted">{{ plan.place.phone }}</h6> -->
+            <input class="form-control mt-2 p-2" type="text" id="stayTimeInput" placeholder="머물 시간" v-model="plan.stayTime" />
+            <!-- <p class="card-text">머물 시간: {{ plan.stayTime }} 시간</p> -->
           </div>
-          <h6 class="card-subtitle mb-2 text-muted">{{ plan.place.road_address_name }}</h6>
-          <h6 class="card-subtitle mb-2 text-muted">{{ plan.place.phone }}</h6>
-          <p class="card-text">머물 시간: {{ plan.stayTime }} 시간</p>
-        </div>
-        <!-- <div class="card-body"> -->
-        <!-- <h6 class="card-subtitle mb-2 text-muted">(지번) {{ plan.place.address_name }}</h6> -->
+          <!-- <div class="card-body"> -->
+          <!-- <h6 class="card-subtitle mb-2 text-muted">(지번) {{ plan.place.address_name }}</h6> -->
 
-        <!-- <a href="#" class="card-link">링크입니다.</a> -->
-        <!-- <a href="#" class="card-link">다른 링크입니다.</a> -->
-        <!-- </div> -->
-      </div>
-      <div class="mt-auto m-0">
-        <button class="btn btn-primary" type="button" style="width: 100%">여행 계획 저장</button>
+          <!-- <a href="#" class="card-link">링크입니다.</a> -->
+          <!-- <a href="#" class="card-link">다른 링크입니다.</a> -->
+          <!-- </div> -->
+        </div>
+        <div class="mt-auto">
+          <button class="btn btn-primary p-2" type="button" @click="sendMyPlan" style="width: 100%; font-size: 15px">여행 계획 저장</button>
+        </div>
       </div>
     </div>
   </div>
-  <!-- </div> -->
 </template>
 
 <script>
+import http from "axios";
+
 export default {
   name: "KakaoMap",
   components: {},
@@ -90,7 +92,9 @@ export default {
       };
 
       this.map = new window.kakao.maps.Map(container, options);
-      this.infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
+      this.infowindow = new kakao.maps.CustomOverlay({
+        map: this.map,
+      });
       //   this.loadMaker();
 
       this.ps = new kakao.maps.services.Places();
@@ -165,7 +169,7 @@ export default {
             $this.displayInfowindow(marker, place, placePosition);
           });
           kakao.maps.event.addListener(marker, "mouseout", function () {
-            // $this.infowindow.close();
+            $this.infowindow.setMap(null);
           });
           kakao.maps.event.addListener(marker, "click", function () {
             console.log(place.place_name + " placePosition=" + placePosition.La + ", " + placePosition.Ma);
@@ -176,12 +180,17 @@ export default {
             $this.displayInfowindow(marker, place, placePosition);
           };
           itemEl.onmouseout = function () {
-            // $this.infowindow.close();
+            $this.infowindow.setMap(null);
           };
           itemEl.onclick = function () {
-            console.log(place.place_name + " placePosition=" + placePosition.La + ", " + placePosition.Ma);
-            alert("리스트 elements를 눌렀습니다.");
+            $this.movePlacePosition(marker, place, placePosition);
           };
+          itemEl.querySelector("#planAddButton").addEventListener("click", function () {
+            // const stayTimeInput = document.getElementById("stayTimeInput");
+            // const stayTime = stayTimeInput.value; // 입력된 머물 시간 값 가져오기
+            var selectMarker = $this.addSelectMarker(placePosition);
+            $this.showCard(selectMarker, place, placePosition, "");
+          });
           // });
         })(marker, places[i], placePosition);
         // console.log(marker);
@@ -200,18 +209,32 @@ export default {
     // 검색결과 항목을 Element로 반환하는 함수입니다
     getListItem(index, places) {
       var el = document.createElement("li"),
-        itemStr = '<span class="markerbg marker_' + (index + 1) + '"></span>' + '<div class="info">' + "   <h5>" + places.place_name + "</h5>";
+        itemStr =
+          '<span class="markerbg marker_' +
+          (index + 1) +
+          '"px;"></span>' +
+          "<div style='display: flex; align-items: center; justify-content: space-between;'>" +
+          "   <h6 style='font-weight: bold; text-overflow: elipsis; overflow: hidden; white-space: nowrap; padding: 5px 0 0 0'><i class='bi bi-geo-alt-fill p-1' style='color: #0d42ff'></i>" +
+          places.place_name +
+          "</h6><i class='bi bi-plus-square' id='planAddButton'></i></div>";
 
       if (places.road_address_name) {
-        itemStr += "    <span>" + places.road_address_name + "</span>" + '   <span class="jibun gray">' + places.address_name + "</span>";
+        itemStr +=
+          "    <div><span style='display: block; margin-top: 4px;'>" +
+          places.road_address_name +
+          "</span>" +
+          '   <span style="display: block; margin-top: 4px; color: #8a8a8a; padding-left: 26px; background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_jibun.png) no-repeat;">' +
+          places.address_name +
+          "</span>";
       } else {
-        itemStr += "    <span>" + places.address_name + "</span>";
+        itemStr += "    <span style='display: block; margin-top: 4px;'>" + places.address_name + "</span>";
       }
 
-      itemStr += '  <span class="tel">' + places.phone + "</span>" + "</div>";
+      itemStr += '  <span style="display: block; margin-top: 4px; color: #009900;" class="tel">' + places.phone + "</span>" + "</div>";
 
       el.innerHTML = itemStr;
-      el.className = "item";
+      el.className = "item p-2";
+      el.style = "position: relative; border-bottom: 1px solid #888; overflow: hidden; cursor: pointer; min-height: 65px;list-style: none;";
 
       return el;
     },
@@ -256,7 +279,6 @@ export default {
       this.markers = [];
     },
 
-    // FIX: 선택된 마커 제거 안되는 중!!!!!!!!!!!!!
     removeSelectMarker(plan) {
       console.log("마커 지우자!");
       const index = this.selectMarkers.findIndex((marker) => marker === plan.selectMarker);
@@ -289,9 +311,12 @@ export default {
         var el = document.createElement("a");
         el.href = "#";
         el.innerHTML = i;
+        el.className = "btn btn-sm bnt-primary";
+        el.style = "display: inline-block; margin-right: 10px;";
 
         if (i === pagination.current) {
-          el.className = "on";
+          el.className = "on btn btn-sm";
+          el.style = "font-weight: bold; cursor: default; color: #777; margin-right: 10px";
         } else {
           el.onclick = (function (i) {
             return function () {
@@ -308,56 +333,43 @@ export default {
     // 검색결과 목록 또는 마커를 클릭했을 때 호출되는 함수입니다
     // 인포윈도우에 장소명을 표시합니다
     displayInfowindow(marker, place, placePosition) {
-      // var content = '<div style="padding:5px;z-index:1;">' + title + "</div>" + '<div><button @click="showCard(markerInfo)">자세히 보기</button></div>';
-      // const content =
-      //   '<div style="padding: 10px;">' +
-      //   '<div style="font-weight: bold;">' +
-      //   place.place_name +
-      //   "</div>" +
-      //   '<div style="margin-top: 5px;">' +
-      //   '<input type="text" id="stayTimeInput" placeholder="머물 시간">' +
-      //   '<button id="planAddButton">내 여행에 추가</button>' +
-      //   "</div>" +
-      //   "</div>";
-
       const content =
-        '<div class="wrap">' +
-        '    <div class="info">' +
-        '        <div class="title">' +
+        '<div class="card" style="margin-bottom: 150px">' +
+        '  <div class="card-body">' +
+        '    <div class="d-flex justify-content-between">' +
+        '        <h8 class="card-title">장소명: ' +
         place.place_name +
-        '            <div class="close" onclick="closeOverlay()" title="닫기"></div>' +
-        "        </div>" +
-        '        <div class="body">' +
-        '            <div class="desc">' +
-        '                <div class="ellipsis">' +
-        place.road_address_name +
-        "</div>" +
-        '                <div class="jibun ellipsis">(지번) ' +
-        place.address_name +
-        "</div>" +
-        '                <div><a href="' +
-        place.place_url +
-        '" target="_blank" class="link">홈페이지</a></div>' +
-        '<div style="margin-top: 5px;">' +
-        '<input type="text" id="stayTimeInput" placeholder="머물 시간">' +
-        '<button id="planAddButton">내 여행에 추가</button>' +
-        "</div>" +
-        "            </div>" +
-        "        </div>" +
+        "</h8>" +
         "    </div>" +
+        '    <h8 class="card-subtitle mb-2 text-muted">주소: ' +
+        place.address_name +
+        "</h8>" +
+        "  </div>" +
         "</div>";
 
-      this.infowindow.setContent(content);
-      this.infowindow.open(this.map, marker);
+      // '        <div class="body">' +
+      // '            <div class="desc">' +
+      // '                <div class="ellipsis">' +
+      // place.road_address_name +
+      // "</div>" +
+      // '                <div class="jibun ellipsis">(지번) ' +
+      // place.address_name +
+      // "</div>" +
+      // '                <div><a href="' +
+      // place.place_url +
+      // '" target="_blank" class="link">홈페이지</a></div>' +
+      // '<div style="margin-top: 5px;">' +
+      // '<input type="text" id="stayTimeInput" placeholder="머물 시간">' +
+      // '<button id="planAddButton">내 여행에 추가</button>' +
+      // "</div>" +
+      // "            </div>" +
+      // "        </div>" +
+      // "    </div>" +
+      // "</div>";
 
-      // 인포윈도우가 열린 후 버튼 클릭 이벤트 처리
-      const planAddButton = document.getElementById("planAddButton");
-      planAddButton.addEventListener("click", () => {
-        const stayTimeInput = document.getElementById("stayTimeInput");
-        const stayTime = stayTimeInput.value; // 입력된 머물 시간 값 가져오기
-        var selectMarker = this.addSelectMarker(placePosition);
-        this.showCard(selectMarker, place, placePosition, stayTime);
-      });
+      this.infowindow.setContent(content);
+      this.infowindow.setPosition(marker.getPosition());
+      this.infowindow.setMap(this.map);
     },
 
     showCard(selectMarker, place, placePosition, stayTime) {
@@ -384,9 +396,60 @@ export default {
     },
 
     movePlacePosition(selectMarker, place, placePosition) {
-      console.log(placePosition);
       this.map.setCenter(placePosition);
       this.displayInfowindow(selectMarker, place, placePosition);
+    },
+
+    sendMyPlan() {
+      console.log(this.myPlan);
+
+      const REST_API_KEY = "718049a1e16b0994e3ed033e857244a3";
+      http.defaults.headers.common["Authorization"] = `KakaoAK ${REST_API_KEY}`;
+      http.defaults.headers.common["Content-Type"] = "application/json";
+
+      const drivingTimeAPI =
+        "https://apis-navi.kakaomobility.com/v1/future/directions?" +
+        "origin=" +
+        this.myPlan[0].placePosition.La +
+        "," +
+        this.myPlan[0].placePosition.Ma +
+        "&destination=" +
+        this.myPlan[this.myPlan.length - 1].placePosition.La +
+        "," +
+        this.myPlan[this.myPlan.length - 1].placePosition.Ma +
+        "&departure_time=" +
+        202305211200;
+      console.log(drivingTimeAPI);
+
+      http
+        .get(drivingTimeAPI)
+        .then((response) => {
+          console.log(response.data.routes[0].sections[0].distance, response.data.routes[0].sections[0].duration);
+          alert(
+            "이동 거리: " +
+              response.data.routes[0].sections[0].distance / 1000 +
+              "km   " +
+              "소요 시간: " +
+              Math.floor(response.data.routes[0].sections[0].duration / 60) +
+              "분 " +
+              (response.data.routes[0].sections[0].duration % 60) +
+              "초"
+          );
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      // AJAX 요청 등을 통해 jsonData를 특정 API에 전송
+      // 예를 들어 axios를 사용한 POST 요청 예시:
+      // http
+      //   .post("https://example.com/api/endpoint", jsonData)
+      //   .then((response) => {
+      //     // 요청에 대한 성공적인 응답 처리
+      //   })
+      //   .catch((error) => {
+      //     // 요청에 대한 오류 처리
+      //   });
     },
   },
 };
@@ -467,8 +530,6 @@ export default {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-}
-#placesList .item .info {
   padding: 10px 0 10px 55px;
 }
 #placesList .info .gray {
@@ -489,6 +550,7 @@ export default {
   margin: 10px 0 0 10px;
   background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png) no-repeat;
 }
+
 #placesList .item .marker_1 {
   background-position: 0 -10px;
 }

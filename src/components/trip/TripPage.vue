@@ -62,7 +62,7 @@
 
 <script>
 import BreadcrumbSection from "@/components/BreadcrumbSection.vue";
-import http from "../../assets/axios.js";
+import http from "@/assets/axios.js";
 // import key from '../common/key'
 // import MainCss from '../common/js/main'
 
