@@ -16,6 +16,15 @@ export default {
     NavBar,
     FooterSection,
   },
+  data() {
+    return {
+      token: localStorage.getItem("token")
+    }
+  },
+  created() {
+    this.token = localStorage.getItem("token");
+    console.log(this.token)
+  },
 };
 </script>
 

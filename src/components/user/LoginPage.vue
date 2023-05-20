@@ -6,23 +6,17 @@
     <section id="contact" class="contact">
       <div class="container" data-aos="fade-up">
           <div class="wrap-container">
-            <form role="form" class="php-email-form">
+            <div class="php-email-form">
               <div class="text">
-                  <input type="text" name="name" class="form-control" id="name" placeholder="Email" required />
+                  <input type="text" name="id" class="form-control" v-model="id" placeholder="Email" required />
               </div>
               <div class="text">
-                <input type="password" class="form-control" name="subject" id="subject" placeholder="Password" required />
-              </div>
-              <div class="my-3">
-                <div class="loading">Loading</div>
-                <div class="error-message"></div>
-                <div class="sent-message">Your message has been sent. Thank you!</div>
+                <input type="password" class="form-control" name="password" v-model="password" placeholder="Password" required />
               </div>
               <div id="login-btn">
-                <button type="submit" style="width: 100%">로그인</button>
+                <button type="submit" @click="login" style="width: 100%">로그인</button>
               </div>
-
-            </form>
+            </div>
           <div id="forgot-pwd"> 비밀번호를 잊었나요?
             <router-link to="/find">
               비밀번호 찾기
@@ -58,19 +52,40 @@
 
 <script>
 import BreadcrumbSection from "@/components/BreadcrumbSection.vue";
+import http from '@/common/axios'
 
 export default {
   components: {
-    BreadcrumbSection,
+    BreadcrumbSection
   },
   data() {
     return {
+      id: "",
+      password: "",
       token: ""
     }
   },
   methods: {
     socialLogin(socialType) {
       return `http://localhost:8080/oauth2/authorization/${socialType}?redirect_uri=http://localhost:5500/oauth/redirect`;
+    },
+    async login() {
+      const param = {
+        id: this.id,
+        password: this.password
+      };
+
+      await http.post('/api/v1/auth/login', param)
+      .then(response => {
+        localStorage.setItem("token", response.data);
+        console.log(localStorage.getItem("token"));
+        alert("로그인 성공")
+        this.$router.push("/")
+      })
+      .catch(error => {
+        console.log("errr: " + error);
+      });
+
     }
   },
 };

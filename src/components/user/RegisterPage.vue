@@ -42,7 +42,7 @@
 
 <script>
 import BreadcrumbSection from "@/components/BreadcrumbSection.vue";
-import http from '@/assets/axios'
+import http from '@/common/axios'
 
 export default {
   data() {
