@@ -424,7 +424,17 @@ export default {
       http
         .get(drivingTimeAPI)
         .then((response) => {
-          console.log(response);
+          console.log(response.data.routes[0].sections[0].distance, response.data.routes[0].sections[0].duration);
+          alert(
+            "이동 거리: " +
+              response.data.routes[0].sections[0].distance / 1000 +
+              "km   " +
+              "소요 시간: " +
+              Math.floor(response.data.routes[0].sections[0].duration / 60) +
+              "분 " +
+              (response.data.routes[0].sections[0].duration % 60) +
+              "초"
+          );
         })
         .catch((error) => {
           console.log(error);
