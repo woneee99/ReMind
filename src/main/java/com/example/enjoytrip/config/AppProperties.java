@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Configuration
 @ConfigurationProperties(prefix = "app")
 public class AppProperties {
     private final Auth auth = new Auth();

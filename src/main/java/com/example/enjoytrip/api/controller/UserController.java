@@ -1,13 +1,15 @@
 package com.example.enjoytrip.api.controller;
 
+import com.example.enjoytrip.api.dto.MailPostDto;
 import com.example.enjoytrip.api.dto.UserDto;
 import com.example.enjoytrip.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpSession;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -17,11 +19,15 @@ public class UserController {
     UserService userService;
 
     @GetMapping
-    public ResponseEntity<UserDto> getUser() {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public ResponseEntity<UserDto> getUser(Principal p) {
+        System.out.println("p = " + p);
+        Authentication principal = SecurityContextHolder.getContext().getAuthentication();
 
-        UserDto user = userService.getUser(principal.getUsername());
-        System.out.println(user);
+        System.out.println("principal = " + principal.getPrincipal().toString());
+        System.out.println("principal.toString() = " + principal.toString());
+        String username = principal.getName();
+        System.out.println("username = " + username);
+        UserDto user = userService.getUser(username);
         return ResponseEntity.ok().body(user);
     }
 
@@ -64,5 +70,12 @@ public class UserController {
             return ResponseEntity.ok().body(ret);
         }
         else return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/email")
+    public ResponseEntity<Integer> emailSend(@RequestBody MailPostDto email){
+        System.out.println("email = " + email);
+        int ret = userService.createMailAndChangePassword(email.getEmail());
+        return ResponseEntity.ok().body(ret);
     }
 }

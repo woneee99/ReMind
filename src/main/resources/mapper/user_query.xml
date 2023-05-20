@@ -28,4 +28,17 @@
         where userId = #{userId}
     </select>
 
+    <select id="findEmailUser"
+            parameterType="String" resultType="com.example.enjoytrip.api.dto.UserDto">
+        select *
+        from users
+        where userEmail = #{userEmail}
+    </select>
+
+    <update id="findEmailUpdate" parameterType="com.example.enjoytrip.api.dto.UserDto">
+        UPDATE users
+        set userPassword = #{userPassword},
+            updatedAt = now()
+        where userEmail = #{userEmail}
+    </update>
 </mapper>

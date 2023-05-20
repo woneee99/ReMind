@@ -28,6 +28,7 @@ import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -43,7 +44,7 @@ public class SecurityConfig {
 
     private final String[] swaggerPermitUrl = { "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**",
             "/webjars/**", "/api-docs/**", "/configuration/**" };
-    private final String[] permitUrl = { "boards/**", "hotplace/**",
+    private final String[] permitUrl = { "boards/**", "hotplace/**", "auth/**",
             "trip/**", "users/**"};
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -69,8 +70,7 @@ public class SecurityConfig {
                     .authorizeRequests()
                     .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                     .antMatchers(swaggerPermitUrl).permitAll()
-                    .antMatchers(permitUrl).permitAll()
-                .antMatchers("/**").permitAll()
+                    .antMatchers("/**").permitAll()
                     .antMatchers("/api/**").hasAnyAuthority(RoleType.USER.getCode())
                     .antMatchers("/api/**/admin/**").hasAnyAuthority(RoleType.ADMIN.getCode())
                     .anyRequest().authenticated()
@@ -90,7 +90,10 @@ public class SecurityConfig {
                     .failureHandler(oAuth2AuthenticationFailureHandler())
                 .and()
                     .authenticationManager(authenticationManager);
-
+        http.logout()
+            .logoutSuccessUrl("/")
+            .invalidateHttpSession(true)
+            .deleteCookies("JSESSIONID");
         http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
@@ -170,8 +173,8 @@ public class SecurityConfig {
         CorsConfiguration corsConfig = new CorsConfiguration();
         corsConfig.setAllowedHeaders(Arrays.asList(corsProperties.getAllowedHeaders().split(",")));
         corsConfig.setAllowedMethods(Arrays.asList(corsProperties.getAllowedMethods().split(",")));
-        corsConfig.setAllowedOrigins(Arrays.asList(corsProperties.getAllowedOrigins().split(",")));
-//        corsConfig.setAllowedOriginPatterns(List.of("*"));
+//        corsConfig.setAllowedOrigins(Arrays.asList(corsProperties.getAllowedOrigins().split(",")));
+        corsConfig.setAllowedOriginPatterns(Arrays.asList("*"));
         corsConfig.setAllowCredentials(true);
         corsConfig.setMaxAge(corsConfig.getMaxAge());
 

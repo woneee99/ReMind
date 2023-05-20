@@ -1,5 +1,6 @@
 package com.example.enjoytrip.api.controller;
 
+import com.example.enjoytrip.api.dao.UserDao;
 import com.example.enjoytrip.api.dao.UserRefreshTokenDao;
 import com.example.enjoytrip.api.entity.AuthReqModel;
 import com.example.enjoytrip.config.AppProperties;
@@ -12,11 +13,15 @@ import com.example.enjoytrip.util.CookieUtil;
 import com.example.enjoytrip.util.HeaderUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -33,22 +38,21 @@ public class AuthController {
     private final AuthTokenProvider tokenProvider;
     private final AuthenticationManager authenticationManager;
     private final UserRefreshTokenDao userRefreshTokenDao;
-
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final static long THREE_DAYS_MSEC = 259200000;
     private final static String REFRESH_TOKEN = "refresh_token";
 
+
     @PostMapping("/login")
     public ResponseEntity<String> login(HttpServletRequest request, HttpServletResponse response, @RequestBody AuthReqModel authReqModel){
-        System.out.println("로그인 시작");
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authReqModel.getId(),
-                        authReqModel.getPassword()
-                )
-        );
 
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                        authReqModel.getId(), authReqModel.getPassword());
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         String userId = authReqModel.getId();
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        System.out.println(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
 
         Date now = new Date();
         AuthToken accessToken = tokenProvider.createAuthToken(
@@ -143,5 +147,11 @@ public class AuthController {
         }
 
         return ResponseEntity.ok().body(newAccessToken.getToken());
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<Integer> logoutPage(HttpServletRequest request, HttpServletResponse response) {
+        new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
+        return ResponseEntity.ok().body(1);
     }
 }

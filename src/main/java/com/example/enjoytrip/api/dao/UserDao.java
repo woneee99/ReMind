@@ -9,4 +9,6 @@ public interface UserDao {
     int updateInfo(UserDto userDto);
     int withdraw(int userId);
     UserDto findUser(String userId);
+    UserDto findEmailUser(String userEmail);
+    int findEmailUpdate(UserDto userDto);
 }

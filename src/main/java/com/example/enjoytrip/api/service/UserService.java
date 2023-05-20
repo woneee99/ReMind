@@ -1,5 +1,6 @@
 package com.example.enjoytrip.api.service;
 
+import com.example.enjoytrip.api.dto.MailDto;
 import com.example.enjoytrip.api.dto.UserDto;
 
 public interface UserService {
@@ -8,4 +9,7 @@ public interface UserService {
     int withdraw(int userId);
 
     UserDto getUser(String userId);
+    int createMailAndChangePassword(String userEmail);
+    String getTempPassword();
+    void mailSend(MailDto mailDTO);
 }
