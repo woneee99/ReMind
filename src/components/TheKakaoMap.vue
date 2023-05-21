@@ -186,9 +186,21 @@ export default {
             $this.movePlacePosition(marker, place, placePosition);
           };
           itemEl.querySelector("#planAddButton").addEventListener("click", function () {
-            // const stayTimeInput = document.getElementById("stayTimeInput");
-            // const stayTime = stayTimeInput.value; // 입력된 머물 시간 값 가져오기
-            var selectMarker = $this.addSelectMarker(placePosition);
+            if ($this.myPlan.length >= 7) {
+              alert("여행 계획은 최대 7개까지 가능합니다.");
+              return;
+            }
+            // 체크 로직 추가
+            const selectedPlaceId = place.id;
+            const isPlaceAlreadyAdded = $this.myPlan.some(function (plan) {
+              return plan.place.id === selectedPlaceId;
+            });
+            if (isPlaceAlreadyAdded) {
+              alert("이미 선택한 여행 장소입니다.");
+              return;
+            }
+
+            const selectMarker = $this.addSelectMarker(placePosition);
             $this.showCard(selectMarker, place, placePosition, "");
           });
           // });
