@@ -55,7 +55,7 @@ export default {
         }
       })
       .catch(error => {
-        console.log("errr: " + error);
+        console.error(error);
       });
     }
   }

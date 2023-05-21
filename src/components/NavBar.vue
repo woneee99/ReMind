@@ -25,7 +25,7 @@
             </ul>
           </li>
           <li>
-            <router-link to="/" v-if="isLogin"> Logout </router-link>
+            <router-link @click.native="logout" to="/" v-if="isLogin"> Logout </router-link>
             <router-link to="/login" v-else class="get-a-quote">Log In / Sign Up</router-link>
           </li>
         </ul>
@@ -48,30 +48,54 @@ export default {
   },
   methods: {
     async getUser() {
-      let response = await http.get("/api/v1/users");
-      let { data } = response;
-      this.name = data.userName;
-      console.log(data);
+      await http.get("/api/v1/users", {
+          headers: {
+            'Authorization': 'Bearer ' + this.token
+          }
+        })
+        .then(response => {
+          let { data } = response;
+          this.name = data.userName;
+        })
+        .catch(error => {
+          console.error(error)
+        });
+
       console.log(this.name)
+    },
+    async logout() {
+      await http.get("/api/v1/auth/logout", {
+          headers: {
+            'Authorization': 'Bearer ' + this.token
+          }
+        })
+        .then(response => {
+          console.log(response.data);
+          if(response.data == 1) {
+            localStorage.removeItem("token");
+            this.token = ''
+            this.isLogin = false;
+            console.log(this.token)
+          }
+        })
+        .catch(error => {
+          console.error(error)
+        });
     }
   },
   created() {
     this.token = localStorage.getItem("token");
-    console.log(this.token)
+    console.log("tk" + this.token)
     if(this.token != null) {
       this.isLogin = true;
       this.getUser();
     }
   },
   watch: {
-    'isLogin': function() {
-      if(this.token != null) {
-        this.isLogin = true;
-        this.getUser();
-      }
-    },
     'token': function() {
+      console.log("token");
       if(this.token != null) {
+        
         this.isLogin = true;
         this.getUser();
       }
