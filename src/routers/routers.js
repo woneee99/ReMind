@@ -8,6 +8,7 @@ import registerPage from "@/components/user/RegisterPage";
 import findPwdPage from "@/components/user/FindPwd";
 import TripPage from "@/components/trip/TripPage";
 import FaqPage from "@/components/FAQ/FaqPage";
+import BoardPage from "@/components/board/BoardMain";
 
 Vue.use(VueRouter);
 
@@ -45,6 +46,10 @@ export default new VueRouter({
     {
       path: "/faq",
       component: FaqPage,
+    },
+    {
+      path: "/board",
+      component: BoardPage,
     },
   ],
 });

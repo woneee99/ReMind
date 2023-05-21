@@ -13,6 +13,7 @@
         <ul>
           <li><router-link to="/">여행계획</router-link></li>
           <li><router-link to="/trip">지역 관광지</router-link></li>
+          <li><router-link to="/board">Community</router-link></li>
           <li class="dropdown" v-if="isLogin">
             <a href="/">
               <span >{{ name }}</span> 
