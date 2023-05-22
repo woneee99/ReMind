@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <nav-bar />
-    <router-view></router-view>
+    <nav-bar v-bind:isLogin="isLogin" @login-success="loginSuccess"/>
+    <router-view @login-success="loginSuccess"></router-view>
     <footer-section></footer-section>
   </div>
 </template>
@@ -16,6 +16,18 @@ export default {
     NavBar,
     FooterSection,
   },
+  data() {
+    return {
+      isLogin: false,
+      token: localStorage.getItem("token")
+    }
+  },
+  methods:{
+     loginSuccess(data){
+      console.log(data)
+       this.isLogin = data;
+     }
+   }
 };
 </script>
 

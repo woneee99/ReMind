@@ -6,23 +6,17 @@
     <section id="contact" class="contact">
       <div class="container" data-aos="fade-up">
           <div class="wrap-container">
-            <form action="forms/contact.php" method="post" role="form" class="php-email-form">
+            <div class="php-email-form">
               <div class="text">
-                  <input type="text" name="name" class="form-control" id="name" placeholder="Email" required />
+                  <input type="text" name="id" class="form-control" v-model="id" placeholder="Email" required />
               </div>
               <div class="text">
-                <input type="password" class="form-control" name="subject" id="subject" placeholder="Password" required />
-              </div>
-              <div class="my-3">
-                <div class="loading">Loading</div>
-                <div class="error-message"></div>
-                <div class="sent-message">Your message has been sent. Thank you!</div>
+                <input type="password" class="form-control" name="password" v-model="password" placeholder="Password" required />
               </div>
               <div id="login-btn">
-                <button type="submit" style="width: 100%">로그인</button>
+                <button type="submit" @click="login" style="width: 100%">로그인</button>
               </div>
-
-            </form>
+            </div>
           <div id="forgot-pwd"> 비밀번호를 잊었나요?
             <router-link to="/find">
               비밀번호 찾기
@@ -34,17 +28,13 @@
             <div class="text-center"> 다른 계정으로 로그인 하기</div>
             <div class="img-container"> 
               <a :href="socialLogin('google')">
-                <img src="https://d1nuzc1w51n1es.cloudfront.net/d99d8628713bb69bd142.png" style="width: 94px; height: 94px">
+                <img src="https://d1nuzc1w51n1es.cloudfront.net/d99d8628713bb69bd142.png" style="width: 75px; height: 75px">
                 <div class="img-text">Google</div>
               </a>
-              <a :href="socialLogin('kakao')">
-                <img src="https://d1nuzc1w51n1es.cloudfront.net/7edcff9c01ccc20d1ef6.png" style="width: 94px; height: 94px">
+              <a :href="socialLogin('kakao')" >
+                <img src="https://d1nuzc1w51n1es.cloudfront.net/7edcff9c01ccc20d1ef6.png" style="width: 75px; height: 75px">
                 <div class="img-text">Kakao</div>
               </a>
-              <div @click="socialLogin('naver')">
-                <img src="@/assets/naverLogo.png" style="width: 94px; height: 94px">
-                <div class="img-text">Naver</div>
-              </div>
             </div>
             </div>
           </div>
@@ -62,21 +52,42 @@
 
 <script>
 import BreadcrumbSection from "@/components/BreadcrumbSection.vue";
+import http from '@/common/axios'
 
 export default {
   components: {
-    BreadcrumbSection,
+    BreadcrumbSection
   },
   data() {
     return {
+      id: "",
+      password: "",
       token: ""
     }
   },
   methods: {
     socialLogin(socialType) {
       return `http://localhost:8080/oauth2/authorization/${socialType}?redirect_uri=http://localhost:5500/oauth/redirect`;
+    },
+    async login() {
+      const param = {
+        id: this.id,
+        password: this.password
+      };
+
+      await http.post('/api/v1/auth/login', param)
+      .then(response => {
+        localStorage.setItem("token", response.data);
+        alert("로그인 성공")
+        this.$emit('login-success', true);
+        this.$router.push("/")
+      })
+      .catch(error => {
+        console.log("errr: " + error);
+      });
+
     }
-  }
+  },
 };
 </script>
 
@@ -118,5 +129,6 @@ export default {
 
 .img-container .img-text{
   text-align: center;
+  color: #000000;
 }
 </style>

@@ -10,6 +10,7 @@ import TripPage from "@/components/trip/TripPage";
 import PlanPage from "@/components/trip/PlanPage";
 import MyPlanPage from "@/components/trip/MyPlanPage";
 import FaqPage from "@/components/FAQ/FaqPage";
+import BoardPage from "@/components/board/BoardMain";
 
 Vue.use(VueRouter);
 
@@ -55,6 +56,10 @@ export default new VueRouter({
     {
       path: "/faq",
       component: FaqPage,
+    },
+    {
+      path: "/board",
+      component: BoardPage,
     },
   ],
 });
