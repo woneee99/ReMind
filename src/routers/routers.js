@@ -11,6 +11,8 @@ import PlanPage from "@/components/trip/PlanPage";
 import MyPlanPage from "@/components/trip/MyPlanPage";
 import FaqPage from "@/components/FAQ/FaqPage";
 import BoardPage from "@/components/board/BoardMain";
+import BoardInsertPage from "@/components/board/BoardInsert";
+import BoardDetailPage from "@/components/board/BoardDetail";
 
 Vue.use(VueRouter);
 
@@ -60,6 +62,10 @@ export default new VueRouter({
     {
       path: "/board",
       component: BoardPage,
+    },
+    {
+      path: "/board/posts",
+      component: BoardInsertPage,
     },
   ],
 });
