@@ -11,7 +11,7 @@
       <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
       <nav id="navbar" class="navbar">
         <ul>
-          <li><router-link to="/">여행계획</router-link></li>
+          <li><router-link to="/plan">여행계획</router-link></li>
           <li><router-link to="/trip">지역 관광지</router-link></li>
           <li><router-link to="/board">Community</router-link></li>
           <li class="dropdown" v-if="isLogin">
