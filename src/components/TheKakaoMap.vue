@@ -20,52 +20,66 @@
       <div class="col-2" style="background-color: #fafafa">
         <div class="my-3 mx-3">
           <input class="form-control p-2 mb-3" type="text" placeholder="여행 계획 제목" v-model="planTitle" />
-          <a-range-picker :disabled-date="disabledDate" :show-time="false" v-model="dateRange" format="YYYY.MM.DD" separator="-" />
+          <a-range-picker
+            :disabled-date="disabledDate"
+            :show-time="false"
+            v-model="dateRange"
+            format="YYYY.MM.DD"
+            separator="-"
+            placeholder="[여행시작, 여행끝]"
+          />
           <div v-if="dateRange.length > 0">
-          <div class="accordion my-2" id="accordionPanelsStayOpenExample">
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="panelsStayOpen-headingOne">
-                <button
-                  class="accordion-button fs-6"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#panelsStayOpen-collapseOne"
-                  aria-expanded="true"
-                  aria-controls="panelsStayOpen-collapseOne"
-                >
-                  여행 출발 시간 설정
-                </button>
-              </h2>
-              <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
-                <div class="accordion-body">
-                  <div class="my-1 ms-2" v-for="i in calculateDayCount()" :key="i">
-                    {{
-                      dateRange[0]
-                        .clone()
-                        .add(i - 1, "day")
-                        .format("MM/DD")
-                    }}
-                    :
-                    <a-time-picker v-model="selectedTime" :default-value="moment('10:00', 'HH:mm')" format="HH:mm" />
+            <div class="accordion my-2" id="accordionPanelsStayOpenExample">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                  <button
+                    class="accordion-button fs-6 p-2 fw-bold"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseOne"
+                    aria-expanded="true"
+                    aria-controls="panelsStayOpen-collapseOne"
+                  >
+                    출발 시간
+                  </button>
+                </h2>
+                <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+                  <div class="accordion-body">
+                    <div class="my-1 ms-2" v-for="i in calculateDayCount()" :key="i">
+                      {{
+                        dateRange[0]
+                          .clone()
+                          .add(i - 1, "day")
+                          .format("MM/DD")
+                      }}
+                      :
+                      <a-time-picker v-model="dateTime[i]" format="HH:mm" placeholder="출발 시간" />
+                      <button class="btn btn-sm btn-primary ms-1 py-1 px-3" type="button" @click="selectPlanTime(i)">선택</button>
+                    </div>
                   </div>
                 </div>
-              </div></div>
+              </div>
             </div>
+            <h6 class="card-title fs-6 fw-bold">{{ selectedIndex + 1 }} 일차</h6>
           </div>
         </div>
         <div class="rounded d-flex flex-column p-0" style="height: 500px; overflow-y: auto">
-          <div class="card p-2 m-1" v-for="(plan, index) in myPlan" :key="plan.place.id">
-            <div class="card-body" @click="movePlacePosition(plan.selectMarker, plan.place, plan.placePosition)">
-              <div class="d-flex justify-content-between">
-                <h6 class="card-title fs-6 fw-bold"><i :class="'fs-6 fw-bold bi bi-' + (index + 1) + '-square'"></i> {{ plan.place.place_name }}</h6>
-                <button type="button" class="btn-close" aria-label="Close" @click="removePlan(plan)"></button>
+          <!-- <div v-for="(myPlan, pIndex) in myPlans" :key="pIndex"> -->
+          <div>
+            <div class="card p-3 m-1 mx-3" v-for="(plan, index) in myPlans[selectedIndex]" :key="plan.place.id">
+              <div class="card-body" @click="movePlacePosition(plan.selectMarker, plan.place, plan.placePosition)">
+                <div class="d-flex justify-content-between">
+                  <h6 class="card-title fs-6 fw-bold"><i :class="'fs-6 fw-bold bi bi-' + (index + 1) + '-square'"></i> {{ plan.place.place_name }}</h6>
+                  <button type="button" class="btn-close" aria-label="Close" @click="removePlan(plan, index)"></button>
+                </div>
+                <input class="form-control mt-2 p-2" type="text" id="stayTimeInput" placeholder="머물 시간" v-model="plan.stayTime" />
+                <a-time-picker v-model="plan.stayTime" format="HH:mm" placeholder="관광 시간" :picker-options="pickerOptions" />
               </div>
-              <input class="form-control mt-2 p-2" type="text" id="stayTimeInput" placeholder="머물 시간" v-model="plan.stayTime" />
             </div>
           </div>
         </div>
-        <div class="mt-auto">
-          <button class="btn btn-primary p-2" type="button" @click="sendMyPlan" style="width: 100%; font-size: 15px">여행 계획 저장</button>
+        <div class="mt-auto p-2">
+          <button class="btn btn-primary p-2" type="button" @click="sendMyPlan" style="width: 100%; font-size: 15px">내 여행 일정 생성</button>
         </div>
       </div>
     </div>
@@ -92,15 +106,27 @@ export default {
       keyword: "",
       positions: [],
       markers: [],
-      myPlan: [],
+      myPlans: [],
       selectMarkers: [],
       planTitle: "",
       dateRange: [],
-      selectedTime: moment("10:00", "HH:mm"),
+      dateTime: [],
+      selectedIndex: 0,
+      pickerOptions: {
+        start: "00:00", // 처음 시간을 '00:00'으로 설정
+      },
     };
   },
   props: {},
-  watch: {},
+  watch: {
+    dateTime: {
+      handler(value) {
+        console.log(value[0]._d.getHours());
+        console.log(value[0]._d.getMinutes());
+      },
+      deep: true,
+    },
+  },
   created() {},
   mounted() {
     // api 스크립트 소스 불러오기 및 지도 출력
@@ -209,9 +235,26 @@ export default {
             $this.infowindow.setMap(null);
           });
           kakao.maps.event.addListener(marker, "click", function () {
-            console.log(place.place_name + " placePosition=" + placePosition.La + ", " + placePosition.Ma);
-            console.log(place);
-            alert("마커를 눌렀습니다.");
+            console.log($this.myPlans.length);
+            if ($this.myPlans.length === 0) {
+              alert("날짜와 시간을 지정하고 선택 버튼을 눌러주세요");
+              return;
+            }
+            if ($this.myPlans[$this.selectedIndex].length >= 7) {
+              alert("여행 계획은 최대 7개까지 가능합니다.");
+              return;
+            }
+            // 체크 로직 추가
+            const selectedPlaceId = place.id;
+            const isPlaceAlreadyAdded = $this.myPlans[$this.selectedIndex].some(function (plan) {
+              return plan.place.id === selectedPlaceId;
+            });
+            if (isPlaceAlreadyAdded) {
+              alert("이미 선택한 여행 장소입니다.");
+              return;
+            }
+            const selectMarker = $this.addSelectMarker(placePosition);
+            $this.showCard(selectMarker, place, placePosition, "");
           });
           itemEl.onmouseover = function () {
             $this.displayInfowindow(marker, place, placePosition);
@@ -223,20 +266,24 @@ export default {
             $this.movePlacePosition(marker, place, placePosition);
           };
           itemEl.querySelector("#planAddButton").addEventListener("click", function () {
-            if ($this.myPlan.length >= 7) {
+            console.log($this.myPlans.length);
+            if ($this.myPlans.length === 0) {
+              alert("날짜와 시간을 지정하고 선택 버튼을 눌러주세요");
+              return;
+            }
+            if ($this.myPlans[$this.selectedIndex].length >= 7) {
               alert("여행 계획은 최대 7개까지 가능합니다.");
               return;
             }
             // 체크 로직 추가
             const selectedPlaceId = place.id;
-            const isPlaceAlreadyAdded = $this.myPlan.some(function (plan) {
+            const isPlaceAlreadyAdded = $this.myPlans[$this.selectedIndex].some(function (plan) {
               return plan.place.id === selectedPlaceId;
             });
             if (isPlaceAlreadyAdded) {
               alert("이미 선택한 여행 장소입니다.");
               return;
             }
-
             const selectMarker = $this.addSelectMarker(placePosition);
             $this.showCard(selectMarker, place, placePosition, "");
           });
@@ -402,9 +449,16 @@ export default {
     },
 
     showCard(selectMarker, place, placePosition, stayTime) {
-      this.myPlan.push({ selectMarker, place, placePosition, stayTime });
+      this.myPlans[this.selectedIndex].push({ selectMarker, place, placePosition, stayTime });
       console.log(selectMarker + " " + place.place_name + " " + placePosition + " " + stayTime);
-      console.log(this.myPlan);
+      console.log(this.myPlans[this.selectedIndex]);
+      this.updateComponent();
+    },
+    updateComponent() {
+      // 컴포넌트를 업데이트하기 위해 빈 객체를 할당한 후 다시 myPlans과 selectedIndex 값을 할당합니다.
+      // 이를 통해 Vue는 변경을 감지하고 컴포넌트를 리렌더링합니다.
+      this.myPlans = [...this.myPlans];
+      this.selectedIndex = this.selectedIndex;
     },
 
     removeAllChildNods(el) {
@@ -412,15 +466,19 @@ export default {
         el.removeChild(el.lastChild);
       }
     },
-    removePlan(plan) {
-      const index = this.myPlan.indexOf(plan);
-      console.log("plan");
-      console.log(plan);
-      if (index !== -1) {
-        this.myPlan.splice(index, 1);
+    removePlan(plan, planIndex) {
+      // 여행 계획 삭제
+      if (this.myPlans[this.selectedIndex] && this.myPlans[this.selectedIndex][planIndex]) {
+        this.myPlans[this.selectedIndex].splice(planIndex, 1);
       }
-      console.log("지워지는 객체는!");
-      console.log(plan);
+      // const index = this.myPlan.indexOf(plan);
+      // console.log("plan");
+      // console.log(plan);
+      // if (index !== -1) {
+      //   this.myPlan.splice(index, 1);
+      // }
+      // console.log("지워지는 객체는!");
+      // console.log(plan);
       this.removeSelectMarker(plan);
     },
 
@@ -428,47 +486,95 @@ export default {
       this.map.setCenter(placePosition);
       this.displayInfowindow(selectMarker, place, placePosition);
     },
+    selectPlanTime(index) {
+      console.log("선택된 시간 인덱스는!! " + index);
+      this.selectedIndex = index - 1;
+      console.log(this.dateTime[index]);
+      // 선택된 출발 시간에 따라 여행 계획 저장
+      // const selectedTime = this.dateTime[this.selectedIndex];
+      // const selectedDate = this.dateRange[0].clone().add(index - 1, "day");
+
+      // const plan = {
+      //   place: {}, // 여행 장소 정보
+      //   selectMarker: null, // 선택한 마커
+      //   placePosition: null, // 장소의 위치
+      //   stayTime: "", // 머물 시간
+      // };
+
+      // // 여행 계획에 출발 시간과 날짜를 저장
+      // plan.place.selectedTime = selectedTime;
+      // plan.place.selectedDate = selectedDate;
+
+      // 해당 일자에 계획 추가
+      if (!this.myPlans[this.selectedIndex]) {
+        this.myPlans[this.selectedIndex] = [];
+      }
+      // this.myPlans[this.selectedIndex].push(plan);
+    },
 
     sendMyPlan() {
-      console.log(this.myPlan);
-
       const REST_API_KEY = "718049a1e16b0994e3ed033e857244a3";
       http.defaults.headers.common["Authorization"] = `KakaoAK ${REST_API_KEY}`;
       http.defaults.headers.common["Content-Type"] = "application/json";
 
-      const drivingTimeAPI =
-        "https://apis-navi.kakaomobility.com/v1/future/directions?" +
-        "origin=" +
-        this.myPlan[0].placePosition.La +
-        "," +
-        this.myPlan[0].placePosition.Ma +
-        "&destination=" +
-        this.myPlan[this.myPlan.length - 1].placePosition.La +
-        "," +
-        this.myPlan[this.myPlan.length - 1].placePosition.Ma +
-        "&departure_time=" +
-        202305211200;
-      console.log(drivingTimeAPI);
+      for (let i = 0; i < this.myPlans.length; i++) {
+        // 현재 요소에 대한 작업 수행
+        console.log(i + 1 + "번 요청!!!!!");
+        // console.log(this.myPlans[i]);
+        // console.log(
+        //   this.dateRange[0].clone().add(i, "day").format("YYYYMMDD") +
+        //     this.dateTime[i + 1]._d.getHours().toString().padStart(2, "0") +
+        //     this.dateTime[i + 1]._d.getMinutes().toString().padStart(2, "0")
+        // );
 
-      http
-        .get(drivingTimeAPI)
-        .then((response) => {
-          console.log(response.data.routes[0].sections[0].distance, response.data.routes[0].sections[0].duration);
-          alert(
-            "이동 거리: " +
-              response.data.routes[0].sections[0].distance / 1000 +
-              "km   " +
-              "소요 시간: " +
-              Math.floor(response.data.routes[0].sections[0].duration / 60) +
-              "분 " +
-              (response.data.routes[0].sections[0].duration % 60) +
-              "초"
-          );
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+        let drivingTimeAPI =
+          "https://apis-navi.kakaomobility.com/v1/future/directions?" +
+          "origin=" +
+          this.myPlans[i][0].placePosition.La +
+          "," +
+          this.myPlans[i][0].placePosition.Ma +
+          "&destination=" +
+          this.myPlans[i][this.myPlans[i].length - 1].placePosition.La +
+          "," +
+          this.myPlans[i][this.myPlans[i].length - 1].placePosition.Ma +
+          "&departure_time=" +
+          this.dateRange[0].clone().add(i, "day").format("YYYYMMDD") +
+          this.dateTime[i + 1]._d.getHours().toString().padStart(2, "0") +
+          this.dateTime[i + 1]._d.getMinutes().toString().padStart(2, "0");
 
+        if (this.myPlans[i].length > 2) {
+          // 경유지가 있으면
+          drivingTimeAPI += "&waypoints=";
+          for (let j = 1; j < this.myPlans[i].length - 1; j++) {
+            const wayPointLa = this.myPlans[i][j].placePosition.La;
+            const wayPointMa = this.myPlans[i][j].placePosition.Ma;
+            drivingTimeAPI += wayPointLa + "," + wayPointMa;
+            if (j != this.myPlans[i].length - 2) {
+              drivingTimeAPI += "|";
+            }
+          }
+        }
+        console.log(drivingTimeAPI);
+
+        http
+          .get(drivingTimeAPI)
+          .then((response) => {
+            console.log(response.data.routes[0].sections[0].distance, response.data.routes[0].sections[0].duration);
+            alert(
+              "이동 거리: " +
+                response.data.routes[0].sections[0].distance / 1000 +
+                "km   " +
+                "소요 시간: " +
+                Math.floor(response.data.routes[0].sections[0].duration / 60) +
+                "분 " +
+                (response.data.routes[0].sections[0].duration % 60) +
+                "초"
+            );
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
       // AJAX 요청 등을 통해 jsonData를 특정 API에 전송
       // 예를 들어 axios를 사용한 POST 요청 예시:
       // http
