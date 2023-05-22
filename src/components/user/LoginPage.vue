@@ -78,8 +78,8 @@ export default {
       await http.post('/api/v1/auth/login', param)
       .then(response => {
         localStorage.setItem("token", response.data);
-        console.log(localStorage.getItem("token"));
         alert("로그인 성공")
+        this.$emit('login-success', true);
         this.$router.push("/")
       })
       .catch(error => {

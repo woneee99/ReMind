@@ -26,7 +26,7 @@
             </ul>
           </li>
           <li>
-            <router-link @click.native="logout" to="/" v-if="isLogin"> Logout </router-link>
+            <router-link @click.native="logout" to="/" v-if="isLogin" v-bind="login"> Logout </router-link>
             <router-link to="/login" v-else class="get-a-quote">Log In / Sign Up</router-link>
           </li>
         </ul>
@@ -40,11 +40,11 @@
 import http from '@/common/axios'
 
 export default {
+  props: ['isLogin'],
   data() {
     return {
       name: "",
-      isLogin: false,
-      token: localStorage.getItem("token")
+      token: localStorage.getItem("token"),
     }
   },
   methods: {
@@ -75,7 +75,7 @@ export default {
           if(response.data == 1) {
             localStorage.removeItem("token");
             this.token = ''
-            this.isLogin = false;
+            this.$emit('login-success', false);
             console.log(this.token)
           }
         })
@@ -84,24 +84,20 @@ export default {
         });
     }
   },
-  created() {
-    this.token = localStorage.getItem("token");
-    console.log("tk" + this.token)
-    if(this.token != null) {
-      this.isLogin = true;
-      this.getUser();
-    }
-  },
-  watch: {
-    'token': function() {
-      console.log("token");
+  computed: {
+    login: function() {
+      this.token = localStorage.getItem("token");
       if(this.token != null) {
-        
-        this.isLogin = true;
         this.getUser();
       }
     }
-  }
+  },
+  created() {
+    this.token = localStorage.getItem("token");
+    if(this.token != null) {
+      this.getUser();
+    }
+  },
 };
 </script>
 
