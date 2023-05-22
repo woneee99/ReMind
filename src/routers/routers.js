@@ -8,6 +8,7 @@ import registerPage from "@/components/user/RegisterPage";
 import findPwdPage from "@/components/user/FindPwd";
 import TripPage from "@/components/trip/TripPage";
 import PlanPage from "@/components/trip/PlanPage";
+import MyPlanPage from "@/components/trip/MyPlanPage";
 import FaqPage from "@/components/FAQ/FaqPage";
 
 Vue.use(VueRouter);
@@ -42,6 +43,10 @@ export default new VueRouter({
     {
       path: "/plan",
       component: PlanPage,
+    },
+    {
+      path: "/myplan",
+      component: MyPlanPage,
     },
     {
       path: "/profile",

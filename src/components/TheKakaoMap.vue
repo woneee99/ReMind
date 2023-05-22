@@ -17,24 +17,52 @@
           </div>
         </div>
       </div>
-      <div class="col-2 rounded d-flex flex-column p-0" style="background-color: #fafafa">
-        <div class="card p-2 m-1" v-for="(plan, index) in myPlan" :key="plan.place.id">
-          <div class="card-body" @click="movePlacePosition(plan.selectMarker, plan.place, plan.placePosition)">
-            <div class="d-flex justify-content-between">
-              <h6 class="card-title fs-6 fw-bold"><i :class="'fs-6 fw-bold bi bi-' + (index + 1) + '-square'"></i> {{ plan.place.place_name }}</h6>
-              <button type="button" class="btn-close" aria-label="Close" @click="removePlan(plan)"></button>
+      <div class="col-2" style="background-color: #fafafa">
+        <div class="my-3 mx-3">
+          <input class="form-control p-2 mb-3" type="text" placeholder="여행 계획 제목" v-model="planTitle" />
+          <a-range-picker :disabled-date="disabledDate" :show-time="false" v-model="dateRange" format="YYYY.MM.DD" separator="-" />
+          <div v-if="dateRange.length > 0">
+          <div class="accordion my-2" id="accordionPanelsStayOpenExample">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                <button
+                  class="accordion-button fs-6"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#panelsStayOpen-collapseOne"
+                  aria-expanded="true"
+                  aria-controls="panelsStayOpen-collapseOne"
+                >
+                  여행 출발 시간 설정
+                </button>
+              </h2>
+              <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+                <div class="accordion-body">
+                  <div class="my-1 ms-2" v-for="i in calculateDayCount()" :key="i">
+                    {{
+                      dateRange[0]
+                        .clone()
+                        .add(i - 1, "day")
+                        .format("MM/DD")
+                    }}
+                    :
+                    <a-time-picker v-model="selectedTime" :default-value="moment('10:00', 'HH:mm')" format="HH:mm" />
+                  </div>
+                </div>
+              </div></div>
             </div>
-            <!-- <h6 class="card-subtitle mb-2 text-muted">{{ plan.place.road_address_name }}</h6> -->
-            <!-- <h6 class="card-subtitle mb-2 text-muted">{{ plan.place.phone }}</h6> -->
-            <input class="form-control mt-2 p-2" type="text" id="stayTimeInput" placeholder="머물 시간" v-model="plan.stayTime" />
-            <!-- <p class="card-text">머물 시간: {{ plan.stayTime }} 시간</p> -->
           </div>
-          <!-- <div class="card-body"> -->
-          <!-- <h6 class="card-subtitle mb-2 text-muted">(지번) {{ plan.place.address_name }}</h6> -->
-
-          <!-- <a href="#" class="card-link">링크입니다.</a> -->
-          <!-- <a href="#" class="card-link">다른 링크입니다.</a> -->
-          <!-- </div> -->
+        </div>
+        <div class="rounded d-flex flex-column p-0" style="height: 500px; overflow-y: auto">
+          <div class="card p-2 m-1" v-for="(plan, index) in myPlan" :key="plan.place.id">
+            <div class="card-body" @click="movePlacePosition(plan.selectMarker, plan.place, plan.placePosition)">
+              <div class="d-flex justify-content-between">
+                <h6 class="card-title fs-6 fw-bold"><i :class="'fs-6 fw-bold bi bi-' + (index + 1) + '-square'"></i> {{ plan.place.place_name }}</h6>
+                <button type="button" class="btn-close" aria-label="Close" @click="removePlan(plan)"></button>
+              </div>
+              <input class="form-control mt-2 p-2" type="text" id="stayTimeInput" placeholder="머물 시간" v-model="plan.stayTime" />
+            </div>
+          </div>
         </div>
         <div class="mt-auto">
           <button class="btn btn-primary p-2" type="button" @click="sendMyPlan" style="width: 100%; font-size: 15px">여행 계획 저장</button>
@@ -46,10 +74,16 @@
 
 <script>
 import http from "axios";
+import moment from "moment";
+import { DatePicker, TimePicker } from "ant-design-vue";
+import "ant-design-vue/dist/antd.css";
 
 export default {
   name: "KakaoMap",
-  components: {},
+  components: {
+    "a-range-picker": DatePicker.RangePicker,
+    "a-time-picker": TimePicker,
+  },
   data() {
     return {
       map: null,
@@ -60,6 +94,9 @@ export default {
       markers: [],
       myPlan: [],
       selectMarkers: [],
+      planTitle: "",
+      dateRange: [],
+      selectedTime: moment("10:00", "HH:mm"),
     };
   },
   props: {},
@@ -186,9 +223,21 @@ export default {
             $this.movePlacePosition(marker, place, placePosition);
           };
           itemEl.querySelector("#planAddButton").addEventListener("click", function () {
-            // const stayTimeInput = document.getElementById("stayTimeInput");
-            // const stayTime = stayTimeInput.value; // 입력된 머물 시간 값 가져오기
-            var selectMarker = $this.addSelectMarker(placePosition);
+            if ($this.myPlan.length >= 7) {
+              alert("여행 계획은 최대 7개까지 가능합니다.");
+              return;
+            }
+            // 체크 로직 추가
+            const selectedPlaceId = place.id;
+            const isPlaceAlreadyAdded = $this.myPlan.some(function (plan) {
+              return plan.place.id === selectedPlaceId;
+            });
+            if (isPlaceAlreadyAdded) {
+              alert("이미 선택한 여행 장소입니다.");
+              return;
+            }
+
+            const selectMarker = $this.addSelectMarker(placePosition);
             $this.showCard(selectMarker, place, placePosition, "");
           });
           // });
@@ -347,26 +396,6 @@ export default {
         "  </div>" +
         "</div>";
 
-      // '        <div class="body">' +
-      // '            <div class="desc">' +
-      // '                <div class="ellipsis">' +
-      // place.road_address_name +
-      // "</div>" +
-      // '                <div class="jibun ellipsis">(지번) ' +
-      // place.address_name +
-      // "</div>" +
-      // '                <div><a href="' +
-      // place.place_url +
-      // '" target="_blank" class="link">홈페이지</a></div>' +
-      // '<div style="margin-top: 5px;">' +
-      // '<input type="text" id="stayTimeInput" placeholder="머물 시간">' +
-      // '<button id="planAddButton">내 여행에 추가</button>' +
-      // "</div>" +
-      // "            </div>" +
-      // "        </div>" +
-      // "    </div>" +
-      // "</div>";
-
       this.infowindow.setContent(content);
       this.infowindow.setPosition(marker.getPosition());
       this.infowindow.setMap(this.map);
@@ -450,6 +479,27 @@ export default {
       //   .catch((error) => {
       //     // 요청에 대한 오류 처리
       //   });
+    },
+    moment,
+    range(start, end) {
+      const result = [];
+      for (let i = start; i < end; i++) {
+        result.push(i);
+      }
+      return result;
+    },
+    disabledDate(current) {
+      // Can not select days before today and today
+      return current && current < moment().endOf("day");
+    },
+    calculateDayCount() {
+      if (this.dateRange.length === 2) {
+        const start = this.dateRange[0].clone().startOf("day");
+        const end = this.dateRange[1].clone().startOf("day");
+        const duration = moment.duration(end.diff(start));
+        return duration.asDays() + 1; // 일 수 계산 후 1을 더해줍니다.
+      }
+      return 0;
     },
   },
 };
