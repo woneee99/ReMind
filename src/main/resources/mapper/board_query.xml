@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.enjoytrip.dao.BoardDao">
+<mapper namespace="com.example.enjoytrip.api.dao.BoardDao">
 
-    <select id="getBoardDetail" parameterType="int" resultType="com.example.enjoytrip.dto.BoardDto">
+    <select id="getBoardDetail" parameterType="int" resultType="com.example.enjoytrip.api.dto.BoardDto">
         SELECT b.boardId, b.userId, u.userName, b.title, b.content, b.createdAT, b.readCount
         FROM boards b,
              users u
@@ -10,7 +10,7 @@
           AND b.userId = u.userId
     </select>
 
-    <select id="getAttachedFiles" parameterType="int" resultType="com.example.enjoytrip.dto.BoardFileDto">
+    <select id="getAttachedFiles" parameterType="int" resultType="com.example.enjoytrip.api.dto.BoardFileDto">
         SELECT fileId, boardId, fileName, fileSzie, fileContentType, fileUrl, createdAt
         FROM boards_file
         WHERE boardId = #{boardId}
@@ -60,19 +60,19 @@
         WHERE boardId = #{boardId}
     </select>
 
-    <insert id="insertBoard" parameterType="com.example.enjoytrip.dto.BoardDto" useGeneratedKeys="true"
+    <insert id="insertBoard" parameterType="com.example.enjoytrip.api.dto.BoardDto" useGeneratedKeys="true"
             keyProperty="boardId">
         INSERT INTO boards (userId, title, content, createdAt, readCount)
         VALUES (#{userId}, #{title}, #{content}, now(), 0)
     </insert>
 
-    <insert id="insertAttachedFiles" parameterType="com.example.enjoytrip.dto.BoardFileDto">
+    <insert id="insertAttachedFiles" parameterType="com.example.enjoytrip.api.dto.BoardFileDto">
         INSERT INTO boards_file (boardId, fileName, fileSize, fileContentType, fileUrl)
         VALUES (#{boardId}, #{fileName}, #{fileSize}, #{fileContentType}, #{fileUrl})
     </insert>
 
     <!-- reg_dt : LocalDateTime, check out BoardDto setter  -->
-    <select id="getBoardList" parameterType="map" resultType="com.example.enjoytrip.dto.BoardDto">
+    <select id="getBoardList" parameterType="map" resultType="com.example.enjoytrip.api.dto.BoardDto">
         SELECT b.boardId, b.userId, u.userName, b.title, b.content, b.createdAt, b.readCount
         FROM boards b,
              USERS u
@@ -87,7 +87,7 @@
         FROM boards
     </select>
 
-    <select id="getBoardListByTitle" parameterType="map" resultType="com.example.enjoytrip.dto.BoardDto">
+    <select id="getBoardListByTitle" parameterType="map" resultType="com.example.enjoytrip.api.dto.BoardDto">
         SELECT b.boardId, b.userId, u.userName, b.title, b.content, b.createdAt, b.readCount
         FROM boards b,
              USERS u
@@ -104,7 +104,7 @@
         WHERE title LIKE CONCAT('%', #{searchWord}, '%')
     </select>
 
-    <update id="updateBoard" parameterType="com.example.enjoytrip.dto.BoardDto">
+    <update id="updateBoard" parameterType="com.example.enjoytrip.api.dto.BoardDto">
         UPDATE boards
         SET title   = #{title},
             content = #{content}
