@@ -20,14 +20,7 @@
       <div class="col-2" style="background-color: #fafafa">
         <div class="my-3 mx-3">
           <input class="form-control p-2 mb-3" type="text" placeholder="여행 계획 제목" v-model="planTitle" />
-          <a-range-picker
-            :disabled-date="disabledDate"
-            :show-time="false"
-            v-model="dateRange"
-            format="YYYY.MM.DD"
-            separator="-"
-            placeholder="[여행시작, 여행끝]"
-          />
+          <a-range-picker :disabled-date="disabledDate" :show-time="false" v-model="dateRange" format="YYYY.MM.DD" separator="-" />
           <div v-if="dateRange.length > 0">
             <div class="accordion my-2" id="accordionPanelsStayOpenExample">
               <div class="accordion-item">
