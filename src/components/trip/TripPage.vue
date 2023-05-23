@@ -62,7 +62,7 @@
 
 <script>
 import BreadcrumbSection from "@/components/BreadcrumbSection.vue";
-import http from '@/common/axios'
+import http from "@/common/axios";
 // import key from '../common/key'
 // import MainCss from '../common/js/main'
 
@@ -116,7 +116,7 @@ export default {
     },
     getAreaCodeList() {
       http
-        .get("/trip/area?areaCode=")
+        .get("/api/v1/trip/area?areaCode=")
         .then((response) => {
           this.area1List = response.data.response.body.items.item;
           console.log(response);
@@ -127,7 +127,7 @@ export default {
     },
     getArea2List(areaCode) {
       http
-        .get("/trip/area", {
+        .get("/api/v1/trip/area", {
           params: {
             areaCode: areaCode,
           },
@@ -142,7 +142,7 @@ export default {
     },
     getCat1List() {
       http
-        .get("/trip/category?cat1=&cat2=")
+        .get("/api/v1/trip/category?cat1=&cat2=")
         .then((response) => {
           this.cat1List = response.data.response.body.items.item;
         })
@@ -152,7 +152,7 @@ export default {
     },
     getCat2List(cat1) {
       http
-        .get("/trip/category", {
+        .get("/api/v1/trip/category", {
           params: {
             cat1: cat1,
             cat2: "",
@@ -169,7 +169,7 @@ export default {
     },
     getCat3List(cat2) {
       http
-        .get("/trip/category", {
+        .get("/api/v1/trip/category", {
           params: {
             cat1: this.cat1,
             cat2: cat2,
@@ -185,7 +185,7 @@ export default {
     },
     search() {
       http
-        .get("/trip/list", {
+        .get("/api/v1/trip/list", {
           params: {
             areaCode: this.areaCode,
             sigunguCode: this.sigunguCode,

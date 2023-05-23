@@ -59,14 +59,14 @@
         <div class="rounded d-flex flex-column p-0" style="height: 500px; overflow-y: auto">
           <!-- <div v-for="(myPlan, pIndex) in myPlans" :key="pIndex"> -->
           <div>
-            <div class="card p-3 m-1 mx-3" v-for="(plan, index) in myPlans[selectedIndex]" :key="plan.place.id">
+            <div class="card p-2 m-1 mx-3" v-for="(plan, index) in myPlans[selectedIndex]" :key="plan.place.id">
               <div class="card-body" @click="movePlacePosition(plan.selectMarker, plan.place, plan.placePosition)">
                 <div class="d-flex justify-content-between">
                   <h6 class="card-title fs-6 fw-bold"><i :class="'fs-6 fw-bold bi bi-' + (index + 1) + '-square'"></i> {{ plan.place.place_name }}</h6>
                   <button type="button" class="btn-close" aria-label="Close" @click="removePlan(plan, index)"></button>
                 </div>
-                <input class="form-control mt-2 p-2" type="text" id="stayTimeInput" placeholder="머물 시간" v-model="plan.stayTime" />
-                <a-time-picker v-model="plan.stayTime" format="HH:mm" placeholder="관광 시간" :picker-options="pickerOptions" />
+                <!-- <input class="form-control mt-2 p-2" type="text" id="stayTimeInput" placeholder="머물 시간" v-model="plan.stayTime" /> -->
+                <a-time-picker class="mt-1" v-model="plan.stayTime" format="HH:mm" placeholder="관광 시간" />
               </div>
             </div>
           </div>
@@ -105,21 +105,11 @@ export default {
       dateRange: [],
       dateTime: [],
       selectedIndex: 0,
-      pickerOptions: {
-        start: "00:00", // 처음 시간을 '00:00'으로 설정
-      },
+      tripSpots: [],
     };
   },
   props: {},
-  watch: {
-    dateTime: {
-      handler(value) {
-        console.log(value[0]._d.getHours());
-        console.log(value[0]._d.getMinutes());
-      },
-      deep: true,
-    },
-  },
+  watch: {},
   created() {},
   mounted() {
     // api 스크립트 소스 불러오기 및 지도 출력
@@ -350,9 +340,17 @@ export default {
     },
 
     addSelectMarker(placePosition) {
-      var selectMarker = new kakao.maps.Marker({
-        position: placePosition,
-      });
+      // const imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png", // 마커 이미지 url, 스프라이트 이미지를 씁니다
+      const imageSrc = "assets/img/marker/marker.png", // 마커 이미지 url, 스프라이트 이미지를 씁니다
+        imageSize = new kakao.maps.Size(43, 43), // 마커 이미지의 크기
+        imgOptions = {
+          offset: new kakao.maps.Point(20, 43), // 마커 좌표에 일치시킬 이미지 내에서의 좌표
+        },
+        markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions),
+        selectMarker = new kakao.maps.Marker({
+          position: placePosition,
+          image: markerImage,
+        });
       selectMarker.setMap(this.map); // 지도 위에 마커 표출
       this.selectMarkers.push(selectMarker); // 배열에 생성된 마커 추가
       console.log("선택된 마커들");
@@ -371,9 +369,6 @@ export default {
     removeSelectMarker(plan) {
       console.log("마커 지우자!");
       const index = this.selectMarkers.findIndex((marker) => marker === plan.selectMarker);
-      console.log(this.selectMarkers[0] === plan.selectMarker);
-      console.log(this.selectMarkers[0]);
-      console.log(plan.selectMarker);
       console.log("인덱스결과!");
       console.log(index);
       if (index !== -1) {
@@ -510,6 +505,7 @@ export default {
       http.defaults.headers.common["Authorization"] = `KakaoAK ${REST_API_KEY}`;
       http.defaults.headers.common["Content-Type"] = "application/json";
 
+      // const $this = this;
       for (let i = 0; i < this.myPlans.length; i++) {
         // 현재 요소에 대한 작업 수행
         console.log(i + 1 + "번 요청!!!!!");
@@ -552,7 +548,7 @@ export default {
         http
           .get(drivingTimeAPI)
           .then((response) => {
-            console.log(response.data.routes[0].sections[0].distance, response.data.routes[0].sections[0].duration);
+            // console.log(response);
             alert(
               "이동 거리: " +
                 response.data.routes[0].sections[0].distance / 1000 +
@@ -563,10 +559,17 @@ export default {
                 (response.data.routes[0].sections[0].duration % 60) +
                 "초"
             );
+            this.pushTripSpots(response, this.myPlans[i]); // tripSpots 배열에 객체 push
           })
           .catch((error) => {
             console.log(error);
           });
+
+        console.log("여행 계획 제목은: " + this.planTitle);
+        console.log("==============");
+        console.log("여행 날짜는: " + this.dateRange[0].clone().add(i, "day").format("YYYYMMDD"));
+        console.log("출발 시간(초)은: " + this.dateTime[i + 1]._d.getHours() * 360 + this.dateTime[i + 1]._d.getMinutes() * 60);
+        console.log(this.myPlans[i][0]);
       }
       // AJAX 요청 등을 통해 jsonData를 특정 API에 전송
       // 예를 들어 axios를 사용한 POST 요청 예시:
@@ -599,6 +602,12 @@ export default {
         return duration.asDays() + 1; // 일 수 계산 후 1을 더해줍니다.
       }
       return 0;
+    },
+
+    pushTripSpots(response, dayPlan) {
+      console.log("json 만드실?");
+      console.log(response);
+      console.log(dayPlan);
     },
   },
 };
