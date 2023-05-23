@@ -544,31 +544,33 @@ export default {
           }
         }
         console.log(drivingTimeAPI);
-
-        http
-          .get(drivingTimeAPI)
-          .then((response) => {
-            // console.log(response);
-            alert(
-              "이동 거리: " +
-                response.data.routes[0].sections[0].distance / 1000 +
-                "km   " +
-                "소요 시간: " +
-                Math.floor(response.data.routes[0].sections[0].duration / 60) +
-                "분 " +
-                (response.data.routes[0].sections[0].duration % 60) +
-                "초"
-            );
-            this.pushTripSpots(response, this.myPlans[i]); // tripSpots 배열에 객체 push
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+        const $this = this;
+        (function (i, myPlan) {
+          http
+            .get(drivingTimeAPI)
+            .then((response) => {
+              console.log(response);
+              $this.pushTripSpots(response, myPlan, i); // tripSpots 배열에 객체 push
+              alert(
+                "이동 거리: " +
+                  response.data.routes[0].sections[0].distance / 1000 +
+                  "km   " +
+                  "소요 시간: " +
+                  Math.floor(response.data.routes[0].sections[0].duration / 60) +
+                  "분 " +
+                  (response.data.routes[0].sections[0].duration % 60) +
+                  "초"
+              );
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        })(i, this.myPlans[i]);
 
         console.log("여행 계획 제목은: " + this.planTitle);
         console.log("==============");
         console.log("여행 날짜는: " + this.dateRange[0].clone().add(i, "day").format("YYYYMMDD"));
-        console.log("출발 시간(초)은: " + this.dateTime[i + 1]._d.getHours() * 360 + this.dateTime[i + 1]._d.getMinutes() * 60);
+        console.log("출발 시간(초)은: " + this.dateTime[i + 1]._d.getHours() * 3600 + this.dateTime[i + 1]._d.getMinutes() * 60);
         console.log(this.myPlans[i][0]);
       }
       // AJAX 요청 등을 통해 jsonData를 특정 API에 전송
@@ -604,10 +606,42 @@ export default {
       return 0;
     },
 
-    pushTripSpots(response, dayPlan) {
+    pushTripSpots(response, dayPlan, index) {
+      let departureTime = this.dateTime[index + 1]._d.getHours() * 3600 + this.dateTime[index + 1]._d.getMinutes() * 60;
+
+      for (let i = 0; i < dayPlan.length; i++) {
+        const temp = {
+          tripDate: this.dateRange[0].clone().add(index, "day").format("YYYYMMDD"),
+          stopName: dayPlan[i].place.place_name,
+          spotId: dayPlan[i].place.id,
+          spotLa: dayPlan[i].placePosition.La,
+          spotMa: dayPlan[i].placePosition.Ma,
+          spotAddress: dayPlan[i].place.address_name,
+          spotPhone: dayPlan[i].place.phone,
+          departureTime:
+            departureTime +
+            (i > 0
+              ? response.data.routes[0].sections[i - 1].duration + dayPlan[i].stayTime._d.getHours() * 3600 + dayPlan[i].stayTime._d.getMinutes() * 60
+              : 0),
+          duration: dayPlan[i].stayTime._d.getHours() * 3600 + dayPlan[i].stayTime._d.getMinutes() * 60,
+          moveTime: i !== dayPlan.length - 1 ? response.data.routes[0].sections[i].duration : 0,
+          spotOrder: i + 1,
+        };
+
+        this.tripSpots.push(temp);
+
+        departureTime +=
+          i > 0 ? response.data.routes[0].sections[i - 1].duration + dayPlan[i].stayTime._d.getHours() * 3600 + dayPlan[i].stayTime._d.getMinutes() * 60 : 0;
+      }
       console.log("json 만드실?");
-      console.log(response);
-      console.log(dayPlan);
+      console.log(this.tripSpots);
+      // console.log(response);
+      // console.log(dayPlan);
+      // console.log("여행 계획 제목은: " + this.planTitle);
+      // console.log("==============");
+      // console.log("여행 날짜는: " + this.dateRange[0].clone().add(i, "day").format("YYYYMMDD"));
+      // console.log("출발 시간(초)은: " + this.dateTime[i + 1]._d.getHours() * 360 + this.dateTime[i + 1]._d.getMinutes() * 60);
+      // console.log(this.myPlans[i][0]);
     },
   },
 };
