@@ -1,6 +1,6 @@
 package com.example.enjoytrip.config;
 
-import com.example.enjoytrip.oauth.token.AuthTokenProvider;
+import com.example.enjoytrip.oauth2.token.AuthTokenProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.example.enjoytrip.dao.HotPlaceDao">
+<mapper namespace="com.example.enjoytrip.api.dao.HotPlaceDao">
 
     <insert id="hotPlaceInsert"
-            parameterType="com.example.enjoytrip.dto.HotPlaceDto">
+            parameterType="com.example.enjoytrip.api.dto.HotPlaceDto">
         insert into hotplace ( userId, hotplaceName, hotplaceMap, type, hotplaceImg )
         values ( #{userId}, #{hotplaceName}, #{hotplaceMap}, #{type}, #{hotplaceImg} )
     </insert>
 
     <select id="hotPlaceSelect" parameterType="int"
-            resultType="com.example.enjoytrip.dto.HotPlaceDto">
+            resultType="com.example.enjoytrip.api.dto.HotPlaceDto">
         select userId, hotplaceName, hotplaceMap, type, hotplaceImg
           from hotplace
          where userId = #{userId}
