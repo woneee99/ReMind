@@ -23,6 +23,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
     private JavaMailSender mailSender;
 
 
@@ -45,7 +46,7 @@ public class UserServiceImpl implements UserService {
         dto.setMessage("안녕하세요. 임시비밀번호 안내 관련 이메일 입니다." + " 회원님의 임시 비밀번호는 "
                 + str + " 입니다." + "로그인 후에 비밀번호를 변경을 해주세요");
 
-        userDto.setUserPassword(str);
+        userDto.setUserPassword(passwordEncoder.encode(str));
         System.out.println("userDto = " + userDto);
         userDao.findEmailUpdate(userDto);
         mailSend(dto);
