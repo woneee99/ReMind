@@ -16,6 +16,7 @@
 <script>
 
 import BreadcrumbSection from "@/components/BreadcrumbSection.vue";
+import {eventBus} from "../../main.js";
 
 export default {
     components: {
@@ -56,7 +57,8 @@ export default {
               reader.readAsDataURL(file);
           });
         }
-        localStorage.setItem("fileList", this.fileList);
+        // console.log(this.fileList)
+        eventBus.sendImg(this.fileList);
       },
       createLi(e, file) {
         const li = document.createElement('li');
@@ -77,12 +79,10 @@ export default {
           li.parentNode.removeChild(li); // img 요소 삭제
         });
         this.fileList = [];
-        localStorage.removeItem("fileList", this.fileList);
       }
     },
     writeBtn() { 
       console.log(this.fileList)
-      localStorage.setItem("fileList", this.fileList);
     }
 };
 </script>

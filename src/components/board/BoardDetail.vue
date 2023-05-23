@@ -1,5 +1,5 @@
 <template>
-      <main id="main">
+    <main id="main">
 
     <!-- ======= Breadcrumbs ======= -->
     <div class="breadcrumbs">
