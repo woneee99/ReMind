@@ -1,7 +1,7 @@
 <template>
   <div>
     <board-search></board-search>
-    <router-link to="/board/posts">글 작성</router-link>
+    <router-link to="/imgs">글 작성</router-link>
     <section id="service" class="services pt-0">
       <div class="container" data-aos="fade-up">
         <div class="row gy-4">
