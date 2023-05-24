@@ -1,11 +1,9 @@
 package com.example.enjoytrip.api.entity;
 
-import com.example.enjoytrip.api.dto.BoardFileDto;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Builder
@@ -13,17 +11,16 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Blog {
+@Table(name = "blogs")
+public class Blogs {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int boardId;
+    @Column(name = "blog_id")
+    private int blogId;
     private int userSeq;
-    private String title;
     private String content;
     private int likeCount;
-
-    @OneToMany
-    private List<BlogFile> blogFile;
+    private String fileUrl;
 
     private LocalDateTime createdAt;
 }

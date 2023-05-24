@@ -14,7 +14,5 @@ public class BlogFile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int blogFileId;
     private String blogUrl;
-
-    @ManyToOne
-    private Blog blog;
+    private int blogId;
 }

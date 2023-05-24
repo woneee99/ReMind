@@ -12,6 +12,5 @@
 		<mapper resource="mapper/user_refresh_query.xml"/>
 		<mapper resource="mapper/login_query.xml"/>
 		<mapper resource="mapper/hotPlace_query.xml"/>
-		<mapper resource="mapper/board_query.xml"/>
 	</mappers>
 </configuration>
