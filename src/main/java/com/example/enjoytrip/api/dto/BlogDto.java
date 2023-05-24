@@ -1,16 +1,17 @@
 package com.example.enjoytrip.api.dto;
 
+import com.example.enjoytrip.api.entity.Blog;
 import com.example.enjoytrip.api.entity.BlogFile;
 import com.example.enjoytrip.api.entity.HashTag;
 import com.example.enjoytrip.api.entity.Location;
 import lombok.*;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class BlogDto {
@@ -20,12 +21,14 @@ public class BlogDto {
     private LocalDateTime createdAt;
 
     // 블로그 사진 url list형식
-    private List<BlogFile> fileList;
+    private List<String> fileList;
 
     private int userSeq;
     private String userName;
     private String profileImageUrl;
 
-    private List<HashTag> hashTag;
+//    private List<HashTag> hashTag;
 //    private Location location;
+
+
 }

@@ -60,7 +60,9 @@ public class BlogController {
 
     @GetMapping("/{blogId}")
     public ResponseEntity<BlogDto> getBlog(@PathVariable(name = "blogId") int blogId) {
-        return ResponseEntity.ok().body(blogService.blogDetail(blogId));
+        BlogDto blogDto = blogService.blogDetail(blogId);
+        System.out.println("blogDto.getContent() = " + blogDto.getContent());
+        return ResponseEntity.ok().body(blogDto);
     }
 
     @PostMapping

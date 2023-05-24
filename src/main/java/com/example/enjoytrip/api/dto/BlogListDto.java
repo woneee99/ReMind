@@ -12,12 +12,14 @@ import java.util.List;
 @AllArgsConstructor
 public class BlogListDto {
     private String thumbNail;
+    private int blogId;
     private String content;
     private String hashTag;
 
     public static Page<BlogListDto> toDtoList(Page<Blog> postList) {
         Page<BlogListDto> postDtoList = postList.map( p -> BlogListDto.builder()
                 .thumbNail(p.getThumbNail())
+                .blogId(p.getBlogId())
                 .content(p.getContent())
                 .hashTag(p.getHashTag())
                 .build());

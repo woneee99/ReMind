@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -55,12 +56,17 @@ public class BlogServiceImpl implements BlogService{
         blogDto.setUserName(user.getUserName());
         blogDto.setProfileImageUrl(user.getProfileImageUrl());
 
-        List<HashTag> hashTagList = hashTagRepository.getHashTagByBlogId(blogId);
-        blogDto.setHashTag(hashTagList);
+//        List<HashTag> hashTagList = hashTagRepository.getHashTagByBlogId(blogId);
+//        blogDto.setHashTag(hashTagList);
+//        System.out.println("hashTagList.size() = " + hashTagList.size());
         List<BlogFile> fileList = blogFileRepository.findByBlogId(blog);
         System.out.println("fileList.sz = " + fileList.size());
-        blogDto.setFileList(fileList);
 
+        List<String> list = new ArrayList<>();
+        for(BlogFile bf : fileList) {
+            list.add(bf.getBlogUrl());
+        }
+        blogDto.setFileList(list);
         return blogDto;
     }
 
