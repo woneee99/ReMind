@@ -37,9 +37,12 @@ public class TripPlanServiceImpl implements TripPlanService {
 
     @Override
     public List<TripPlanDto> getUserPlans(int userSeq) {
-        List<TripPlanDto> temp = tripPlanDao.getUserPlans(userSeq);
-        System.out.println(temp);
-        return temp;
+        return tripPlanDao.getUserPlans(userSeq);
+    }
+
+    @Override
+    public List<TripPlanSpotDto> getUserPlanSpots(int planId) {
+        return tripPlanDao.getUserPlanSpots(planId);
     }
 
     private int insertTripPlanSpots(TripPlanDto tripPlanDto) {
