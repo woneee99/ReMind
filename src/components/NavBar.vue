@@ -11,7 +11,7 @@
       <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
       <nav id="navbar" class="navbar">
         <ul>
-          <li><router-link to="/plan">여행계획</router-link></li>
+          <li><router-link to="/myplans">여행계획</router-link></li>
           <li><router-link to="/trip">지역 관광지</router-link></li>
           <li><router-link to="/board">Community</router-link></li>
           <li class="dropdown" v-if="isLogin">
@@ -21,7 +21,7 @@
             </a>
             <ul>
               <li><router-link to="/profile">프로필 관리</router-link></li>
-              <li><a href="/">내 여행</a></li>
+              <li><a href="/myplans">내 여행</a></li>
               <li><router-link to="/faq">공지사항 / FAQ</router-link></li>
             </ul>
           </li>
@@ -58,7 +58,6 @@ export default {
         .then((response) => {
           let { data } = response;
           this.name = data.userName;
-          this.userSeq = data.userSeq;
         })
         .catch((error) => {
           console.error(error);
