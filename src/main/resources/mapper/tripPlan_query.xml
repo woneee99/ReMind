@@ -15,6 +15,14 @@
             resultType="com.example.enjoytrip.api.dto.TripPlanDto">
         SELECT planId, userSeq, planTitle, startDate, endDate, createdAt, updatedAt
         FROM plans
-        where userSeq = #{userSeq}
+        WHERE userSeq = #{userSeq}
+    </select>
+
+    <select id="getUserPlanSpots" parameterType="int"
+            resultType="com.example.enjoytrip.api.dto.TripPlanSpotDto">
+        SELECT tripSpotId, planId, tripDate, spotName, spotId, spotLa, spotMa, spotAddress, spotPhone, departureTime, duration, moveTime, spotOrder
+        FROM trip_spots
+        WHERE planId = #{planId}
+        ORDER BY tripDate, spotOrder
     </select>
 </mapper>

@@ -13,4 +13,6 @@ public interface TripPlanDao {
     int insertTripPlanSpots(TripPlanSpotDto tripPlanSpotDto);
 
     List<TripPlanDto> getUserPlans(int userSeq);
+
+    List<TripPlanSpotDto> getUserPlanSpots(int planId);
 }
