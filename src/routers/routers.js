@@ -74,8 +74,13 @@ export default new VueRouter({
       component: BoardImgPreivewPage,
     },
     {
+      name: "posts",
       path: "/posts",
       component: BoardInsertPage,
     },
+    {
+      path: "/detail",
+      component: BoardDetailPage,
+    }
   ],
 });
