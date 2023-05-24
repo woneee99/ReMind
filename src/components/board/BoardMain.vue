@@ -8,7 +8,7 @@
           <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100" v-for="(blog, index) in blogList" :key="index">
             <div class="card" > <!-- 여기 반복 -->
               <div class="card-img">
-                <img :src='`${blog.fileList[0].blogUrl}`' alt="" class="img-fluid" />
+                <img :src='`${blog.thumbNail}`' alt="" class="img-fluid" />
               </div>
               <!-- <h3><router-link :to="`/${boards.boardId}`" class="stretched-link">title</router-link></h3> -->
               <!-- <a href="#" @click.prevent="sendImg">글 작성하러 가기</a> -->
@@ -50,8 +50,7 @@ export default {
       let response = await http.get("/api/v1/blog/list");
       let data = response.data;
       console.log(data)
-      console.log("" + data.content)
-      this.blogList = data.content;
+      this.blogList = data;
       console.log(this.blogList)
       this.boards = data;
     },
