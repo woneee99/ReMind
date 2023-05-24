@@ -22,32 +22,32 @@
         </button>
       </div>
       <!-- 캐러셀 끝 -->
-      <div>
-        <div class="dropdown">
-          <button class="btn btn-secondary dropdown-toggle" @click="getMyTripList()" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-            내 여행 선택
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            <li><a class="dropdown-item" href="#">Action</a></li> <!-- 반복문 사용 -->
-          </ul>
+      <div class="right-container">
+        <div class="form-floating">
+          <select class="form-select" id="floatingSelect" @change="selectTrip" aria-label="Floating label select example">
+            <!-- <option selected>Zero</option> -->
+            <option v-for="(trip, index) in myTripList" :key="index" :value="index"> {{trip.planTitle}} </option>
+          </select>
+          <label for="floatingSelect">나의 여행 목록</label>
         </div>
-        <div class="dropdown">
-          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-            위치 선택
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1"> 
-            <li><a class="dropdown-item">Action</a></li> <!-- 반복문 사용 -->
-          </ul>
+        <div class="form-floating">
+          <select class="form-select" id="floatingSelect" @change="selectLocation" aria-label="Floating label select example">
+            <option v-for="(location, index) in myTripLocationList" :key="index" :value="index"> {{location.spotName}} </option>
+          </select>
+          <label for="floatingSelect">위치 선택</label>
         </div>
+        해시태그
+        <div class="input-group mb-3">
+          <button class="btn btn-outline-secondary" type="button" id="button-addon1">#</button>
+          <input type="text" class="form-control" v-model="hashTag" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+        </div>
+
         <!-- input box -->
-        <div class="col-lg-8">
-          <form action="forms/contact.php" method="post" role="form" class="php-email-form">
-            <div class="form-group mt-3">
-              <textarea class="form-control" name="message" rows="5" placeholder="Message" required></textarea>
-            </div>
-            <div class="text-center"><button type="submit">Send Message</button></div>
-          </form>
-        </div><!-- End Contact Form -->
+        <div class="form-floating">
+          <textarea class="form-control" v-model="content" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 400px"></textarea>
+          <label for="floatingTextarea2">내용</label>
+        </div>
+        <button type="button" class="btn btn-primary" @click="postBlog()" style="float: right">등록하기</button>
       </div>
     </div>
   </main>
@@ -64,25 +64,72 @@ export default {
     data() {
         return {
             fileList: this.$route.params.fileList,
-            carouselList: []
+            myTripList: [],
+            selectTripIdx: 1,
+            myTripLocationList: [],
+            locationIdx: 1,
+            hashTag: "",
+            content: ""
         }
     },
     methods: {
       async getMyTripList() {
         let token = localStorage.getItem("token");
         console.log(token)
-        let response = await http.get("/api/v1/blog/myList", {
+        let response = await http.get("/api/v1/plan/my-plans", {
           headers: {
             'Authorization': 'Bearer ' + token
           }
         })
         let { data } = response;
-        console.log("data: " + data);
-        this.carouselList = data;
-        console.log("data: " + this.carouselList);
+        this.myTripList = data;
         this.boards = data;
+      },
+      async getMyTripLocation() {
+        let token = localStorage.getItem("token");
+        console.log(token)
+        let response = await http.get("/api/v1/plan/my-plans/" +this.selectTripIdx)
+        let { data } = response;
+        this.myTripLocationList = data;
+      },
+      async postBlog() {
+        let token = localStorage.getItem("token");
+        console.log(token)
+        const val = {
+          planId: this.selectTripIdx,
+          tripPlanSpotId: this.locationIdx,
+          content: this.content,
+          hashTag: this.hashTag,
+          fileList: this.fileList
+        };
+        console.log(val);
+        let response = await http.post("/api/v1/blog", val, {
+          headers: {
+            'Authorization': 'Bearer ' + token
+          }
+        })
+        let { data } = response;
+        console.log("data: "+ data);
+        if(data == 1) {
+          alert("글 작성 완료")
+          this.$router.push("/board");
+        }
+        else alert("글 작성에 실패했습니다.")
+      },
+      selectTrip(event) {
+        const selectedOptionIndex = event.target.value;
+        this.selectTripIdx = selectedOptionIndex + 1;
+        this.getMyTripLocation();
+      },
+      selectLocation(event) {
+        const selectedLocationIndex = event.target.value;
+        this.locationIdx = selectedLocationIndex + 1;
       }
     },
+    created() {
+      this.getMyTripList();
+      this.getMyTripLocation();
+    }
 }
 </script>
 
@@ -97,4 +144,5 @@ export default {
   max-width: 1080px;
   height: 1080px;
 }
+
 </style>

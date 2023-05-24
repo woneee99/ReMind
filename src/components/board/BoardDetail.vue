@@ -80,7 +80,7 @@ export default {
             { blogUrl : ""},
             { blogId : ''}
           ],
-          blogId: 1,
+          blogId: this.$route.params.blogId,
           content: "",
           likeCount: "",
           createdAt: "",
@@ -95,26 +95,15 @@ export default {
     },
     methods: {
       async getImg() {
-        // let token = localStorage.getItem("token");
-        // console.log(token)
-        
         let response = await http.get("/api/v1/blog/" + this.blogId); // 블로그 가져오기
-        // let response2 = await http.get("/api/v1/blog/" + this.blogId); // 사진 가져오기
-
         let { data } = response;
-        // let { data2 } = response2;
-        
-        // console.log("data: " + data1.fileUrl);
-        // this.carouselList = data1;
         this.userName = data.userName;
         this.profileImageUrl = data.profileImageUrl;
         this.content = data.content;
         this.fileList = data.fileList;
-
-        
+        console.log(this.fileList)
         this.boards = data;
         this.hashTag = data.hashTag;
-      
       }
     },
     created() {

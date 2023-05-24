@@ -3,31 +3,35 @@
     <board-search></board-search>
     <section id="service" class="services pt-0">
       <div class="container" data-aos="fade-up">
-
         <div class="row gy-4">
           <router-link to="/imgs"><img src="../../assets/plus.png" style="width: 50px; float: right;" /></router-link>
-          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-            <div class="card"> <!-- 여기 반복 -->
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100" v-for="(blog, index) in blogList" :key="index">
+            <div class="card" > <!-- 여기 반복 -->
               <div class="card-img">
-                <img src="https://cdn.visitkorea.or.kr/img/call?cmd=VIEW&id=903cc46f-8831-4569-ac7e-06fe418b6b11" alt="" class="img-fluid" />
+                <img :src='`${blog.fileList[0].blogUrl}`' alt="" class="img-fluid" />
               </div>
               <!-- <h3><router-link :to="`/${boards.boardId}`" class="stretched-link">title</router-link></h3> -->
-              <h3><router-link to="/detail" class="stretched-link">title</router-link></h3>
+              <!-- <a href="#" @click.prevent="sendImg">글 작성하러 가기</a> -->
+              <h3><a href="#" @click.prevent="selectCard(blog.blogId)" class="stretched-link"> {{blog.content}}</a></h3>
               <p>
-                # 제주코스 #휴애리자연생활공원 #서귀포갈곳
+               # {{blog.hashTag}}
               </p>
             </div>
           </div>
           <!-- End Card Item -->
         </div>
       </div>
+      <div class="pagination justify-content-center">
+        <a href="" role="button" class="btn btn-lg bi bi-caret-left-square-fill"></a>
+        <a href="" role="button" class="btn btn-lg bi bi-caret-right-square-fill"></a>
+    </div>
     </section>
   </div>
 </template>
 
 <script>
 import BoardSearch from "./BoardSearch.vue";
-// import http from '@/common/axios'
+import http from '@/common/axios'
 
 export default {
   name: "MainPage",
@@ -36,17 +40,49 @@ export default {
   },
   data() {
     return {
-      boards: []
+      blogList: [],
+      previous: '',
+      next: '',
     }
   },
   methods: {
     async getBoardList() {
-      // let response = await http.get("/api/v1/boards");
-      // let { data } = response;
-      // console.log("data: " + data);
-            
-      // this.boards = data;
-    }
+      let response = await http.get("/api/v1/blog/list");
+      let data = response.data;
+      console.log(data)
+      console.log("" + data.content)
+      this.blogList = data.content;
+      console.log(this.blogList)
+      this.boards = data;
+    },
+    async getImg() {
+      console.log(typeof this.blogId)
+      let response = await http.get("/api/v1/blog/" + this.blogId); // 블로그 가져오기
+
+      let { data } = response;
+
+      this.userName = data.userName;
+      this.profileImageUrl = data.profileImageUrl;
+      this.content = data.content;
+      this.fileList = data.fileList;
+      this.boards = data;
+      this.hashTag = data.hashTag;
+    },
+    selectCard(index){
+      console.log('BoardImgPreview : sendImg() ')
+      console.log(index)
+      this.$router.push( 
+        { 
+          name: 'details', 
+          params: {
+            blogId : index
+          } 
+        } 
+      ); // Not Working
+    },
+  },
+  created() {
+    this.getBoardList();
   }
 };
 </script>

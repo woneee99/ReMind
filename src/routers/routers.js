@@ -79,7 +79,8 @@ export default new VueRouter({
       component: BoardInsertPage,
     },
     {
-      path: "/detail",
+      name: "details",
+      path: "/details",
       component: BoardDetailPage,
     }
   ],
