@@ -10,4 +10,11 @@
         INSERT INTO trip_spots ( planId, tripDate, spotName, spotId, spotLa, spotMa, spotAddress, spotPhone, departureTime, duration, moveTime, spotOrder)
         VALUES (#{planId}, #{tripDate}, #{spotName}, #{spotId}, #{spotLa}, #{spotMa}, #{spotAddress}, #{spotPhone}, #{departureTime}, #{duration}, #{moveTime}, #{spotOrder})
     </insert>
+
+    <select id="getUserPlans" parameterType="int"
+            resultType="com.example.enjoytrip.api.dto.TripPlanDto">
+        SELECT planId, userSeq, planTitle, startDate, endDate, createdAt, updatedAt
+        FROM plans
+        where userSeq = #{userSeq}
+    </select>
 </mapper>

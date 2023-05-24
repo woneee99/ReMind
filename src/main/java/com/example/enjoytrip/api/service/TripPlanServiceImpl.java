@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
+
 @Service
 public class TripPlanServiceImpl implements TripPlanService {
 
@@ -31,6 +33,13 @@ public class TripPlanServiceImpl implements TripPlanService {
             // TripPlanSpotDto에서 TripPlanDto의 pk값을 fk로 가지는 애들 삭제한다.
         }
         return FAIL;
+    }
+
+    @Override
+    public List<TripPlanDto> getUserPlans(int userSeq) {
+        List<TripPlanDto> temp = tripPlanDao.getUserPlans(userSeq);
+        System.out.println(temp);
+        return temp;
     }
 
     private int insertTripPlanSpots(TripPlanDto tripPlanDto) {
