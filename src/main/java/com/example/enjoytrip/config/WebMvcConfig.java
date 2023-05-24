@@ -10,6 +10,7 @@ import org.springframework.web.servlet.config.annotation.ContentNegotiationConfi
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.Filter;
 
@@ -25,4 +26,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .maxAge(3600);
     }
 
+    @Bean
+    MappingJackson2JsonView jsonView() {
+        return new MappingJackson2JsonView();
+    }
 }

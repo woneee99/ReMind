@@ -28,6 +28,13 @@
         where userId = #{userId}
     </select>
 
+    <select id="findUserByUserSeq"
+            parameterType="int" resultType="com.example.enjoytrip.api.dto.UserDto">
+        select *
+        from users
+        where userSeq = #{userSeq}
+    </select>
+
     <select id="findEmailUser"
             parameterType="String" resultType="com.example.enjoytrip.api.dto.UserDto">
         select *

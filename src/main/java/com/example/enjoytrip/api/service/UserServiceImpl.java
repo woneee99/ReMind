@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
+import static com.example.enjoytrip.oauth2.entity.RoleType.USER;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -44,7 +46,7 @@ public class UserServiceImpl implements UserService {
         dto.setMessage("안녕하세요. 임시비밀번호 안내 관련 이메일 입니다." + " 회원님의 임시 비밀번호는 "
                 + str + " 입니다." + "로그인 후에 비밀번호를 변경을 해주세요");
 
-        userDto.setUserPassword(str);
+        userDto.setUserPassword(passwordEncoder.encode(str));
         System.out.println("userDto = " + userDto);
         userDao.findEmailUpdate(userDto);
         mailSend(dto);
@@ -68,6 +70,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public int register(UserDto userDto) {
         userDto.setUserId(userDto.getUserEmail());
+        userDto.setRoleType(USER);
+        userDto.setEmailVerifiedYn("Y");
         if(userDto.getUserPassword() != null) {
             userDto.setUserPassword(passwordEncoder.encode(userDto.getUserPassword()));
         }
