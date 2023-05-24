@@ -3,7 +3,11 @@
     <breadcrumb-section title="나의 여행 일정" description="계획한 여행을 한 눈에 보세요." />
     <div class="container">
       <div class="row p-3 justify-content-center">
-        <div v-for="plan in myPlans" :key="plan.planId" class="card mb-3 col-5 mx-3">
+        <div v-for="(plan, index) in myPlans" :key="plan.planId" class="card mb-3 col-5 mx-3">
+          <span class="position-absolute top-0 start-0 translate-middle badge bg-info m-1 p-2">
+            {{ daysLeft[index] }}
+            <span class="visually-hidden">D-Day</span>
+          </span>
           <div class="row g-0">
             <div class="col-md-5">
               <div class="card-body">
@@ -13,12 +17,11 @@
               </div>
             </div>
             <div class="col-md-7">
-              <div class="card-body">
+              <div class="card-body my-2 mt-4">
                 <h6 class="card-title">여행 일자</h6>
                 <p class="card-text">{{ plan.startDate }} - {{ plan.endDate }}</p>
                 <h6 class="card-title">계획 생성 일자</h6>
                 <p class="card-text">{{ plan.createdAt }}</p>
-                <p class="card-text"><small class="text-muted">D-2</small></p>
               </div>
             </div>
           </div>
@@ -48,6 +51,31 @@ export default {
       myPlans: [],
     };
   },
+  computed: {
+    daysLeft() {
+      return this.myPlans.map((plan) => {
+        const startDate = new Date(plan.startDate);
+        const today = new Date();
+        startDate.setHours(0, 0, 0, 0);
+        today.setHours(0, 0, 0, 0);
+
+        const timeDiff = startDate.getTime() - today.getTime();
+        const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+        let dDayPrefix = "D - ";
+        if (diffDays < 0) {
+          dDayPrefix = "D + ";
+        } else if (diffDays === 0) {
+          return `${dDayPrefix}day`;
+        }
+        console.log(startDate);
+        console.log(today);
+        console.log(diffDays);
+        return `${dDayPrefix}${Math.abs(diffDays)}`;
+      });
+    },
+  },
+
   created() {
     this.token = localStorage.getItem("token");
     if (this.token != null) {
