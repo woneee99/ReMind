@@ -16,7 +16,7 @@
           <li><router-link to="/board">Community</router-link></li>
           <li class="dropdown" v-if="isLogin">
             <a href="/">
-              <span >{{ name }}</span> 
+              <span>{{ name }}</span>
               <i class="bi bi-chevron-down dropdown-indicator"></i>
             </a>
             <ul>
@@ -37,64 +37,67 @@
 </template>
 
 <script>
-import http from '@/common/axios'
+import http from "@/common/axios";
 
 export default {
-  props: ['isLogin'],
+  props: ["isLogin"],
   data() {
     return {
       name: "",
       token: localStorage.getItem("token"),
-    }
+    };
   },
   methods: {
     async getUser() {
-      await http.get("/api/v1/users", {
+      await http
+        .get("/api/v1/users", {
           headers: {
-            'Authorization': 'Bearer ' + this.token
-          }
+            Authorization: "Bearer " + this.token,
+          },
         })
-        .then(response => {
+        .then((response) => {
           let { data } = response;
           this.name = data.userName;
+          this.userSeq = data.userSeq;
         })
-        .catch(error => {
-          console.error(error)
+        .catch((error) => {
+          console.error(error);
         });
 
-      console.log(this.name)
+      console.log(this.name);
     },
     async logout() {
-      await http.get("/api/v1/auth/logout", {
+      await http
+        .get("/api/v1/auth/logout", {
           headers: {
-            'Authorization': 'Bearer ' + this.token
-          }
+            Authorization: "Bearer " + this.token,
+          },
         })
-        .then(response => {
+        .then((response) => {
           console.log(response.data);
-          if(response.data == 1) {
+          if (response.data == 1) {
             localStorage.removeItem("token");
-            this.token = ''
-            this.$emit('login-success', false);
-            console.log(this.token)
+            this.token = "";
+            this.$emit("login-success", false);
+            console.log(this.token);
           }
         })
-        .catch(error => {
-          console.error(error)
+        .catch((error) => {
+          console.error(error);
         });
-    }
+    },
   },
   computed: {
-    login: function() {
+    login: function () {
       this.token = localStorage.getItem("token");
-      if(this.token != null) {
+      if (this.token != null) {
         this.getUser();
       }
-    }
+    },
   },
   created() {
     this.token = localStorage.getItem("token");
-    if(this.token != null) {
+    if (this.token != null) {
       this.getUser();
     }
   },

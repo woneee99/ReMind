@@ -80,7 +80,8 @@
 </template>
 
 <script>
-import http from "axios";
+import http from "@/common/axios";
+import axios from "axios";
 import moment from "moment";
 import { DatePicker, TimePicker } from "ant-design-vue";
 import "ant-design-vue/dist/antd.css";
@@ -93,6 +94,7 @@ export default {
   },
   data() {
     return {
+      userSeq: 0,
       map: null,
       ps: null,
       infowindow: null,
@@ -108,9 +110,14 @@ export default {
       tripSpots: [],
     };
   },
-  props: {},
+  // props: ["isLogin"],
   watch: {},
-  created() {},
+  created() {
+    this.token = localStorage.getItem("token");
+    if (this.token != null) {
+      this.getUser();
+    }
+  },
   mounted() {
     // api 스크립트 소스 불러오기 및 지도 출력
     if (window.kakao && window.kakao.maps) {
@@ -118,8 +125,27 @@ export default {
     } else {
       this.loadScript();
     }
+    // console.log(this.isLogin);
   },
   methods: {
+    async getUser() {
+      await http
+        .get("/api/v1/users", {
+          headers: {
+            Authorization: "Bearer " + this.token,
+          },
+        })
+        .then((response) => {
+          let { data } = response;
+          // this.name = data.userName;
+          this.userSeq = data.userSeq;
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
+      console.log(this.userSeq);
+    },
     // api 불러오기
     loadScript() {
       const script = document.createElement("script");
@@ -502,87 +528,97 @@ export default {
 
     sendMyPlan() {
       const REST_API_KEY = "718049a1e16b0994e3ed033e857244a3";
-      http.defaults.headers.common["Authorization"] = `KakaoAK ${REST_API_KEY}`;
-      http.defaults.headers.common["Content-Type"] = "application/json";
+      axios.defaults.headers.common["Authorization"] = `KakaoAK ${REST_API_KEY}`;
+      axios.defaults.headers.common["Content-Type"] = "application/json";
 
-      // const $this = this;
-      for (let i = 0; i < this.myPlans.length; i++) {
-        // 현재 요소에 대한 작업 수행
-        console.log(i + 1 + "번 요청!!!!!");
-        // console.log(this.myPlans[i]);
-        // console.log(
-        //   this.dateRange[0].clone().add(i, "day").format("YYYYMMDD") +
-        //     this.dateTime[i + 1]._d.getHours().toString().padStart(2, "0") +
-        //     this.dateTime[i + 1]._d.getMinutes().toString().padStart(2, "0")
-        // );
+      const $this = this; // `this`를 클로저 변수에 할당
 
-        let drivingTimeAPI =
-          "https://apis-navi.kakaomobility.com/v1/future/directions?" +
-          "origin=" +
-          this.myPlans[i][0].placePosition.La +
-          "," +
-          this.myPlans[i][0].placePosition.Ma +
-          "&destination=" +
-          this.myPlans[i][this.myPlans[i].length - 1].placePosition.La +
-          "," +
-          this.myPlans[i][this.myPlans[i].length - 1].placePosition.Ma +
-          "&departure_time=" +
-          this.dateRange[0].clone().add(i, "day").format("YYYYMMDD") +
-          this.dateTime[i + 1]._d.getHours().toString().padStart(2, "0") +
-          this.dateTime[i + 1]._d.getMinutes().toString().padStart(2, "0");
+      const sendRequest = async function (i, myPlan) {
+        try {
+          const drivingTimeAPI =
+            "https://apis-navi.kakaomobility.com/v1/future/directions?" +
+            "origin=" +
+            myPlan[0].placePosition.La +
+            "," +
+            myPlan[0].placePosition.Ma +
+            "&destination=" +
+            myPlan[myPlan.length - 1].placePosition.La +
+            "," +
+            myPlan[myPlan.length - 1].placePosition.Ma +
+            "&departure_time=" +
+            $this.dateRange[0].clone().add(i, "day").format("YYYYMMDD") +
+            $this.dateTime[i + 1]._d.getHours().toString().padStart(2, "0") +
+            $this.dateTime[i + 1]._d.getMinutes().toString().padStart(2, "0");
 
-        if (this.myPlans[i].length > 2) {
-          // 경유지가 있으면
-          drivingTimeAPI += "&waypoints=";
-          for (let j = 1; j < this.myPlans[i].length - 1; j++) {
-            const wayPointLa = this.myPlans[i][j].placePosition.La;
-            const wayPointMa = this.myPlans[i][j].placePosition.Ma;
-            drivingTimeAPI += wayPointLa + "," + wayPointMa;
-            if (j != this.myPlans[i].length - 2) {
-              drivingTimeAPI += "|";
+          if (myPlan.length > 2) {
+            // 경유지가 있으면
+            drivingTimeAPI += "&waypoints=";
+            for (let j = 1; j < myPlan.length - 1; j++) {
+              const wayPointLa = myPlan[j].placePosition.La;
+              const wayPointMa = myPlan[j].placePosition.Ma;
+              drivingTimeAPI += wayPointLa + "," + wayPointMa;
+              if (j != myPlan.length - 2) {
+                drivingTimeAPI += "|";
+              }
             }
           }
-        }
-        console.log(drivingTimeAPI);
-        const $this = this;
-        (function (i, myPlan) {
-          http
-            .get(drivingTimeAPI)
-            .then((response) => {
-              console.log(response);
-              $this.pushTripSpots(response, myPlan, i); // tripSpots 배열에 객체 push
-              alert(
-                "이동 거리: " +
-                  response.data.routes[0].sections[0].distance / 1000 +
-                  "km   " +
-                  "소요 시간: " +
-                  Math.floor(response.data.routes[0].sections[0].duration / 60) +
-                  "분 " +
-                  (response.data.routes[0].sections[0].duration % 60) +
-                  "초"
-              );
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        })(i, this.myPlans[i]);
 
-        console.log("여행 계획 제목은: " + this.planTitle);
-        console.log("==============");
-        console.log("여행 날짜는: " + this.dateRange[0].clone().add(i, "day").format("YYYYMMDD"));
-        console.log("출발 시간(초)은: " + this.dateTime[i + 1]._d.getHours() * 3600 + this.dateTime[i + 1]._d.getMinutes() * 60);
-        console.log(this.myPlans[i][0]);
+          console.log(drivingTimeAPI);
+
+          const response = await axios.get(drivingTimeAPI);
+          console.log(response);
+          $this.pushTripSpots(response, myPlan, i); // tripSpots 배열에 객체 push
+          alert(
+            "이동 거리: " +
+              response.data.routes[0].sections[0].distance / 1000 +
+              "km   " +
+              "소요 시간: " +
+              Math.floor(response.data.routes[0].sections[0].duration / 60) +
+              "분 " +
+              (response.data.routes[0].sections[0].duration % 60) +
+              "초"
+          );
+
+          console.log($this.tripSpots);
+          console.log("여행 계획 제목은: " + $this.planTitle);
+          console.log("==============");
+          console.log("여행 날짜는: " + $this.dateRange[0].clone().add(i, "day").format("YYYYMMDD"));
+          console.log("출발 시간(초)은: " + $this.dateTime[i + 1]._d.getHours() * 3600 + $this.dateTime[i + 1]._d.getMinutes() * 60);
+          console.log(myPlan[0]);
+
+          if (i === $this.myPlans.length - 1) {
+            await $this.sendJson();
+          }
+        } catch (error) {
+          console.log(error);
+          return;
+        }
+      };
+
+      for (let i = 0; i < this.myPlans.length; i++) {
+        console.log(i + 1 + "번 요청!!!!!");
+        sendRequest(i, this.myPlans[i]);
       }
-      // AJAX 요청 등을 통해 jsonData를 특정 API에 전송
-      // 예를 들어 axios를 사용한 POST 요청 예시:
-      // http
-      //   .post("https://example.com/api/endpoint", jsonData)
-      //   .then((response) => {
-      //     // 요청에 대한 성공적인 응답 처리
-      //   })
-      //   .catch((error) => {
-      //     // 요청에 대한 오류 처리
-      //   });
+    },
+
+    async sendJson() {
+      const jsonData = {
+        userSeq: this.userSeq,
+        planTitle: this.planTitle,
+        tripSpots: this.tripSpots,
+      };
+
+      console.log(jsonData);
+
+      try {
+        const response = await http.post("/api/v1/plan", JSON.stringify(jsonData));
+        console.log(response);
+        alert("여행 계획 저장 성공!");
+        this.$router.push("/");
+      } catch (error) {
+        console.log(error);
+        alert("여행 계획 저장 중 문제가 생겼습니다.");
+      }
     },
     moment,
     range(start, end) {
@@ -612,7 +648,7 @@ export default {
       for (let i = 0; i < dayPlan.length; i++) {
         const temp = {
           tripDate: this.dateRange[0].clone().add(index, "day").format("YYYYMMDD"),
-          stopName: dayPlan[i].place.place_name,
+          spotName: dayPlan[i].place.place_name,
           spotId: dayPlan[i].place.id,
           spotLa: dayPlan[i].placePosition.La,
           spotMa: dayPlan[i].placePosition.Ma,
@@ -634,7 +670,7 @@ export default {
           i > 0 ? response.data.routes[0].sections[i - 1].duration + dayPlan[i].stayTime._d.getHours() * 3600 + dayPlan[i].stayTime._d.getMinutes() * 60 : 0;
       }
       console.log("json 만드실?");
-      console.log(this.tripSpots);
+
       // console.log(response);
       // console.log(dayPlan);
       // console.log("여행 계획 제목은: " + this.planTitle);
