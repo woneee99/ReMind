@@ -535,7 +535,7 @@ export default {
 
       const sendRequest = async function (i, myPlan) {
         try {
-          const drivingTimeAPI =
+          let drivingTimeAPI =
             "https://apis-navi.kakaomobility.com/v1/future/directions?" +
             "origin=" +
             myPlan[0].placePosition.La +
@@ -552,8 +552,12 @@ export default {
 
           if (myPlan.length > 2) {
             // 경유지가 있으면
+            console.log("경유지가 있습니다.");
+            console.log(drivingTimeAPI);
             drivingTimeAPI += "&waypoints=";
+            console.log(drivingTimeAPI);
             for (let j = 1; j < myPlan.length - 1; j++) {
+              console.log(j);
               const wayPointLa = myPlan[j].placePosition.La;
               const wayPointMa = myPlan[j].placePosition.Ma;
               drivingTimeAPI += wayPointLa + "," + wayPointMa;
@@ -591,6 +595,7 @@ export default {
           }
         } catch (error) {
           console.log(error);
+          // console.log(drivingTimeAPI);
           return;
         }
       };

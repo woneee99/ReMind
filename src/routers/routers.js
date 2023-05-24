@@ -81,6 +81,6 @@ export default new VueRouter({
     {
       path: "/detail",
       component: BoardDetailPage,
-    }
+    },
   ],
 });
