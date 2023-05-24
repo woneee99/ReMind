@@ -2,9 +2,13 @@ package com.example.enjoytrip.api.controller;
 
 import com.example.enjoytrip.api.dto.TripPlanDto;
 import com.example.enjoytrip.api.dto.TripPlanSpotDto;
+import com.example.enjoytrip.api.dto.UserDto;
 import com.example.enjoytrip.api.service.TripPlanService;
+import com.example.enjoytrip.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +19,9 @@ public class TripPlanController {
 
     @Autowired
     TripPlanService tripPlanService;
+
+    @Autowired
+    UserService userService;
 
     private static final int SUCCESS = 1;
 
@@ -28,9 +35,14 @@ public class TripPlanController {
     }
 
     @GetMapping("/my-plans")
-    public ResponseEntity<List<TripPlanDto>> getUserPlans(@RequestParam int userSeq) {
-        System.out.println("내 pk: " + userSeq);
-        List<TripPlanDto> myPlans = tripPlanService.getUserPlans(userSeq);
+    public ResponseEntity<List<TripPlanDto>> getUserPlans() {
+        Authentication principal = SecurityContextHolder.getContext().getAuthentication();
+        String username = principal.getName();
+        System.out.println("username = " + username);
+        UserDto user = userService.getUser(username);
+
+        System.out.println("내 pk: " + user.getUserSeq());
+        List<TripPlanDto> myPlans = tripPlanService.getUserPlans(user.getUserSeq());
         System.out.println("내 계획!!!!!! " + myPlans);
 
         if (myPlans.isEmpty()) {

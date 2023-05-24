@@ -1,5 +1,6 @@
 package com.example.enjoytrip.api.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -14,5 +15,8 @@ public class BlogFile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int blogFileId;
     private String blogUrl;
-    private int blogId;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JsonBackReference
+    private Blog blogId;
 }

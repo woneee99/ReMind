@@ -1,16 +1,15 @@
 package com.example.enjoytrip.api.service;
 
 import com.example.enjoytrip.api.dto.BlogDto;
-import com.example.enjoytrip.api.entity.Blogs;
+import com.example.enjoytrip.api.entity.Blog;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface BlogService {
-    Blogs blogsInsert(Blogs blogs);
-    Page<Blogs> findAll(Pageable pageable);
-    List<Blogs> findByUserSeq(int userSeq);
-    BlogDto blogDetail(int blogId);
+    Blog blogInsert(Blog blog);
+    Page<Blog> findAll(Pageable pageable);
+    List<Blog> findByUserSeq(int userSeq);
+    BlogDto blogDetail(int blogsId);
 }
