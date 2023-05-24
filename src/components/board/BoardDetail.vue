@@ -1,28 +1,22 @@
 <template>
     <main id="main">
-
     <!-- ======= Breadcrumbs ======= -->
     <div class="breadcrumbs">
       <div class="page-header d-flex align-items-center" style="background-image: url('assets/img/page-header.jpg');">
         <div class="container position-relative">
           <div class="row d-flex justify-content-center">
-            <div class="col-lg-6 text-center">
-              <h2>Service Details</h2>
-              <p>Odio et unde deleniti. Deserunt numquam exercitationem. Officiis quo odio sint voluptas consequatur ut a odio voluptatem. Sit dolorum debitis veritatis natus dolores. Quasi ratione sint. Sit quaerat ipsum dolorem.</p>
-            </div>
           </div>
         </div>
       </div>
       <nav>
         <div class="container">
           <ol>
-            <li><a href="index.html">Home</a></li>
-            <li>Service Details</li>
+            <li><router-link to="/board">Blog Main</router-link></li>
+            <li>게시글</li>
           </ol>
         </div>
       </nav>
     </div><!-- End Breadcrumbs -->
-
     <!-- ======= Service Details Section ======= -->
     <section id="service-details" class="service-details">
       <div class="container" data-aos="fade-up">
@@ -31,39 +25,44 @@
 
           <div class="col-lg-4">
             <div class="services-list">
-              <a href="#" class="active">Storage</a>
-              <a href="#">Logistics</a>
-              <a href="#">Cargo</a>
-              <a href="#">Trucking</a>
-              <a href="#">Packaging</a>
-              <a href="#">Warehousing</a>
+              <img :src='`${profileImageUrl}`' > <!-- 블로그 주인 프로필 사진 -->
+              <p> @ {{userName}}</p> <!-- 이름-->
             </div>
-
-            <h4>Enim qui eos rerum in delectus</h4>
-            <p>Nam voluptatem quasi numquam quas fugiat ex temporibus quo est. Quia aut quam quod facere ut non occaecati ut aut. Nesciunt mollitia illum tempore corrupti sed eum reiciendis. Maxime modi rerum.</p>
+            <!-- 트립쪽 가져와지면 여행 루트 보여주기-->
+            <!-- <h4>Enim qui eos rerum in delectus</h4> 
+            <p>Nam voluptatem quasi numquam quas fugiat ex temporibus quo est. Quia aut quam quod facere ut non occaecati ut aut. Nesciunt mollitia illum tempore corrupti sed eum reiciendis. Maxime modi rerum.</p> -->
           </div>
 
           <div class="col-lg-8">
-            <img src="assets/img/service-details.jpg" alt="" class="img-fluid services-img">
-            <h3>Temporibus et in vero dicta aut eius lidero plastis trand lined voluptas dolorem ut voluptas</h3>
+            <!-- 캐러셀 시작 -->
+            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                <div class="carousel-item active">
+                  <img :src='`${fileList[0].blogUrl}`' class="d-block w-100">
+                </div>
+                <div class="carousel-item" v-for="(file, index) in fileList.slice(1, fileList.length)"  :key="index" >
+                  <img :src="file.blogUrl" class="d-block w-100">
+                </div>
+              </div>
+              <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+              </button>
+            </div>
+            <!-- 캐러셀 끝 -->
+            <br />
+            <h5>
+              <span class="badge bg-info text-dark" v-for="(tag, index) in hashTag"  :key="index"> # {{tag.tagName}} </span> 
+            </h5>
             <p>
-              Blanditiis voluptate odit ex error ea sed officiis deserunt. Cupiditate non consequatur et doloremque consequuntur. Accusantium labore reprehenderit error temporibus saepe perferendis fuga doloribus vero. Qui omnis quo sit. Dolorem architecto eum et quos deleniti officia qui.
-            </p>
-            <ul>
-              <li><i class="bi bi-check-circle"></i> <span>Aut eum totam accusantium voluptatem.</span></li>
-              <li><i class="bi bi-check-circle"></i> <span>Assumenda et porro nisi nihil nesciunt voluptatibus.</span></li>
-              <li><i class="bi bi-check-circle"></i> <span>Ullamco laboris nisi ut aliquip ex ea</span></li>
-            </ul>
-            <p>
-              Est reprehenderit voluptatem necessitatibus asperiores neque sed ea illo. Deleniti quam sequi optio iste veniam repellat odit. Aut pariatur itaque nesciunt fuga.
-            </p>
-            <p>
-              Sunt rem odit accusantium omnis perspiciatis officia. Laboriosam aut consequuntur recusandae mollitia doloremque est architecto cupiditate ullam. Quia est ut occaecati fuga. Distinctio ex repellendus eveniet velit sint quia sapiente cumque. Et ipsa perferendis ut nihil. Laboriosam vel voluptates tenetur nostrum. Eaque iusto cupiditate et totam et quia dolorum in. Sunt molestiae ipsum at consequatur vero. Architecto ut pariatur autem ad non cumque nesciunt qui maxime. Sunt eum quia impedit dolore alias explicabo ea.
+              {{content}}
             </p>
           </div>
-
         </div>
-
       </div>
     </section><!-- End Service Details Section -->
 
@@ -71,10 +70,60 @@
 
 </template>
 <script>
-export default {
+import http from '@/common/axios'
 
+export default {
+    data() {
+        return {
+          fileList: [
+            { blogFileId : ''},
+            { blogUrl : ""},
+            { blogId : ''}
+          ],
+          blogId: 1,
+          content: "",
+          likeCount: "",
+          createdAt: "",
+          userName: "",
+          profileImageUrl: "",
+          hashTag: [
+            { id : ''},
+            { tagName : ""},
+            { blogId : ''}
+          ],
+        }
+    },
+    methods: {
+      async getImg() {
+        // let token = localStorage.getItem("token");
+        // console.log(token)
+        
+        let response = await http.get("/api/v1/blog/" + this.blogId); // 블로그 가져오기
+        // let response2 = await http.get("/api/v1/blog/" + this.blogId); // 사진 가져오기
+
+        let { data } = response;
+        // let { data2 } = response2;
+        
+        // console.log("data: " + data1.fileUrl);
+        // this.carouselList = data1;
+        this.userName = data.userName;
+        this.profileImageUrl = data.profileImageUrl;
+        this.content = data.content;
+        this.fileList = data.fileList;
+
+        
+        this.boards = data;
+        this.hashTag = data.hashTag;
+      
+      }
+    },
+    created() {
+      this.getImg();
+    }
 }
 </script>
 <style scoped>
-
+.services-list img {
+  width: 100%;
+}
 </style>

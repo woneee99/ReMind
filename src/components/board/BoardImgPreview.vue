@@ -7,7 +7,7 @@
           <input @change="selectImg" type="file" class="real-upload" accept="image/*" required multiple/>
           <ul class="image-preview"></ul>
           <div class="upload" @click="imgDelete"> 이미지 전체 삭제하기 </div>
-        <router-link to="/posts" id="write-btn"> 글 작성하러 가기</router-link>
+        <a href="#" @click.prevent="sendImg">글 작성하러 가기</a>
       </div>
     </section>
   </main>
@@ -16,7 +16,6 @@
 <script>
 
 import BreadcrumbSection from "@/components/BreadcrumbSection.vue";
-import {eventBus} from "../../main.js";
 
 export default {
     components: {
@@ -57,8 +56,6 @@ export default {
               reader.readAsDataURL(file);
           });
         }
-        // console.log(this.fileList)
-        eventBus.sendImg(this.fileList);
       },
       createLi(e, file) {
         const li = document.createElement('li');
@@ -79,7 +76,19 @@ export default {
           li.parentNode.removeChild(li); // img 요소 삭제
         });
         this.fileList = [];
-      }
+      },
+      sendImg(){
+        console.log('BoardImgPreview : sendImg() ')
+        console.log(this.fileList)
+        this.$router.push( 
+          { 
+            name: 'posts', 
+            params: {
+              fileList : this.fileList 
+            } 
+          } 
+        ); // Not Working
+      },
     },
     writeBtn() { 
       console.log(this.fileList)
@@ -120,7 +129,7 @@ export default {
     color: rgb(255, 87, 87);
 }
 
-img {
+li img {
   width: 200px;
   height: 200px;
 }
