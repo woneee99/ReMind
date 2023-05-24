@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 public class TripPlanServiceImpl implements TripPlanService {
@@ -41,8 +41,26 @@ public class TripPlanServiceImpl implements TripPlanService {
     }
 
     @Override
-    public List<TripPlanSpotDto> getUserPlanSpots(int planId) {
-        return tripPlanDao.getUserPlanSpots(planId);
+    public List<List<TripPlanSpotDto>> getUserPlanSpots(int planId) {
+        List<TripPlanSpotDto> planSpots = tripPlanDao.getUserPlanSpots(planId);
+
+        Map<String, List<TripPlanSpotDto>> spotMap = new TreeMap<>();
+
+        // 날짜별로 관광지 정보를 그룹화
+        for (TripPlanSpotDto spot : planSpots) {
+            String tripDate = spot.getTripDate();
+            spotMap.computeIfAbsent(tripDate, k -> new ArrayList<>()).add(spot);
+        }
+
+        // 날짜 오름차순으로 정렬된 2차원 배열 생성
+        List<List<TripPlanSpotDto>> sortedSpots = new ArrayList<>(spotMap.values());
+
+        // 관광지 정보를 spotOrder를 기준으로 오름차순으로 정렬
+        for (List<TripPlanSpotDto> spots : sortedSpots) {
+            spots.sort(Comparator.comparingInt(TripPlanSpotDto::getSpotOrder));
+        }
+
+        return sortedSpots;
     }
 
     private int insertTripPlanSpots(TripPlanDto tripPlanDto) {

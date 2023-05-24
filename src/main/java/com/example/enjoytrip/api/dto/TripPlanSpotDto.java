@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TripPlanSpotDto {
-    private int tripPlanSpotId;
+    private int tripSpotId;
     private int planId;
     private String tripDate;
     private String spotName;
