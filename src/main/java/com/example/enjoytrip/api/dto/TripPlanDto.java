@@ -13,5 +13,7 @@ public class TripPlanDto {
     private int planId;
     private int userSeq;
     private String planTitle;
+    private String startDate;
+    private String endDate;
     private List<TripPlanSpotDto> tripSpots;
 }

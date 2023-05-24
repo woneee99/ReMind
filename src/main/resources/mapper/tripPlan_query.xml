@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.enjoytrip.api.dao.TripPlanDao">
     <insert id="insertTripPlan" parameterType="com.example.enjoytrip.api.dto.TripPlanDto" useGeneratedKeys="true" keyProperty="planId">
-        INSERT INTO plans (userSeq, planTitle, createdAt)
-        VALUES (#{userSeq}, #{planTitle}, now())
+        INSERT INTO plans (userSeq, planTitle, startDate, endDate, createdAt)
+        VALUES (#{userSeq}, #{planTitle}, #{startDate}, #{endDate}, now())
     </insert>
 
     <insert id="insertTripPlanSpots" parameterType="com.example.enjoytrip.api.dto.TripPlanSpotDto">
