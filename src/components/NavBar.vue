@@ -21,7 +21,7 @@
             </a>
             <ul>
               <li><router-link to="/profile">프로필 관리</router-link></li>
-              <li><a href="/myplans">내 여행</a></li>
+              <li><router-link to="/myplans">내 여행</router-link></li>
               <li><router-link to="/faq">공지사항 / FAQ</router-link></li>
             </ul>
           </li>
