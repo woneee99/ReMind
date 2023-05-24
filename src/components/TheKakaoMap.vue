@@ -606,6 +606,8 @@ export default {
         userSeq: this.userSeq,
         planTitle: this.planTitle,
         tripSpots: this.tripSpots,
+        startDate: this.dateRange[0].format("YYYYMMDD"),
+        endDate: this.dateRange[1].format("YYYYMMDD"),
       };
 
       console.log(jsonData);

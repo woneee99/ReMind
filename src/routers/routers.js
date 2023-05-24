@@ -9,6 +9,7 @@ import findPwdPage from "@/components/user/FindPwd";
 import TripPage from "@/components/trip/TripPage";
 import PlanPage from "@/components/trip/PlanPage";
 import MyPlanPage from "@/components/trip/MyPlanPage";
+import MyPlanDetailPage from "@/components/trip/MyPlanDetailPage";
 import FaqPage from "@/components/FAQ/FaqPage";
 import BoardPage from "@/components/board/BoardMain";
 
@@ -46,8 +47,12 @@ export default new VueRouter({
       component: PlanPage,
     },
     {
-      path: "/myplan",
+      path: "/myplans",
       component: MyPlanPage,
+    },
+    {
+      path: "/myplan",
+      component: MyPlanDetailPage,
     },
     {
       path: "/profile",
