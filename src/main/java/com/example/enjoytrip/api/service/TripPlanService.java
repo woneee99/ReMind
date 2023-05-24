@@ -10,5 +10,7 @@ public interface TripPlanService {
 
     List<TripPlanDto> getUserPlans(int userSeq);
 
-    List<TripPlanSpotDto> getUserPlanSpots(int planId);
+    List<List<TripPlanSpotDto>> getUserPlanSpots(int planId);
+
+    int deleteUserPlans(int planId, int userSeq);
 }

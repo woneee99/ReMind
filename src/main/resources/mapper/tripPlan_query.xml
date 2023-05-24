@@ -25,4 +25,10 @@
         WHERE planId = #{planId}
         ORDER BY tripDate, spotOrder
     </select>
+
+    <delete id="deleteUserPlans" parameterType="map">
+        DELETE FROM plans
+        WHERE planId = #{planId}
+          AND userSeq = #{userSeq}
+    </delete>
 </mapper>
