@@ -9,7 +9,7 @@
               <div class="card-body">
                 <h5 class="card-title mt-3 fw-bold">{{ plan.planTitle }}</h5>
                 <button type="button" class="btn btn-outline-primary col-8 my-1" @click="redirectToMyPlan(plan.planId)">일정 보기</button><br />
-                <button type="button" class="btn btn-outline-danger col-8 my-1">일정 삭제</button>
+                <button type="button" class="btn btn-outline-danger col-8 my-1" @click="deleteMyPlan(plan.planId)">일정 삭제</button>
               </div>
             </div>
             <div class="col-md-7">
@@ -44,7 +44,7 @@ export default {
   data() {
     return {
       userSeq: 0,
-      token: localStorage.getItem("token"),
+      token: null,
       myPlans: [],
     };
   },
@@ -57,7 +57,6 @@ export default {
       this.$nextTick(async () => {
         try {
           // await this.getUser();
-
           const response = await http.get("/api/v1/plan/my-plans", {
             headers: {
               Authorization: "Bearer " + this.token,
@@ -74,26 +73,29 @@ export default {
     }
   },
   methods: {
-    // async getUser() {
-    //   await http
-    //     .get("/api/v1/users", {
-    //       headers: {
-    //         Authorization: "Bearer " + this.token,
-    //       },
-    //     })
-    //     .then((response) => {
-    //       let { data } = response;
-    //       this.userSeq = data.userSeq;
-    //     })
-    //     .catch((error) => {
-    //       console.error(error);
-    //     });
-
-    //   console.log(this.userSeq);
-    // },
     redirectToMyPlan(planId) {
-      // '/myplan'으로 이동하는 코드
       this.$router.push({ path: "/myplan", query: { planId } });
+    },
+    deleteMyPlan(planId) {
+      if (this.token) {
+        http
+          .delete("/api/v1/plan/my-plan/" + planId, {
+            headers: {
+              Authorization: "Bearer " + this.token,
+            },
+          })
+          .then((response) => {
+            let { data } = response;
+            console.log(data);
+            const index = this.myPlans.findIndex((plan) => plan.planId === planId);
+            if (index !== -1) {
+              this.myPlans.splice(index, 1);
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
     },
   },
 };
