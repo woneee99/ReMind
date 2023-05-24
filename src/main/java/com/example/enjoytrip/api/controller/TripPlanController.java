@@ -4,10 +4,9 @@ import com.example.enjoytrip.api.dto.TripPlanDto;
 import com.example.enjoytrip.api.service.TripPlanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/plan")
@@ -25,5 +24,18 @@ public class TripPlanController {
             return ResponseEntity.ok("여행 계획 저장 완료");
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/my-plans")
+    public ResponseEntity<List<TripPlanDto>> getUserPlans(@RequestParam int userSeq) {
+        System.out.println("내 pk: " + userSeq);
+        List<TripPlanDto> myPlans;
+        myPlans = tripPlanService.getUserPlans(userSeq);
+        System.out.println("내 계획!!!!!! " + myPlans);
+
+        if (myPlans.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(myPlans);
     }
 }

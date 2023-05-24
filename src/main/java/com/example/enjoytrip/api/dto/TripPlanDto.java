@@ -15,5 +15,7 @@ public class TripPlanDto {
     private String planTitle;
     private String startDate;
     private String endDate;
+    private String createdAt;
+    private String updatedAt;
     private List<TripPlanSpotDto> tripSpots;
 }
