@@ -37,7 +37,9 @@ public class TripPlanServiceImpl implements TripPlanService {
 
     @Override
     public List<TripPlanDto> getUserPlans(int userSeq) {
-        return tripPlanDao.getUserPlans(userSeq);
+        List<TripPlanDto> result = tripPlanDao.getUserPlans(userSeq);
+        result.sort(Comparator.comparing(TripPlanDto::getStartDate));
+        return result;
     }
 
     @Override
