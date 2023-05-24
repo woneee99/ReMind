@@ -45,6 +45,7 @@ export default {
     return {
       name: "",
       token: localStorage.getItem("token"),
+      isLogin: this.isLogin
     }
   },
   methods: {
@@ -56,6 +57,8 @@ export default {
         })
         .then(response => {
           let { data } = response;
+          console.log(data);
+          this.$emit('user-info', data);
           this.name = data.userName;
         })
         .catch(error => {
@@ -94,7 +97,10 @@ export default {
   },
   created() {
     this.token = localStorage.getItem("token");
+    console.log(this.token)
+    
     if(this.token != null) {
+      this.isLogin = true;
       this.getUser();
     }
   },
