@@ -11,4 +11,6 @@ public interface TripPlanService {
     List<TripPlanDto> getUserPlans(int userSeq);
 
     List<List<TripPlanSpotDto>> getUserPlanSpots(int planId);
+
+    int deleteUserPlans(int planId, int userSeq);
 }

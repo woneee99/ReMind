@@ -37,6 +37,7 @@ public class TripPlanController {
     @GetMapping("/my-plans")
     public ResponseEntity<List<TripPlanDto>> getUserPlans() {
         Authentication principal = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("principal = " + principal);
         String username = principal.getName();
         System.out.println("username = " + username);
         UserDto user = userService.getUser(username);
@@ -60,5 +61,21 @@ public class TripPlanController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(mySpots);
+    }
+
+    @DeleteMapping("/my-plan/{planId}")
+    public ResponseEntity<String> deleteUserPlans(@PathVariable int planId) {
+        Authentication principal = SecurityContextHolder.getContext().getAuthentication();
+        String username = principal.getName();
+        System.out.println("username = " + username);
+        UserDto user = userService.getUser(username);
+
+        System.out.println("내 pk: " + user.getUserSeq());
+        int result = tripPlanService.deleteUserPlans(planId, user.getUserSeq());
+        System.out.println("result = " + result);
+        if (result == SUCCESS) {
+            return ResponseEntity.ok("여행 계획 삭제 완료");
+        }
+        return ResponseEntity.notFound().build();
     }
 }

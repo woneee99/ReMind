@@ -29,8 +29,8 @@ public class TripPlanServiceImpl implements TripPlanService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            // FIX: 만들어진 여행 계획 삭제하기(delete 쿼리 작성하기)
-            // TripPlanSpotDto에서 TripPlanDto의 pk값을 fk로 가지는 애들 삭제한다.
+            // 만들어졌던 DB rows 삭제
+            tripPlanDao.deleteUserPlans(tripPlanDto.getPlanId(), tripPlanDto.getUserSeq());
         }
         return FAIL;
     }
@@ -61,6 +61,16 @@ public class TripPlanServiceImpl implements TripPlanService {
         }
 
         return sortedSpots;
+    }
+
+    @Override
+    public int deleteUserPlans(int planId, int userSeq) {
+        System.out.println("planId = " + planId);
+        System.out.println("userSeq = " + userSeq);
+        int result = tripPlanDao.deleteUserPlans(planId, userSeq);
+        System.out.println("result = " + result);
+        if (result > 0) return SUCCESS;
+        return FAIL;
     }
 
     private int insertTripPlanSpots(TripPlanDto tripPlanDto) {
