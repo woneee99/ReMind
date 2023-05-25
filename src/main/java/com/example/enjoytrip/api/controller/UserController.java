@@ -28,6 +28,8 @@ public class UserController {
         String username = principal.getName();
         System.out.println("username = " + username);
         UserDto user = userService.getUser(username);
+        System.out.println("user = " + user.toString());
+        System.out.println("user.getUserName() = " + user.getUserName());
         return ResponseEntity.ok().body(user);
     }
 

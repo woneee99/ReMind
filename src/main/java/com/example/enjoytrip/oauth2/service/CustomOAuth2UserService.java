@@ -43,7 +43,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         ProviderType providerType = ProviderType.valueOf(userRequest.getClientRegistration().getRegistrationId().toUpperCase());
 
         OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, user.getAttributes());
-        UserDto savedUser = userDao.findUser(userInfo.getId());
+        System.out.println("userInfo.getId() = " + userInfo.getEmail());
+        UserDto savedUser = userDao.findUser(userInfo.getEmail());
 
 
         if (savedUser != null) {

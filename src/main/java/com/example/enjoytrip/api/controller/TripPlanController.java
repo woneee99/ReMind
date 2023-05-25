@@ -51,7 +51,7 @@ public class TripPlanController {
         return ResponseEntity.ok(myPlans);
     }
 
-    @GetMapping("/my-plans/{planId}")
+    @GetMapping("/my-plan/{planId}")
     public ResponseEntity<List<TripPlanSpotDto>> getUserPlanSpots(@PathVariable int planId) {
         List<TripPlanSpotDto> mySpots = tripPlanService.getUserPlanSpots(planId);
         if(mySpots.isEmpty()) {
