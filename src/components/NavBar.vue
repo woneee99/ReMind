@@ -49,6 +49,7 @@ export default {
   },
   methods: {
     async getUser() {
+      console.log(this.token)
       await http
         .get("/api/v1/users", {
           headers: {
@@ -100,7 +101,9 @@ export default {
   },
   created() {
     this.token = localStorage.getItem("token");
-    if (this.token) {
+    if (this.token != null) {
+      console.log(this.token)
+      this.isLogin = true;
       this.getUser();
     }
   },
