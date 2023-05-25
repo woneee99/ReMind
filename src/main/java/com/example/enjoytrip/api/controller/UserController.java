@@ -7,7 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.security.Principal;
 
@@ -23,13 +27,8 @@ public class UserController {
         System.out.println("p = " + p);
         Authentication principal = SecurityContextHolder.getContext().getAuthentication();
 
-        System.out.println("principal = " + principal.getPrincipal().toString());
-        System.out.println("principal.toString() = " + principal.toString());
         String username = principal.getName();
-        System.out.println("username = " + username);
         UserDto user = userService.getUser(username);
-        System.out.println("user = " + user.toString());
-        System.out.println("user.getUserName() = " + user.getUserName());
         return ResponseEntity.ok().body(user);
     }
 
@@ -63,12 +62,13 @@ public class UserController {
     }
 
     @DeleteMapping("/myInfo")
-    public ResponseEntity<Integer> withdraw(HttpSession session){
-        UserDto dto = (UserDto) session.getAttribute("userDto");
-
-        int ret = userService.withdraw(dto.getUserSeq());
+    public ResponseEntity<Integer> withdraw(HttpServletRequest request, HttpServletResponse response){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        UserDto user = userService.getUser(username);
+        int ret = userService.withdraw(user.getUserSeq());
         if(ret == 1) {
-            session.invalidate();
+            new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
             return ResponseEntity.ok().body(ret);
         }
         else return ResponseEntity.notFound().build();

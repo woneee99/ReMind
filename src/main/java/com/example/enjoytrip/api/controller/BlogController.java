@@ -58,15 +58,17 @@ public class BlogController {
         return ResponseEntity.ok().body(content);
     }
 
-//    @GetMapping("/myList")
-//    public ResponseEntity<List<Blog>> myBlogList() {
-//        Authentication principal = SecurityContextHolder.getContext().getAuthentication();
-//        String username = principal.getName();
-//        UserDto user = userService.getUser(username);
-//
-//
-//        return ResponseEntity.ok().body();
-//    }
+    @GetMapping("/myList")
+    public ResponseEntity<List<BlogListDto>> myBlogList() {
+        Authentication principal = SecurityContextHolder.getContext().getAuthentication();
+        String username = principal.getName();
+        UserDto user = userService.getUser(username);
+        List<Blog> userBlogList = blogService.findByUserSeq(user.getUserSeq());
+
+        List<BlogListDto> myList = BlogListDto.getMyList(userBlogList);
+
+        return ResponseEntity.ok().body(myList);
+    }
 
     @GetMapping("/{blogId}")
     public ResponseEntity<BlogDto> getBlog(@PathVariable(name = "blogId") int blogId) {

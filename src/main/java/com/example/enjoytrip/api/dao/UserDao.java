@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 public interface UserDao {
     int register(UserDto userDto);
     int updateInfo(UserDto userDto);
-    int withdraw(int userId);
+    int withdraw(int userSeq);
     UserDto findUser(String userId);
 
     UserDto findUserByUserSeq(int userSeq);
