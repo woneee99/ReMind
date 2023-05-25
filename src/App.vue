@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <nav-bar v-bind:isLogin="isLogin" @login-success="loginSuccess"/>
+    <nav-bar v-bind:isLogin="isLogin" @login-success="loginSuccess" />
     <router-view @login-success="loginSuccess"></router-view>
     <footer-section></footer-section>
   </div>
@@ -20,25 +20,25 @@ export default {
     return {
       isLogin: false,
       token: localStorage.getItem("token"),
-    }
+    };
   },
-  methods:{
-     loginSuccess(data){
-      console.log("login: " + data)
+  methods: {
+    loginSuccess(data) {
+      console.log("login: " + data);
       this.isLogin = data;
-     },
-   }
+    },
+  },
 };
 </script>
 
 <style>
 @font-face {
-    font-family: 'Pretendard-Regular';
-    src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
-    font-style: normal;
+  font-family: "Pretendard-Regular";
+  src: url("https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff") format("woff");
+  font-style: normal;
 }
 #app {
-  font-family: 'Pretendard-Regular';
+  font-family: "Pretendard-Regular";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
