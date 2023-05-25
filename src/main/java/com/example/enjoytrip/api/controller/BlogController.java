@@ -38,9 +38,19 @@ public class BlogController {
 
     @GetMapping("/list")
     public ResponseEntity<List<BlogListDto>> blogList(@PageableDefault(size = 9, sort = "blogId", direction = Sort.Direction.DESC)
-                                               Pageable pageable) {
+                                               Pageable pageable, @RequestParam(required = false) String hashTag) {
+        Page<Blog> page = null;
+        System.out.println("hashTag = " + hashTag);
+        if(hashTag != null && hashTag.length() > 0) {
+            System.out.println(" here1 ");
+            page = blogService.findAllByHashTag(pageable, hashTag);
+        }
+        else {
+            System.out.println(" here2 ");
+            page = blogService.findAll(pageable);
+        }
         System.out.println("pageable = " + pageable);
-        Page<Blog> page = blogService.findAll(pageable);
+
         Page<BlogListDto> blogListDto = BlogListDto.toDtoList(page);
         System.out.println("blogListDto.getContent() = " + blogListDto.getContent());
         List<BlogListDto> content = blogListDto.getContent();
@@ -49,7 +59,7 @@ public class BlogController {
     }
 
 //    @GetMapping("/myList")
-//    public ResponseEntity<List<Blogs>> myBlogList() {
+//    public ResponseEntity<List<Blog>> myBlogList() {
 //        Authentication principal = SecurityContextHolder.getContext().getAuthentication();
 //        String username = principal.getName();
 //        UserDto user = userService.getUser(username);

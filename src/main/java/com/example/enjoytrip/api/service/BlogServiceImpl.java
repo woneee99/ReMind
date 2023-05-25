@@ -38,6 +38,11 @@ public class BlogServiceImpl implements BlogService{
     }
 
     @Override
+    public Page<Blog> findAllByHashTag(Pageable pageable, String hashTag) {
+        return blogRepository.findAllByHashTag(pageable, hashTag);
+    }
+
+    @Override
     public List<Blog> findByUserSeq(int userSeq) {
         return blogRepository.findByUserSeq(userSeq);
     }

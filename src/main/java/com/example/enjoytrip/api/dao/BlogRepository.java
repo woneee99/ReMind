@@ -10,4 +10,5 @@ public interface BlogRepository extends JpaRepository<Blog, String> {
     Blog findByBlogId(int blogsId);
     List<Blog> findByUserSeq(int userSeq);
     Page<Blog> findAll(Pageable pageable);
+    Page<Blog> findAllByHashTag(Pageable pageable, String hashTag);
 }

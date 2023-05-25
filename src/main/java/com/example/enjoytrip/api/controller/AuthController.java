@@ -52,8 +52,6 @@ public class AuthController {
         String userId = authReqModel.getId();
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        System.out.println(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
-
         Date now = new Date();
         AuthToken accessToken = tokenProvider.createAuthToken(
                 userId,
@@ -66,7 +64,6 @@ public class AuthController {
                 appProperties.getAuth().getTokenSecret(),
                 new Date(now.getTime() + refreshTokenExpiry)
         );
-        System.out.println("로그인 중반");
         // userId refresh token 으로 DB 확인
         UserRefreshToken userRefreshToken = userRefreshTokenDao.findUserRefreshToken(userId);
         if (userRefreshToken == null) {

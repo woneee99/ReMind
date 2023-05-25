@@ -10,6 +10,7 @@ import java.util.List;
 public interface BlogService {
     Blog blogInsert(Blog blog);
     Page<Blog> findAll(Pageable pageable);
+    Page<Blog> findAllByHashTag(Pageable pageable, String hashTag);
     List<Blog> findByUserSeq(int userSeq);
     BlogDto blogDetail(int blogsId);
 }
