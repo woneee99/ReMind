@@ -6,6 +6,8 @@ import lombok.*;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Getter
 @Builder
@@ -24,6 +26,17 @@ public class BlogListDto {
                 .hashTag(p.getHashTag())
                 .build());
         return postDtoList;
+    }
+
+    public static List<BlogListDto> getMyList(List<Blog> postList) {
+        List<BlogListDto> listDto = postList.stream().map(p -> BlogListDto.builder()
+                .thumbNail(p.getThumbNail())
+                .blogId(p.getBlogId())
+                .content(p.getContent())
+                .hashTag(p.getHashTag())
+                .build()).collect(Collectors.toList());
+
+        return listDto;
     }
 
 }

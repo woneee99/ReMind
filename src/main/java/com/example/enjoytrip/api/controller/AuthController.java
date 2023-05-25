@@ -45,20 +45,21 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(HttpServletRequest request, HttpServletResponse response, @RequestBody AuthReqModel authReqModel){
-
+        System.out.println("1");
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         authReqModel.getId(), authReqModel.getPassword());
+        System.out.println("2");
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         String userId = authReqModel.getId();
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
+        System.out.println("3");
         Date now = new Date();
         AuthToken accessToken = tokenProvider.createAuthToken(
                 userId,
                 ((UserPrincipal) authentication.getPrincipal()).getRoleType().getCode(),
                 new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
         );
-
+        System.out.println("4");
         long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
         AuthToken refreshToken = tokenProvider.createAuthToken(
                 appProperties.getAuth().getTokenSecret(),

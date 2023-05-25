@@ -25,7 +25,7 @@
             parameterType="String" resultType="com.example.enjoytrip.api.dto.UserDto">
         select *
         from users
-        where userId = #{userId}
+        where userEmail = #{userEmail}
     </select>
 
     <select id="findUserByUserSeq"
