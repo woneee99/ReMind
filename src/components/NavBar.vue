@@ -23,11 +23,11 @@
               <li><router-link to="/profile">프로필 관리</router-link></li>
               <li><router-link to="/myplans">내 여행</router-link></li>
               <li><router-link to="/faq">공지사항 / FAQ</router-link></li>
+              <li><router-link @click.native="logout" to="/" v-bind="login"> Logout </router-link></li>
             </ul>
           </li>
-          <li>
-            <router-link @click.native="logout" to="/" v-if="isLogin" v-bind="login"> Logout </router-link>
-            <router-link to="/login" v-else class="get-a-quote">Log In / Sign Up</router-link>
+          <li v-if="!isLogin">
+            <router-link to="/login" class="get-a-quote">Log In / Sign Up</router-link>
           </li>
         </ul>
       </nav>
