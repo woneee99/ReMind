@@ -5,50 +5,29 @@
       <div class="row gy-4">
         <div class="col-lg-5 col-md-12 footer-info">
           <a href="index.html" class="logo d-flex align-items-center">
-            <span>Logis</span>
+            <span>Re:Mind</span>
           </a>
           <p>
-            Cras fermentum odio eu feugiat lide par naso tierra. Justo eget nada terra videa magna derita valies darta donna mare fermentum iaculis eu non diam
-            phasellus.
+            당신의 여행은 어떻게 기억되고 있나요 <br />
+            오랫동안 기억될 오늘의 여행을 남겨드려요
           </p>
-          <div class="social-links d-flex mt-4">
-            <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
-            <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-            <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-            <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
-          </div>
         </div>
-
-        <div class="col-lg-2 col-6 footer-links">
-          <h4>Useful Links</h4>
-          <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">About us</a></li>
-            <li><a href="#">Services</a></li>
-            <li><a href="#">Terms of service</a></li>
-            <li><a href="#">Privacy policy</a></li>
-          </ul>
-        </div>
-
         <div class="col-lg-2 col-6 footer-links">
           <h4>Our Services</h4>
           <ul>
-            <li><a href="#">Web Design</a></li>
-            <li><a href="#">Web Development</a></li>
-            <li><a href="#">Product Management</a></li>
-            <li><a href="#">Marketing</a></li>
-            <li><a href="#">Graphic Design</a></li>
+            <li><a href="#">Trip Plan</a></li>
+            <li><a href="#">Popular tourist attractions</a></li>
+            <li><a href="#">Blog</a></li>
           </ul>
         </div>
 
         <div class="col-lg-3 col-md-12 footer-contact text-center text-md-start">
           <h4>Contact Us</h4>
           <p>
-            A108 Adam Street <br />
-            New York, NY 535022<br />
-            United States <br /><br />
-            <strong>Phone:</strong> +1 5589 55488 55<br />
-            <strong>Email:</strong> info@example.com<br />
+            부산광역시 강서구 송정동 <br />
+            녹산산업중로 333 <br />
+            <strong>Phone:</strong> 02-3429-5100 <br />
+            <strong>Email:</strong> tripssafy@gmail.com<br />
           </p>
         </div>
       </div>
@@ -56,7 +35,7 @@
 
     <div class="container mt-4">
       <div class="copyright">
-        &copy; Copyright <strong><span>Logis</span></strong
+        &copy; Copyright <strong><span>Re:Mind</span></strong
         >. All Rights Reserved
       </div>
       <div class="credits">
