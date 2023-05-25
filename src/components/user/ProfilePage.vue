@@ -14,22 +14,21 @@
               <div class="rounded-top text-white d-flex flex-row" style="background-color: #273f55; height: 200px">
                 <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px">
                   <img :src="imageSrc" alt="Generic placeholder image" class="img-fluid img-thumbnail mt-4 mb-2" style="width: 150px; z-index: 1" />
-
                 </div>
                 <div class="ms-3" style="margin-top: 130px">
-                  <h5>{{ name }}</h5>
+                  <p class="fs-5 m-0">{{ name }}</p>
                   <p>{{ email }}</p>
                 </div>
               </div>
               <div class="p-4 text-black" style="background-color: #f8f9fa">
-                  <template v-if="!editingAbout">
-                    <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark" style="z-index: 1" @click="editingAbout = true">
-                      Edit profile
-                    </button>
-                  </template>
-                  <template v-else>
-                    <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark" style="z-index: 1" @click="saveAbout">Save</button>
-                  </template>
+                <template v-if="!editingAbout">
+                  <button type="button" class="btn btn-outline-dark float-end" data-mdb-ripple-color="dark" style="z-index: 1" @click="editingAbout = true">
+                    Edit profile
+                  </button>
+                </template>
+                <template v-else>
+                  <button type="button" class="btn btn-outline-dark float-end" data-mdb-ripple-color="dark" style="z-index: 1" @click="saveAbout">Save</button>
+                </template>
               </div>
               <div class="card-body p-4 text-black">
                 <!-- <div class="mb-5">
@@ -49,7 +48,7 @@
                 </div>
                 <div class="row g-2">
                   <div class="col mb-2" v-for="(blog, index) in recentBlogs.slice(0, 4)" :key="index">
-                    <img :src='`${blog.thumbNail}`' class="w-100 rounded-3" @click="moveBlog()"/>
+                    <img :src="`${blog.thumbNail}`" class="w-100 rounded-3" @click="moveBlog()" />
                   </div>
                 </div>
               </div>
@@ -72,10 +71,10 @@ export default {
   },
   data() {
     return {
-      imageSrc: "",
+      imageSrc: null,
       name: "",
       email: "",
-      photoCount: '',
+      photoCount: "",
       recentBlogs: [],
       editingAbout: false,
     };
@@ -84,11 +83,9 @@ export default {
     saveAbout() {
       this.editingAbout = false;
     },
-    movePage() {
-      
-    },
+    movePage() {},
     async getUser() {
-      console.log(this.token)
+      console.log(this.token);
       await http
         .get("/api/v1/users", {
           headers: {
@@ -97,7 +94,10 @@ export default {
         })
         .then((response) => {
           let { data } = response;
-          this.imageSrc = data.profileImageUrl;
+          this.imageSrc = "https://play-lh.googleusercontent.com/38AGKCqmbjZ9OuWx4YjssAz3Y0DTWbiM5HB0ove1pNBq_o9mtWfGszjZNxZdwt_vgHo=s200";
+          if (data.profileImageUrl) {
+            this.imageSrc = data.profileImageUrl;
+          }
           this.name = data.userName;
           this.email = data.userEmail;
           console.log(data);
@@ -108,7 +108,7 @@ export default {
       this.getMyBlog();
     },
     async getMyBlog() {
-      console.log(this.token)
+      console.log(this.token);
       await http
         .get("/api/v1/blog/myList", {
           headers: {
@@ -134,21 +134,22 @@ export default {
         .then((response) => {
           let { data } = response;
           console.log(data);
-          if(data == 1) {
+          if (data == 1) {
             localStorage.clear();
             this.$emit("login-success", false);
-            this.$router.push("/")
+            this.$router.push("/");
           }
         })
         .catch((error) => {
           console.error(error);
         });
-    }
+    },
   },
   created() {
     this.token = localStorage.getItem("token");
     this.getUser();
   },
+  mounted() {},
 };
 </script>
 

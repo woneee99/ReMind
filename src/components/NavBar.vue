@@ -3,8 +3,8 @@
     <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
       <router-link to="/" class="logo d-flex align-items-center">
         <!-- Uncomment the line below if you also wish to use an image logo -->
-        <!-- <img src="assets/img/logo.png" alt=""> -->
-        <h1>Enjoy Trip</h1>
+        <img src="assets/img/brand_logo.png" alt="" />
+        <!-- <h1>Enjoy Trip</h1> -->
       </router-link>
 
       <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
