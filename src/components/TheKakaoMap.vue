@@ -169,7 +169,7 @@ export default {
       });
       //   this.loadMaker();
 
-      this.ps = new kakao.maps.services.Places();
+      this.ps = new window.kakao.maps.services.Places();
 
       // 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
       const zoomControl = new window.kakao.maps.ZoomControl();

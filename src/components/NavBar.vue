@@ -15,10 +15,10 @@
           <li><router-link to="/trip">지역 관광지</router-link></li>
           <li><router-link to="/board">Community</router-link></li>
           <li class="dropdown" v-if="isLogin">
-            <a href="/">
+            <router-link to="/profile">
               <span>{{ name }}</span>
               <i class="bi bi-chevron-down dropdown-indicator"></i>
-            </a>
+            </router-link>
             <ul>
               <li><router-link to="/profile">프로필 관리</router-link></li>
               <li><router-link to="/myplans">내 여행</router-link></li>
@@ -45,7 +45,6 @@ export default {
     return {
       name: "",
       token: localStorage.getItem("token"),
-      isLogin: this.isLogin
     };
   },
   methods: {
@@ -59,8 +58,9 @@ export default {
         .then((response) => {
           let { data } = response;
           console.log(data);
-          this.$emit('user-info', data);
+          this.$emit("user-info", data);
           this.name = data.userName;
+          this.$emit("login-success", true);
         })
         .catch((error) => {
           console.error(error);
@@ -80,6 +80,7 @@ export default {
           if (response.data == 1) {
             localStorage.removeItem("token");
             this.token = "";
+            // this.isLogin = false;
             this.$emit("login-success", false);
             console.log(this.token);
           }
@@ -92,20 +93,15 @@ export default {
   computed: {
     login: function () {
       this.token = localStorage.getItem("token");
-      if (this.token != null) {
+      if (this.token) {
         this.getUser();
       }
     },
   },
   created() {
     this.token = localStorage.getItem("token");
-    if (this.token != null) {
-      console.log(this.token)
-      
-      if(this.token != null) {
-        this.isLogin = true;
-        this.getUser();
-      }
+    if (this.token) {
+      this.getUser();
     }
   },
 };
