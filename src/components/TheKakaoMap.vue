@@ -262,8 +262,9 @@ export default {
               alert("이미 선택한 여행 장소입니다.");
               return;
             }
-            const selectMarker = $this.addSelectMarker(placePosition);
+            const selectMarker = $this.makeSelectMarker(placePosition);
             $this.showCard(selectMarker, place, placePosition, "");
+            $this.addSelectMarker();
           });
           itemEl.onmouseover = function () {
             $this.displayInfowindow(marker, place, placePosition);
@@ -293,8 +294,10 @@ export default {
               alert("이미 선택한 여행 장소입니다.");
               return;
             }
-            const selectMarker = $this.addSelectMarker(placePosition);
+            const selectMarker = $this.makeSelectMarker(placePosition);
+            selectMarker.setMap(this.map);
             $this.showCard(selectMarker, place, placePosition, "");
+            $this.addSelectMarker();
           });
           // });
         })(marker, places[i], placePosition);
@@ -365,7 +368,7 @@ export default {
       return marker;
     },
 
-    addSelectMarker(placePosition) {
+    makeSelectMarker(placePosition) {
       // const imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png", // 마커 이미지 url, 스프라이트 이미지를 씁니다
       const imageSrc = "assets/img/marker/marker.png", // 마커 이미지 url, 스프라이트 이미지를 씁니다
         imageSize = new kakao.maps.Size(43, 43), // 마커 이미지의 크기
@@ -377,8 +380,8 @@ export default {
           position: placePosition,
           image: markerImage,
         });
-      selectMarker.setMap(this.map); // 지도 위에 마커 표출
-      this.selectMarkers.push(selectMarker); // 배열에 생성된 마커 추가
+      // selectMarker.setMap(this.map); // 지도 위에 마커 표출
+      // this.selectMarkers.push(selectMarker); // 배열에 생성된 마커 추가
       console.log("선택된 마커들");
       console.log(selectMarker);
       console.log(this.selectMarkers);
@@ -523,7 +526,25 @@ export default {
       if (!this.myPlans[this.selectedIndex]) {
         this.myPlans[this.selectedIndex] = [];
       }
+      // 여기서 마커를 찍자
+      this.addSelectMarker();
       // this.myPlans[this.selectedIndex].push(plan);
+    },
+
+    addSelectMarker() {
+      // 모든 selectmarker 지우고
+      for (var i = 0; i < this.selectMarkers.length; i++) {
+        this.selectMarkers[i].setMap(null);
+      }
+      this.selectMarkers = [];
+      // this.$nextTick()을 사용하여 비동기 작업을 수행합니다.
+      // this.$nextTick(() => {
+      // this.myPlans[this.selectedIndex].placePosition을 가져와서 map에 찍기
+      for (var i = 0; i < this.myPlans[this.selectedIndex].length; i++) {
+        this.myPlans[this.selectedIndex][i].selectMarker.setMap(this.map);
+        this.selectMarkers.push(this.myPlans[this.selectedIndex][i].selectMarker);
+      }
+      // });
     },
 
     sendMyPlan() {
@@ -572,16 +593,16 @@ export default {
           const response = await axios.get(drivingTimeAPI);
           console.log(response);
           $this.pushTripSpots(response, myPlan, i); // tripSpots 배열에 객체 push
-          alert(
-            "이동 거리: " +
-              response.data.routes[0].sections[0].distance / 1000 +
-              "km   " +
-              "소요 시간: " +
-              Math.floor(response.data.routes[0].sections[0].duration / 60) +
-              "분 " +
-              (response.data.routes[0].sections[0].duration % 60) +
-              "초"
-          );
+          // alert(
+          //   "이동 거리: " +
+          //     response.data.routes[0].sections[0].distance / 1000 +
+          //     "km   " +
+          //     "소요 시간: " +
+          //     Math.floor(response.data.routes[0].sections[0].duration / 60) +
+          //     "분 " +
+          //     (response.data.routes[0].sections[0].duration % 60) +
+          //     "초"
+          // );
 
           console.log($this.tripSpots);
           console.log("여행 계획 제목은: " + $this.planTitle);
@@ -595,6 +616,7 @@ export default {
           }
         } catch (error) {
           console.log(error);
+          alert("도로를 탐색할 수 없습니다.");
           // console.log(drivingTimeAPI);
           return;
         }
@@ -621,7 +643,7 @@ export default {
         const response = await http.post("/api/v1/plan", JSON.stringify(jsonData));
         console.log(response);
         alert("여행 계획 저장 성공!");
-        this.$router.push("/");
+        this.$router.push("/myplans");
       } catch (error) {
         console.log(error);
         alert("여행 계획 저장 중 문제가 생겼습니다.");

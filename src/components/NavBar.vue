@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     async getUser() {
-      console.log(this.token)
+      console.log(this.token);
       await http
         .get("/api/v1/users", {
           headers: {
@@ -59,7 +59,7 @@ export default {
         .then((response) => {
           let { data } = response;
           console.log(data);
-          this.$emit("user-info", data);
+          // this.$emit("user-info", data);
           this.name = data.userName;
           this.$emit("login-success", true);
         })
@@ -102,8 +102,8 @@ export default {
   created() {
     this.token = localStorage.getItem("token");
     if (this.token != null) {
-      console.log(this.token)
-      this.isLogin = true;
+      console.log(this.token);
+      this.$emit("login-success", true);
       this.getUser();
     }
   },
