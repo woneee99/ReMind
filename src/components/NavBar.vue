@@ -59,7 +59,6 @@ export default {
         .then((response) => {
           let { data } = response;
           console.log(data);
-          // this.$emit("user-info", data);
           this.name = data.userName;
           this.$emit("login-success", true);
         })

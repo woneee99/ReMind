@@ -14,6 +14,14 @@
               <div class="rounded-top text-white d-flex flex-row" style="background-color: #273f55; height: 200px">
                 <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px">
                   <img :src="imageSrc" alt="Generic placeholder image" class="img-fluid img-thumbnail mt-4 mb-2" style="width: 150px; z-index: 1" />
+
+                </div>
+                <div class="ms-3" style="margin-top: 130px">
+                  <h5>{{ name }}</h5>
+                  <p>{{ email }}</p>
+                </div>
+              </div>
+              <div class="p-4 text-black" style="background-color: #f8f9fa">
                   <template v-if="!editingAbout">
                     <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark" style="z-index: 1" @click="editingAbout = true">
                       Edit profile
@@ -22,53 +30,31 @@
                   <template v-else>
                     <button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark" style="z-index: 1" @click="saveAbout">Save</button>
                   </template>
-                </div>
-                <div class="ms-3" style="margin-top: 130px">
-                  <h5>{{ name }}</h5>
-                  <p>{{ email }}</p>
-                </div>
-              </div>
-              <div class="p-4 text-black" style="background-color: #f8f9fa">
-                <div class="d-flex justify-content-end text-center py-1">
-                  <div>
-                    <p class="mb-1 h5">{{ photoCount }}</p>
-                    <p class="small text-muted mb-0">Photos</p>
-                  </div>
-                  <div class="px-3">
-                    <p class="mb-1 h5">{{ followersCount }}</p>
-                    <p class="small text-muted mb-0">Followers</p>
-                  </div>
-                  <div>
-                    <p class="mb-1 h5">{{ followingCount }}</p>
-                    <p class="small text-muted mb-0">Following</p>
-                  </div>
-                </div>
               </div>
               <div class="card-body p-4 text-black">
-                <div class="mb-5">
+                <!-- <div class="mb-5">
                   <p class="lead fw-normal mb-1">About</p>
                   <div class="p-4" style="background-color: #f8f9fa">
                     <div v-if="!editingAbout">
                       <p class="font-italic mb-1">{{ aboutText1 }}</p>
                     </div>
                     <div v-else>
-                      <!-- <input type="text" v-model="aboutText1" class="form-control" placeholder="자기소개를 입력하세요" /> -->
                       <textarea v-model="aboutText1" class="form-control" rows="5" placeholder="자기소개를 입력하세요"></textarea>
                     </div>
                   </div>
-                </div>
+                </div> -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                  <p class="lead fw-normal mb-0">Recent photos</p>
+                  <p class="lead fw-normal mb-0">Recent Blogs</p>
                   <p class="mb-0"><a href="#!" class="text-muted">Show all</a></p>
                 </div>
                 <div class="row g-2">
-                  <div class="col mb-2" v-for="photo in recentPhotos" :key="photo.id">
-                    <img :src="photo.src" :alt="photo.alt" class="w-100 rounded-3" />
+                  <div class="col mb-2" v-for="(blog, index) in recentBlogs.slice(0, 4)" :key="index">
+                    <img :src='`${blog.thumbNail}`' class="w-100 rounded-3" @click="moveBlog()"/>
                   </div>
                 </div>
               </div>
             </div>
-            <button type="button" class="btn btn-sm text-secondary">탈퇴하기</button>
+            <button type="button" @click="deleteUser()" class="btn btn-sm text-secondary">탈퇴하기</button>
           </div>
         </div>
       </div>
@@ -78,40 +64,90 @@
 
 <script>
 import BreadcrumbSection from "@/components/BreadcrumbSection.vue";
+import http from "@/common/axios";
 
 export default {
   components: {
     BreadcrumbSection,
   },
-  props: ['userInfo'],
   data() {
     return {
-      userInfo: this.userInfo,
-      imageSrc: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
-      name: "홍길동",
-      email: "test@test.com",
-      photoCount: 253,
-      followersCount: 1026,
-      followingCount: 478,
-      aboutText1: "자기소개 칸입니다.",
-      recentPhotos: [
-        { id: 1, src: "https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(112).webp", alt: "image 1" },
-        { id: 2, src: "https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(107).webp", alt: "image 2" },
-        { id: 3, src: "https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(108).webp", alt: "image 3" },
-        { id: 4, src: "https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(114).webp", alt: "image 4" },
-      ],
+      imageSrc: "",
+      name: "",
+      email: "",
+      photoCount: '',
+      recentBlogs: [],
       editingAbout: false,
     };
   },
   methods: {
     saveAbout() {
       this.editingAbout = false;
-      // TODO: 현재는 프론트에서만 수정되어있음. 수정된 값을 백엔드로 넘겨줘야함.
     },
+    movePage() {
+      
+    },
+    async getUser() {
+      console.log(this.token)
+      await http
+        .get("/api/v1/users", {
+          headers: {
+            Authorization: "Bearer " + this.token,
+          },
+        })
+        .then((response) => {
+          let { data } = response;
+          this.imageSrc = data.profileImageUrl;
+          this.name = data.userName;
+          this.email = data.userEmail;
+          console.log(data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+      this.getMyBlog();
+    },
+    async getMyBlog() {
+      console.log(this.token)
+      await http
+        .get("/api/v1/blog/myList", {
+          headers: {
+            Authorization: "Bearer " + this.token,
+          },
+        })
+        .then((response) => {
+          let { data } = response;
+          this.recentBlogs = data;
+          console.log(data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    async deleteUser() {
+      await http
+        .delete("/api/v1/users/myInfo", {
+          headers: {
+            Authorization: "Bearer " + this.token,
+          },
+        })
+        .then((response) => {
+          let { data } = response;
+          console.log(data);
+          if(data == 1) {
+            localStorage.clear();
+            this.$emit("login-success", false);
+            this.$router.push("/")
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
   },
   created() {
     this.token = localStorage.getItem("token");
-    console.log("this: " + this.userInfo)
+    this.getUser();
   },
 };
 </script>
