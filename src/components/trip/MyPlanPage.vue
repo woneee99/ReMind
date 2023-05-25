@@ -1,7 +1,7 @@
 <template>
   <div>
     <breadcrumb-section title="나의 여행 일정" description="계획한 여행을 한 눈에 보세요." />
-    <div class="container">
+    <div class="container" style="min-height: 300px">
       <div class="row p-3 justify-content-center">
         <div v-for="(plan, index) in myPlans" :key="plan.planId" class="card mb-3 col-5 mx-3">
           <span class="position-absolute top-0 start-0 translate-middle badge bg-info m-1 p-2">
