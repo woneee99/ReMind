@@ -26,13 +26,13 @@
         <div class="form-floating">
           <select class="form-select" id="floatingSelect" @change="selectTrip" aria-label="Floating label select example">
             <!-- <option selected>Zero</option> -->
-            <option v-for="(trip, index) in myTripList" :key="index" :value="index">{{ trip.planTitle }}</option>
+            <option v-for="(trip, index) in myTripList" :key="index" :value="trip.planId">{{ trip.planTitle }}</option>
           </select>
           <label for="floatingSelect">나의 여행 목록</label>
         </div>
         <div class="form-floating">
           <select class="form-select" id="floatingSelect" @change="selectLocation" aria-label="Floating label select example">
-            <option v-for="(location, index) in myTripLocationList" :key="index" :value="index">{{ location.spotName }}</option>
+            <option v-for="(location, index) in flattenLocationList" :key="index" :value="location.tripSpotId">{{ location.spotName }}</option>
           </select>
           <label for="floatingSelect">위치 선택</label>
         </div>
@@ -72,12 +72,20 @@ export default {
     return {
       fileList: this.$route.params.fileList,
       myTripList: [],
-      selectTripIdx: 1,
+      selectTripIdx: 0,
       myTripLocationList: [],
-      locationIdx: 1,
+      locationIdx: 0,
       hashTag: "",
       content: "",
     };
+  },
+  computed: {
+    flattenLocationList() {
+      // 2차원 배열을 평면화한 배열을 생성
+      const flattened = [].concat(...this.myTripLocationList);
+
+      return flattened;
+    },
   },
   methods: {
     async getMyTripList() {
@@ -97,9 +105,15 @@ export default {
     async getMyTripLocation() {
       let token = localStorage.getItem("token");
       console.log(token);
-      let response = await http.get("/api/v1/plan/my-plan/" + this.selectTripIdx);
+      let response = await http.get("/api/v1/plan/my-plan/" + this.selectTripIdx, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
       let { data } = response;
+      console.log(response);
       this.myTripLocationList = data;
+      console.log(this.myTripLocationList);
     },
     async postBlog() {
       let token = localStorage.getItem("token");
@@ -125,13 +139,15 @@ export default {
       } else alert("글 작성에 실패했습니다.");
     },
     selectTrip(event) {
-      const selectedOptionIndex = event.target.value;
-      this.selectTripIdx = selectedOptionIndex + 1;
+      console.log(event);
+      let selectedOptionIndex = event.target.value;
+      console.log(selectedOptionIndex);
+      this.selectTripIdx = selectedOptionIndex;
       this.getMyTripLocation();
     },
     selectLocation(event) {
-      const selectedLocationIndex = event.target.value;
-      this.locationIdx = selectedLocationIndex + 1;
+      let selectedLocationIndex = event.target.value;
+      this.locationIdx = selectedLocationIndex;
     },
   },
   created() {
