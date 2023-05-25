@@ -83,9 +83,10 @@ export default {
   components: {
     BreadcrumbSection,
   },
-
+  props: ['userInfo'],
   data() {
     return {
+      userInfo: this.userInfo,
       imageSrc: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
       name: "홍길동",
       email: "test@test.com",
@@ -107,6 +108,10 @@ export default {
       this.editingAbout = false;
       // TODO: 현재는 프론트에서만 수정되어있음. 수정된 값을 백엔드로 넘겨줘야함.
     },
+  },
+  created() {
+    this.token = localStorage.getItem("token");
+    console.log("this: " + this.userInfo)
   },
 };
 </script>

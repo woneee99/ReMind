@@ -1,6 +1,19 @@
 <template>
   <div>
-    <board-search></board-search>
+  <section id="hero" class="hero d-flex align-items-center">
+    <div class="container">
+      <div class="row gy-4 d-flex justify-content-center">
+        <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center">
+          <h2 data-aos="fade-up"># 여행 기록 </h2>
+
+          <form action="#" class="form-search d-flex align-items-stretch mb-3" data-aos="fade-up" data-aos-delay="200">
+            <input type="text" v-model="hashTag" class="form-control" placeholder="# 해시 태그" />
+            <button type="submit" @click="getBoardListWithParam()" class="btn btn-primary">Search</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
     <section id="service" class="services pt-0">
       <div class="container" data-aos="fade-up">
         <div class="row gy-4">
@@ -8,7 +21,7 @@
           <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100" v-for="(blog, index) in blogList" :key="index">
             <div class="card" > <!-- 여기 반복 -->
               <div class="card-img">
-                <img :src='`${blog.fileList[0].blogUrl}`' alt="" class="img-fluid" />
+                <img :src='`${blog.thumbNail}`' alt="" class="img-fluid" />
               </div>
               <!-- <h3><router-link :to="`/${boards.boardId}`" class="stretched-link">title</router-link></h3> -->
               <!-- <a href="#" @click.prevent="sendImg">글 작성하러 가기</a> -->
@@ -43,6 +56,7 @@ export default {
       blogList: [],
       previous: '',
       next: '',
+      hashTag: ""
     }
   },
   methods: {
@@ -50,8 +64,18 @@ export default {
       let response = await http.get("/api/v1/blog/list");
       let data = response.data;
       console.log(data)
-      console.log("" + data.content)
-      this.blogList = data.content;
+      this.blogList = data;
+      console.log(this.blogList)
+      this.boards = data;
+    },
+    async getBoardListWithParam() {
+      let response = await http.get("/api/v1/blog/list", { params: {
+          hashTag: this.hashTag
+      }});
+
+      let data = response.data;
+      console.log(data)
+      this.blogList = data;
       console.log(this.blogList)
       this.boards = data;
     },

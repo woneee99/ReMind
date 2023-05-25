@@ -76,15 +76,16 @@ export default {
       };
 
       await http.post('/api/v1/auth/login', param)
-      .then(response => {
-        localStorage.setItem("token", response.data);
-        alert("로그인 성공")
-        this.$emit('login-success', true);
-        this.$router.push("/")
-      })
-      .catch(error => {
-        console.log("errr: " + error);
-      });
+        .then(response => {
+          console.log("dd: " + response.data)
+          localStorage.setItem("token", response.data);
+          alert("로그인 성공")
+          this.$emit('login-success', true);
+          this.$router.push("/")
+        })
+        .catch(error => {
+          console.log("errr: " + error);
+        });
 
     }
   },
