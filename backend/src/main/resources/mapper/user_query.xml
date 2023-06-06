@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.enjoytrip.api.dao.UserDao">
+
+    <insert id="register"
+            parameterType="com.example.enjoytrip.api.dto.UserDto">
+        insert into users ( userId, userEmail, userPassword, userName, emailVerifiedYn, profileImageUrl, providerType, roleType, createdAt, updatedAt )
+        values ( #{userId}, #{userEmail}, #{userPassword}, #{userName}, #{emailVerifiedYn}, #{profileImageUrl}, #{providerType}, #{roleType}, now(), now() )
+    </insert>
+
+    <update id="updateInfo" parameterType="com.example.enjoytrip.api.dto.UserDto">
+        UPDATE users
+           set userEmail = #{userEmail},
+               userPassword = #{userPassword},
+               updatedAt = now()
+         where userSeq = #{userSeq}
+    </update>
+
+    <delete id="withdraw" parameterType="int">
+        delete from users where userSeq = #{userSeq}
+    </delete>
+
+    <select id="findUser"
+            parameterType="String" resultType="com.example.enjoytrip.api.dto.UserDto">
+        select *
+        from users
+        where userEmail = #{userEmail}
+    </select>
+
+    <select id="findUserByUserSeq"
+            parameterType="int" resultType="com.example.enjoytrip.api.dto.UserDto">
+        select *
+        from users
+        where userSeq = #{userSeq}
+    </select>
+
+    <select id="findEmailUser"
+            parameterType="String" resultType="com.example.enjoytrip.api.dto.UserDto">
+        select *
+        from users
+        where userEmail = #{userEmail}
+    </select>
+
+    <update id="findEmailUpdate" parameterType="com.example.enjoytrip.api.dto.UserDto">
+        UPDATE users
+        set userPassword = #{userPassword},
+            updatedAt = now()
+        where userEmail = #{userEmail}
+    </update>
+</mapper>
