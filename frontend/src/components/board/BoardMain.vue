@@ -24,8 +24,6 @@
               <div class="card-img">
                 <img :src="`${blog.thumbNail}`" alt="" class="img-fluid" />
               </div>
-              <!-- <h3><router-link :to="`/${boards.boardId}`" class="stretched-link">title</router-link></h3> -->
-              <!-- <a href="#" @click.prevent="sendImg">글 작성하러 가기</a> -->
               <h3>
                 <a href="#" @click.prevent="selectCard(blog.blogId)" class="stretched-link"> {{ blog.content }}</a>
               </h3>
