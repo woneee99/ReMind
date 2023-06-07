@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.enjoytrip.api.dao.BlogDao">
+
+    <select id="blogId"
+            parameterType="String" resultType="com.example.enjoytrip.api.dto.UserDto">
+        select *
+        from users
+        where userEmail = #{userEmail}
+    </select>
+
+    <insert id="blogInsert"
+            parameterType="com.example.enjoytrip.api.dto.BlogDto" useGeneratedKeys="true" keyProperty="blogId">
+        insert into blog ( userSeq,  planId, tripPlanSpotId, content, hashTag, createdAt)
+        values ( #{userSeq}, #{planId}, #{tripPlanSpotId}, #{content}, #{hashTag}, now())
+    </insert>
+
+    <insert id="fileInsert"
+            parameterType="com.example.enjoytrip.api.dto.BlogFileDto">
+        insert into blog_file ( fileName, blogId )
+        values ( #{fileName}, #{blogId})
+    </insert>
+</mapper>

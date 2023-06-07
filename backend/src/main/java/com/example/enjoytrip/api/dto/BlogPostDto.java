@@ -1,9 +1,7 @@
 package com.example.enjoytrip.api.dto;
 
-import com.example.enjoytrip.api.entity.BlogFile;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter

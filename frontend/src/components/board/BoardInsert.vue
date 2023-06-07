@@ -118,6 +118,7 @@ export default {
     async postBlog() {
       let token = localStorage.getItem("token");
       console.log(token);
+      console.log(this.fileList)
       const val = {
         planId: this.selectTripIdx,
         tripPlanSpotId: this.locationIdx,
