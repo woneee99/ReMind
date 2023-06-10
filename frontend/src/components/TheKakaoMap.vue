@@ -547,7 +547,7 @@ export default {
       // });
     },
 
-    sendMyPlan() {
+    async sendMyPlan() {
       const REST_API_KEY = "718049a1e16b0994e3ed033e857244a3";
       axios.defaults.headers.common["Authorization"] = `KakaoAK ${REST_API_KEY}`;
       axios.defaults.headers.common["Content-Type"] = "application/json";
@@ -592,7 +592,7 @@ export default {
 
           const response = await axios.get(drivingTimeAPI);
           console.log(response);
-          $this.pushTripSpots(response, myPlan, i); // tripSpots 배열에 객체 push
+          await $this.pushTripSpots(response, myPlan, i); // tripSpots 배열에 객체 push
           // alert(
           //   "이동 거리: " +
           //     response.data.routes[0].sections[0].distance / 1000 +
@@ -611,9 +611,9 @@ export default {
           console.log("출발 시간(초)은: " + $this.dateTime[i + 1]._d.getHours() * 3600 + $this.dateTime[i + 1]._d.getMinutes() * 60);
           console.log(myPlan[0]);
 
-          if (i === $this.myPlans.length - 1) {
-            await $this.sendJson();
-          }
+          // if (i === $this.myPlans.length - 1) {
+          //   await $this.sendJson();
+          // }
         } catch (error) {
           console.log(error);
           alert("도로를 탐색할 수 없습니다.");
@@ -624,8 +624,10 @@ export default {
 
       for (let i = 0; i < this.myPlans.length; i++) {
         console.log(i + 1 + "번 요청!!!!!");
-        sendRequest(i, this.myPlans[i]);
+        await sendRequest(i, this.myPlans[i]);
       }
+
+      await this.sendJson();
     },
 
     async sendJson() {
