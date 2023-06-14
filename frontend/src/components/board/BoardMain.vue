@@ -22,7 +22,7 @@
             <div class="card">
               <!-- 여기 반복 -->
               <div class="card-img">
-                <img :src="`${blog.thumbNail}`" alt="" class="img-fluid" />
+                <img :src= "getImgSrc(index)" alt="" class="img-fluid" />
               </div>
               <h3>
                 <a href="#" @click.prevent="selectCard(blog.blogId)" class="stretched-link"> {{ blog.content }}</a>
@@ -59,10 +59,18 @@ export default {
     };
   },
   methods: {
-    async getBoardList() {
-      let response = await http.get("/api/v1/blog/list");
+    getImgSrc(index) {
+      console.log(index);
+      console.log(this.blogList[index].images);
+      return "data:image/jpeg;base64," + this.blogList[index].images;
+    },
+    async getBoardList(offset) {
+      let response = await http.get("/api/v1/blog", {
+        params: {
+          offset: offset
+        }
+      });
       let data = response.data;
-      console.log(data);
       this.blogList = data;
       console.log(this.blogList);
       this.boards = data;
@@ -105,7 +113,7 @@ export default {
     },
   },
   created() {
-    this.getBoardList();
+    this.getBoardList(0);
   },
 };
 </script>

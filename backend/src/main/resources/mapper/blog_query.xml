@@ -3,11 +3,22 @@
 
 <mapper namespace="com.example.enjoytrip.api.dao.BlogDao">
 
-    <select id="blogId"
-            parameterType="String" resultType="com.example.enjoytrip.api.dto.UserDto">
-        select *
-        from users
-        where userEmail = #{userEmail}
+    <select id="blogList"
+            parameterType="int" resultType="com.example.enjoytrip.api.dto.BlogListDto">
+        SELECT b.blog_id, u.userName, b.hashTag, b.createdAt, bf.fileName
+        FROM blog b
+        inner join blog_file bf
+        on b.blog_id = bf.blogId
+        inner join users u
+        on b.userSeq = u.userSeq
+        limit 9 offset #{offset};
+    </select>
+
+    <select id="blogDetail"
+            parameterType="int" resultType="com.example.enjoytrip.api.dto.BlogDto">
+        SELECT *
+        FROM blog
+        where #{blog_id} = blogId;
     </select>
 
     <insert id="blogInsert"
@@ -21,4 +32,11 @@
         insert into blog_file ( fileName, blogId )
         values ( #{fileName}, #{blogId})
     </insert>
+
+    <select id="fileList"
+            parameterType="int" resultType="com.example.enjoytrip.api.dto.BlogFileDto">
+        SELECT fileName
+        FROM blog_file
+        where #{blog_id} = blogId;
+    </select>
 </mapper>

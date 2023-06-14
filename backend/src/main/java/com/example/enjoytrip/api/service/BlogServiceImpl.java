@@ -2,10 +2,17 @@ package com.example.enjoytrip.api.service;
 
 import com.example.enjoytrip.api.dao.BlogDao;
 import com.example.enjoytrip.api.dto.BlogDto;
+import com.example.enjoytrip.api.dto.BlogListDto;
 import com.example.enjoytrip.api.dto.BlogFileDto;
+import com.example.enjoytrip.api.dto.UserDto;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +21,7 @@ import java.util.List;
 public class BlogServiceImpl implements BlogService{
 
     private final BlogDao blogDao;
+    private String uploadFolder = "C:\\upload";
 
     @Override
     public int fileInsert(BlogFileDto fileDto) {
@@ -25,12 +33,11 @@ public class BlogServiceImpl implements BlogService{
         return blogDao.blogInsert(blogDto);
     }
 
-//
-//    @Override
-//    public Page<Blog> findAll(Pageable pageable) {
-//        return blogRepository.findAll(pageable);
-//    }
-//
+    @Override
+    public List<BlogListDto> blogList(int offset) {
+        return blogDao.blogList(offset);
+    }
+
 //    @Override
 //    public Page<Blog> findAllByHashTag(Pageable pageable, String hashTag) {
 //        return blogRepository.findAllByHashTag(pageable, hashTag);
@@ -41,36 +48,24 @@ public class BlogServiceImpl implements BlogService{
 //        return blogRepository.findByUserSeq(userSeq);
 //    }
 //
-//    @Override
-//    public BlogDto blogDetail(int blogId) {
-//        BlogDto blogDto = new BlogDto();
-//        Blog blog = blogRepository.findByBlogId(blogId);
-//        blogDto.setBlogId(blog.getBlogId());
-//        blogDto.setContent(blog.getContent());
-//        blogDto.setLikeCount(blog.getLikeCount());
-//        blogDto.setCreatedAt(blog.getCreatedAt());
-//        blogDto.setUserSeq(blog.getUserSeq());
-//
-//        UserDto user = userDao.findUserByUserSeq(blog.getUserSeq());
-//        blogDto.setUserName(user.getUserName());
-//        blogDto.setProfileImageUrl(user.getProfileImageUrl());
-//
-////        List<HashTag> hashTagList = hashTagRepository.getHashTagByBlogId(blogId);
-////        blogDto.setHashTag(hashTagList);
-////        System.out.println("hashTagList.size() = " + hashTagList.size());
-//        List<BlogFile> fileList = blogFileRepository.findByBlogId(blog);
-//        System.out.println("fileList.sz = " + fileList.size());
-//
-//        List<String> list = new ArrayList<>();
-//        for(BlogFile bf : fileList) {
-//            list.add(bf.getBlogUrl());
-//        }
-//        blogDto.setFileList(list);
-//        return blogDto;
-//    }
+    @Override
+    public BlogDto blogDetail(int blogId) throws IOException {
+        BlogDto blogDto = blogDao.blogDetail(blogId);
 
-//    @Override
-//    public Optional<Blogs> blogDetail(int blogId) {
-//        return Optional.empty();
-//    }
+        List<BlogFileDto> fileList = blogDao.fileList(blogId);
+        System.out.println("fileList.sz = " + fileList.size());
+
+        List<BlogFileDto> list = new ArrayList<>();
+        for(BlogFileDto bf : fileList) {
+            InputStream inputStream = new FileInputStream(uploadFolder + "/" + bf.getFileName());
+            byte[] images = IOUtils.toByteArray(inputStream);
+            bf.setImages(images);
+            inputStream.close();
+            list.add(bf);
+        }
+        blogDto.setFileDto(list);
+        return blogDto;
+    }
+
+
 }
