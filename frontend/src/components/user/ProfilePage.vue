@@ -13,7 +13,7 @@
             <div class="card">
               <div class="rounded-top text-white d-flex flex-row" style="background-color: #273f55; height: 200px">
                 <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px">
-                  <img :src="imageSrc" alt="Generic placeholder image" class="img-fluid img-thumbnail mt-4 mb-2" style="width: 150px; z-index: 1" />
+                  <img :src="imageSrc()" alt="Generic placeholder image" class="img-fluid img-thumbnail mt-4 mb-2" style="width: 150px; z-index: 1" />
                 </div>
                 <div class="ms-3" style="margin-top: 130px">
                   <p class="fs-5 m-0">{{ name }}</p>
@@ -71,7 +71,7 @@ export default {
   },
   data() {
     return {
-      imageSrc: null,
+      images: "",
       name: "",
       email: "",
       photoCount: "",
@@ -80,6 +80,9 @@ export default {
     };
   },
   methods: {
+    imageSrc() {
+      return "data:image/jpeg;base64," +  this.images;
+    },
     saveAbout() {
       this.editingAbout = false;
     },
@@ -94,10 +97,7 @@ export default {
         })
         .then((response) => {
           let { data } = response;
-          this.imageSrc = "https://play-lh.googleusercontent.com/38AGKCqmbjZ9OuWx4YjssAz3Y0DTWbiM5HB0ove1pNBq_o9mtWfGszjZNxZdwt_vgHo=s200";
-          if (data.profileImageUrl) {
-            this.imageSrc = data.profileImageUrl;
-          }
+          this.images = data.profileImageUrl;
           this.name = data.userName;
           this.email = data.userEmail;
           console.log(data);
@@ -105,7 +105,7 @@ export default {
         .catch((error) => {
           console.error(error);
         });
-      this.getMyBlog();
+      // this.getMyBlog();
     },
     async getMyBlog() {
       console.log(this.token);

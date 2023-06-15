@@ -38,10 +38,10 @@
             <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
               <div class="carousel-inner">
                 <div class="carousel-item active">
-                  <img :src='`${fileList[0].blogUrl}`' class="d-block w-100">
+                  <img :src= "getImgSrc(0)" class="d-block w-100">
                 </div>
-                <div class="carousel-item" v-for="(file, index) in fileList.slice(1, fileList.length)"  :key="index" >
-                  <img :src="file.blogUrl" class="d-block w-100">
+                <div class="carousel-item" v-for="(file, index) in images.slice(1, images.length)"  :key="index" >
+                  <img :src="getImgSrc(index)" class="d-block w-100">
                 </div>
               </div>
               <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
@@ -56,7 +56,8 @@
             <!-- 캐러셀 끝 -->
             <br />
             <h5>
-              <span class="badge bg-info text-dark" v-for="(tag, index) in hashTag"  :key="index"> # {{tag.tagName}} </span> 
+              <!-- <span class="badge bg-info text-dark" v-for="(tag, index) in hashTag"  :key="index"> # {{tag.tagName}} </span>  -->
+              <span class="badge bg-info text-dark"> # {{hashTag}} </span>
             </h5>
             <p>
               {{content}}
@@ -75,35 +76,27 @@ import http from '@/common/axios'
 export default {
     data() {
         return {
-          fileList: [
-            { blogFileId : ''},
-            { blogUrl : ""},
-            { blogId : ''}
-          ],
+          images: [],
           blogId: this.$route.params.blogId,
           content: "",
-          likeCount: "",
           createdAt: "",
           userName: "",
-          profileImageUrl: "",
-          hashTag: [
-            { id : ''},
-            { tagName : ""},
-            { blogId : ''}
-          ],
+          hashTag: "",
         }
     },
     methods: {
+      getImgSrc(index) {
+        console.log(this.images[index]);
+        return "data:image/jpeg;base64," + this.images[index];
+      },
       async getImg() {
         let response = await http.get("/api/v1/blog/" + this.blogId); // 블로그 가져오기
         let { data } = response;
+        console.log(data)
         this.userName = data.userName;
-        this.profileImageUrl = data.profileImageUrl;
         this.content = data.content;
-        this.fileList = data.fileList;
-        console.log(this.fileList)
-        this.boards = data;
         this.hashTag = data.hashTag;
+        this.images = data.images;
       }
     },
     created() {
