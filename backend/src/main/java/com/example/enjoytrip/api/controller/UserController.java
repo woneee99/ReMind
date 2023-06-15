@@ -22,6 +22,8 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    private String uploadFolder = "C:\\upload";
+
     @GetMapping
     public ResponseEntity<UserDto> getUser(Principal p) {
         System.out.println("p = " + p);

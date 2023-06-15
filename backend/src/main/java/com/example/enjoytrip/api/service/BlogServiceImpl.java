@@ -1,12 +1,11 @@
 package com.example.enjoytrip.api.service;
 
 import com.example.enjoytrip.api.dao.BlogDao;
-import com.example.enjoytrip.api.dto.BlogDto;
-import com.example.enjoytrip.api.dto.BlogListDto;
-import com.example.enjoytrip.api.dto.BlogFileDto;
-import com.example.enjoytrip.api.dto.UserDto;
+import com.example.enjoytrip.api.dao.UserDao;
+import com.example.enjoytrip.api.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
@@ -21,6 +20,7 @@ import java.util.List;
 public class BlogServiceImpl implements BlogService{
 
     private final BlogDao blogDao;
+    private final UserDao userDao;
     private String uploadFolder = "C:\\upload";
 
     @Override
@@ -49,22 +49,26 @@ public class BlogServiceImpl implements BlogService{
 //    }
 //
     @Override
-    public BlogDto blogDetail(int blogId) throws IOException {
+    public BlogDetailDto blogDetail(int blogId) throws IOException {
         BlogDto blogDto = blogDao.blogDetail(blogId);
+        UserDto userDto = userDao.findUserByUserSeq(blogDto.getUserSeq());
+        List<BlogFileDto> blogFileDto = blogDao.fileList(blogId);
 
-        List<BlogFileDto> fileList = blogDao.fileList(blogId);
-        System.out.println("fileList.sz = " + fileList.size());
-
-        List<BlogFileDto> list = new ArrayList<>();
-        for(BlogFileDto bf : fileList) {
-            InputStream inputStream = new FileInputStream(uploadFolder + "/" + bf.getFileName());
+        int size = blogFileDto.size();
+        List<String> imgList = new ArrayList<>();
+        for(int i=0; i<size; i++) {
+            BlogFileDto fileDto = blogFileDto.get(i);
+            InputStream inputStream = new FileInputStream(uploadFolder + "/" + fileDto.getFileName());
             byte[] images = IOUtils.toByteArray(inputStream);
-            bf.setImages(images);
+            byte[] byteEnc64 = Base64.encodeBase64(images);
+            String imgStr = new String(byteEnc64 , "UTF-8");
+
+            imgList.add(imgStr);
             inputStream.close();
-            list.add(bf);
         }
-        blogDto.setFileDto(list);
-        return blogDto;
+
+        BlogDetailDto blogDetailDto = new BlogDetailDto(userDto.getUserName(), blogDto, imgList);
+        return blogDetailDto;
     }
 
 

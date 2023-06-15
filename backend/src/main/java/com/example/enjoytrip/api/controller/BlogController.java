@@ -32,7 +32,6 @@ public class BlogController {
         List<BlogListDto> blogListDto = null;
         if(hashTag != null && hashTag.length() > 0) { // 해시태그가 있는 경우
             System.out.println(" here1 ");
-
         }
         else { // 없는 경우
             System.out.println(" here2 ");
@@ -49,7 +48,6 @@ public class BlogController {
                 blogListDto.get(i).setImages(imgStr);
                 inputStream.close();
             }
-
         }
         return ResponseEntity.ok().body(blogListDto);
     }
@@ -67,10 +65,9 @@ public class BlogController {
 //    }
 //
     @GetMapping("/{blogId}")
-    public ResponseEntity<BlogDto> getBlog(@PathVariable(name = "blogId") int blogId) throws IOException {
-        BlogDto blogDto = blogService.blogDetail(blogId);
-        System.out.println("blogDto.getFileDto() = " + blogDto.getFileDto());
-        return ResponseEntity.ok().body(blogDto);
+    public ResponseEntity<BlogDetailDto> getBlog(@PathVariable(name = "blogId") int blogId) throws IOException {
+        BlogDetailDto blogDetailDto = blogService.blogDetail(blogId);
+        return ResponseEntity.ok().body(blogDetailDto);
     }
 
     @PostMapping

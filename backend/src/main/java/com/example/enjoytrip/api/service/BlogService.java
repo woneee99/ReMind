@@ -1,5 +1,6 @@
 package com.example.enjoytrip.api.service;
 
+import com.example.enjoytrip.api.dto.BlogDetailDto;
 import com.example.enjoytrip.api.dto.BlogDto;
 import com.example.enjoytrip.api.dto.BlogFileDto;
 import com.example.enjoytrip.api.dto.BlogListDto;
@@ -12,5 +13,5 @@ public interface BlogService {
     int fileInsert(BlogFileDto fileDto);
     int blogInsert(BlogDto blogDto);
     List<BlogListDto> blogList(int offset);
-    BlogDto blogDetail(int blogId) throws IOException;
+    BlogDetailDto blogDetail(int blogId) throws IOException;
 }

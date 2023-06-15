@@ -18,7 +18,7 @@
             parameterType="int" resultType="com.example.enjoytrip.api.dto.BlogDto">
         SELECT *
         FROM blog
-        where #{blog_id} = blogId;
+        where blog_id = #{blog_id};
     </select>
 
     <insert id="blogInsert"
