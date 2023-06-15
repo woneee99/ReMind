@@ -3,6 +3,7 @@ package com.example.enjoytrip.api.dto;
 import com.example.enjoytrip.oauth2.entity.ProviderType;
 import com.example.enjoytrip.oauth2.entity.RoleType;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -17,6 +18,7 @@ public class UserDto {
     private String userName;
 
     private String emailVerifiedYn;
+    private MultipartFile profilePostImage;
     private String profileImageUrl;
 
     private ProviderType providerType;

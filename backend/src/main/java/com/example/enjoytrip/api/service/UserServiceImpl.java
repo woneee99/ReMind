@@ -1,6 +1,7 @@
 package com.example.enjoytrip.api.service;
 
 import com.example.enjoytrip.api.dao.UserDao;
+import com.example.enjoytrip.api.dto.BlogFileDto;
 import com.example.enjoytrip.api.dto.MailDto;
 import com.example.enjoytrip.api.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.time.LocalDate;
 
 import static com.example.enjoytrip.oauth2.entity.RoleType.USER;
@@ -26,6 +28,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private JavaMailSender mailSender;
 
+    private String uploadFolder = "C:\\upload";
 
     @Override
     @Transactional(readOnly = true)
@@ -67,13 +70,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public int register(UserDto userDto) {
         userDto.setUserId(userDto.getUserEmail());
         userDto.setRoleType(USER);
         userDto.setEmailVerifiedYn("Y");
         if(userDto.getUserPassword() != null) {
             userDto.setUserPassword(passwordEncoder.encode(userDto.getUserPassword()));
+        }
+        if(userDto.getProfilePostImage() == null) {
+            userDto.setProfileImageUrl("noProfile.png");
+        }
+        else {
+            String uploadFileName = userDto.getProfilePostImage().getOriginalFilename();
+            File file = new File(uploadFolder, uploadFileName);
+            try {
+                userDto.getProfilePostImage().transferTo(file);
+                userDto.setProfileImageUrl(uploadFileName);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return userDao.register(userDto);
     }

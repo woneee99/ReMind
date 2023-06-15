@@ -72,8 +72,6 @@ public class BlogController {
 
     @PostMapping
     public ResponseEntity<Integer> blogInsert(BlogDto blogDto) {
-
-        System.out.println("blog = " + blogDto.getContent());
         Authentication principal = SecurityContextHolder.getContext().getAuthentication();
         String username = principal.getName();
         UserDto user = userService.getUser(username);
