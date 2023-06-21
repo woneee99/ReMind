@@ -25,8 +25,8 @@
 
           <div class="col-lg-4">
             <div class="services-list">
-              <img :src='`${profileImageUrl}`' > <!-- 블로그 주인 프로필 사진 -->
-              <p> @ {{userName}}</p> <!-- 이름-->
+              <img :src= "getProfileImg()" > <!-- 블로그 주인 프로필 사진 -->
+              <p> @ {{userInfo.userName}}</p> <!-- 이름-->
             </div>
             <!-- 트립쪽 가져와지면 여행 루트 보여주기-->
             <!-- <h4>Enim qui eos rerum in delectus</h4> 
@@ -40,8 +40,8 @@
                 <div class="carousel-item active">
                   <img :src= "getImgSrc(0)" class="d-block w-100">
                 </div>
-                <div class="carousel-item" v-for="(file, index) in images.slice(1, images.length)"  :key="index" >
-                  <img :src="getImgSrc(index)" class="d-block w-100">
+                <div class="carousel-item" v-for="(image, index) in images.slice(1, images.length)"  :key="index" >
+                  <img :src="getImgSrc(index+1)" class="d-block w-100">
                 </div>
               </div>
               <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
@@ -62,6 +62,7 @@
             <p>
               {{content}}
             </p>
+            <button type="submit" v-if="userInfo.userSeq == userSeq" @click="deleteBoard()" class="btn btn-primary" id="deleteBtn">delete</button>
           </div>
         </div>
       </div>
@@ -80,26 +81,51 @@ export default {
           blogId: this.$route.params.blogId,
           content: "",
           createdAt: "",
-          userName: "",
+          userInfo: null,
           hashTag: "",
+          userSeq: 0
         }
     },
     methods: {
+      getProfileImg(){
+        return "data:image/jpeg;base64," + this.userInfo.profileImageUrl;
+      },
       getImgSrc(index) {
-        console.log(this.images[index]);
+        console.log("who" + index);
         return "data:image/jpeg;base64," + this.images[index];
       },
       async getImg() {
         let response = await http.get("/api/v1/blog/" + this.blogId); // 블로그 가져오기
         let { data } = response;
         console.log(data)
-        this.userName = data.userName;
+        
+        this.getBlogProfile(data.userSeq);
+
         this.content = data.content;
         this.hashTag = data.hashTag;
         this.images = data.images;
+        console.log(this.images)
+      },
+      async getBlogProfile(userSeq) {
+        let response = await http.get("/api/v1/users/blogInfo/" + userSeq); 
+        let { data } = response;
+        this.userInfo = data;
+        console.log(data)
+      },
+      async getUser() {
+        let token = localStorage.getItem("token");
+        let response = await http.get("/api/v1/users", {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+        })
+        let { data } = response;
+        this.userSeq = data.userSeq;
+        console.log("lg: " + this.userSeq);
       }
     },
     created() {
+      this.getUser();
       this.getImg();
     }
 }
@@ -107,5 +133,9 @@ export default {
 <style scoped>
 .services-list img {
   width: 100%;
+}
+
+#deleteBtn{
+  margin-right: 0;
 }
 </style>

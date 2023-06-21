@@ -15,13 +15,13 @@
       </div>
     </section>
     <section id="service" class="services pt-0">
-      <div class="container" data-aos="fade-up" style="min-height: 300px">
+      <div class="container" data-aos="fade-up">
         <div class="row gy-4">
           <router-link to="/imgs"><img src="../../assets/plus.png" style="width: 50px; float: right" /></router-link>
           <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100" v-for="(blog, index) in blogList" :key="index">
-            <div class="card">
+            <div class="card" style="max-height: 500px">
               <!-- 여기 반복 -->
-              <div class="card-img">
+              <div class="card-img" style="max-height: 400px">
                 <img :src= "getImgSrc(index)" alt="" class="img-fluid" />
               </div>
               <h3>
@@ -34,8 +34,8 @@
         </div>
       </div>
       <div class="pagination justify-content-center">
-        <a href="" role="button" class="btn btn-lg bi bi-caret-left-square-fill"></a>
-        <a href="" role="button" class="btn btn-lg bi bi-caret-right-square-fill"></a>
+        <button v-if="nowIdx > 0" @click="getBoardList(nowIdx-1, offset-9)" class="btn btn-lg bi bi-caret-left-square-fill"></button>
+        <button v-if="(nowIdx+1)*9 < total" @click="getBoardList(nowIdx+1, offset+9)" class="btn btn-lg bi bi-caret-right-square-fill"></button>
       </div>
     </section>
   </div>
@@ -56,24 +56,27 @@ export default {
       previous: "",
       next: "",
       hashTag: "",
+      nowIdx: 0,
+      offset: 0,
+      total: 0
     };
   },
   methods: {
     getImgSrc(index) {
-      console.log(index);
-      console.log(this.blogList[index].images);
       return "data:image/jpeg;base64," + this.blogList[index].images;
     },
-    async getBoardList(offset) {
+    async getBoardList(nowIdx, offset) {
       let response = await http.get("/api/v1/blog", {
         params: {
           offset: offset
         }
       });
       let data = response.data;
+      console.log("dddd" + data);
+      this.nowIdx = nowIdx;
+      this.offset = offset;
       this.blogList = data;
       console.log(this.blogList);
-      this.boards = data;
     },
     async getBoardListWithParam() {
       let response = await http.get("/api/v1/blog/list", {
@@ -85,8 +88,6 @@ export default {
       let data = response.data;
       console.log(data);
       this.blogList = data;
-      console.log(this.blogList);
-      this.boards = data;
     },
     async getImg() {
       console.log(typeof this.blogId);
@@ -98,12 +99,10 @@ export default {
       this.profileImageUrl = data.profileImageUrl;
       this.content = data.content;
       this.fileList = data.fileList;
-      this.boards = data;
       this.hashTag = data.hashTag;
     },
     selectCard(index) {
       console.log("BoardImgPreview : sendImg() ");
-      console.log(index);
       this.$router.push({
         name: "details",
         params: {
@@ -111,9 +110,18 @@ export default {
         },
       }); // Not Working
     },
+    async getBoardCount() {
+      let response = await http.get("/api/v1/blog/count");
+      let { data } = response;
+      console.log("total: " + data)
+      this.total = data;
+
+    }
   },
   created() {
-    this.getBoardList(0);
+    this.getBoardList(0, 0);
+    this.getBoardCount();
+
   },
 };
 </script>

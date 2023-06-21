@@ -77,7 +77,7 @@ export default {
       formData.append("userPassword", this.password);
       formData.append("userName", this.name);
       
-      console.log(typeof this.img)
+      console.log(this.img)
       if(this.img != "") formData.append("profilePostImage", this.img);
       
       let options = {

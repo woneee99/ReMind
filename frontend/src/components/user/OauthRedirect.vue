@@ -11,7 +11,6 @@ export default {
   },
   created() {
     this.token = this.$route.query.token
-    localStorage.setItem("token", this.token);
     window.location.href = '/';
   }
 };

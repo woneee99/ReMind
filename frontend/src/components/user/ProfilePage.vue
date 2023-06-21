@@ -76,6 +76,7 @@ export default {
       email: "",
       photoCount: "",
       recentBlogs: [],
+      token: "",
       editingAbout: false,
     };
   },
