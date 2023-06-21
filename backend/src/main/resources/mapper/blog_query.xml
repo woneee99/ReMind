@@ -11,7 +11,9 @@
         on b.blog_id = bf.blogId
         inner join users u
         on b.userSeq = u.userSeq
-        limit 9 offset #{offset};
+        group by b.blog_id
+        order by b.blog_id desc
+        limit #{offset}, 9;
     </select>
 
     <select id="blogDetail"
@@ -38,5 +40,10 @@
         SELECT fileName
         FROM blog_file
         where #{blog_id} = blogId;
+    </select>
+
+    <select id="blogCount" resultType="int">
+        SELECT COUNT(*)
+        FROM blog;
     </select>
 </mapper>

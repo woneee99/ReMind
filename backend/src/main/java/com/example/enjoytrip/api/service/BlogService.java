@@ -14,4 +14,5 @@ public interface BlogService {
     int blogInsert(BlogDto blogDto);
     List<BlogListDto> blogList(int offset);
     BlogDetailDto blogDetail(int blogId) throws IOException;
+    int blogCount();
 }

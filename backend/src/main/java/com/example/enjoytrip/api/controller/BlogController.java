@@ -35,6 +35,7 @@ public class BlogController {
         }
         else { // 없는 경우
             System.out.println(" here2 ");
+            System.out.println("offset = " + offset);
             blogListDto = blogService.blogList(offset);
             int size = blogListDto.size();
             System.out.println("size = " + size);
@@ -49,6 +50,7 @@ public class BlogController {
                 inputStream.close();
             }
         }
+        System.out.println("blogListDto = " + blogListDto);
         return ResponseEntity.ok().body(blogListDto);
     }
 
@@ -70,15 +72,23 @@ public class BlogController {
         return ResponseEntity.ok().body(blogDetailDto);
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getBlogCount() {
+        return ResponseEntity.ok().body(blogService.blogCount());
+    }
+
+
     @PostMapping
     public ResponseEntity<Integer> blogInsert(BlogDto blogDto) {
         Authentication principal = SecurityContextHolder.getContext().getAuthentication();
         String username = principal.getName();
         UserDto user = userService.getUser(username);
+        System.out.println("blogDto = " + blogDto.getFileList().size());
+        System.out.println("blogDto = " + blogDto.getFileList());
 
         blogDto.setUserSeq(user.getUserSeq());
         int ret = blogService.blogInsert(blogDto);
-
+        System.out.println("blogDto = " + blogDto);
         for( MultipartFile file : blogDto.getFileList()) {
             String uploadFileName = file.getOriginalFilename();
             File saveFile = new File(uploadFolder, uploadFileName);

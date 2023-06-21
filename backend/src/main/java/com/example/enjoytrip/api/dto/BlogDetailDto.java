@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BlogDetailDto {
-    private String userName;
+    private int userSeq;
     private String content;
     private String hashTag;
     private int planId;
@@ -22,8 +22,8 @@ public class BlogDetailDto {
     private String fileName;
     private List<String> images = new ArrayList<>();
 
-    public BlogDetailDto(String userName, BlogDto blogDto, List<String> imgList) {
-        this.userName = userName;
+    public BlogDetailDto(BlogDto blogDto, List<String> imgList) {
+        this.userSeq = blogDto.getUserSeq();
         this.content = blogDto.getContent();
         this.hashTag = blogDto.getHashTag();
         this.planId = blogDto.getPlanId();

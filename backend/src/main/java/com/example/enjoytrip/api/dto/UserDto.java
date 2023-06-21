@@ -38,4 +38,9 @@ public class UserDto {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+
+    public UserDto(String name, String profileImageUrl) {
+        this.userName = name;
+        this.profileImageUrl = profileImageUrl;
+    }
 }

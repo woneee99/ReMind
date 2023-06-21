@@ -4,6 +4,8 @@ import com.example.enjoytrip.api.dao.UserDao;
 import com.example.enjoytrip.api.dto.BlogFileDto;
 import com.example.enjoytrip.api.dto.MailDto;
 import com.example.enjoytrip.api.dto.UserDto;
+import org.apache.commons.io.IOUtils;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -11,7 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
+import java.io.*;
 import java.time.LocalDate;
 
 import static com.example.enjoytrip.oauth2.entity.RoleType.USER;
@@ -34,6 +36,20 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public UserDto getUser(String userId) {
         return userDao.findUser(userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserDto getUserInfo(int userSeq) throws IOException {
+        UserDto userDto = userDao.findUserByUserSeq(userSeq);
+        InputStream inputStream = new FileInputStream(uploadFolder + "/" + userDto.getProfileImageUrl());
+        byte[] images = IOUtils.toByteArray(inputStream);
+        byte[] byteEnc64 = Base64.encodeBase64(images);
+        String imgStr = new String(byteEnc64 , "UTF-8");
+        inputStream.close();
+        UserDto userInfoDto = new UserDto(userDto.getUserName(), imgStr);
+
+        return userInfoDto;
     }
 
     @Override
@@ -96,7 +112,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public UserDto updateInfo(UserDto userDto) {
         userDto.setUserPassword(passwordEncoder.encode(userDto.getUserPassword()));
         userDao.updateInfo(userDto);
@@ -106,7 +122,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public int withdraw(int userId) {
         return userDao.withdraw(userId);
     }

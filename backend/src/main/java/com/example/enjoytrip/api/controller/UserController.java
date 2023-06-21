@@ -31,9 +31,7 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<UserDto> getUser(Principal p) throws IOException {
-        System.out.println("p = " + p);
         Authentication principal = SecurityContextHolder.getContext().getAuthentication();
-
         String username = principal.getName();
         UserDto userDto = userService.getUser(username);
 
@@ -44,6 +42,12 @@ public class UserController {
         userDto.setProfileImageUrl(imgStr);
 
         return ResponseEntity.ok().body(userDto);
+    }
+
+    @GetMapping("/blogInfo/{userSeq}")
+    public ResponseEntity<UserDto> getUserInfo(@PathVariable(name = "userSeq") int userSeq) throws IOException {
+        UserDto userInfo = userService.getUserInfo(userSeq);
+        return ResponseEntity.ok().body(userInfo);
     }
 
     @PostMapping("/register")

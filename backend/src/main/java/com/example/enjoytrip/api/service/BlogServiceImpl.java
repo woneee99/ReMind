@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,34 +25,27 @@ public class BlogServiceImpl implements BlogService{
     private String uploadFolder = "C:\\upload";
 
     @Override
+    @Transactional(rollbackFor = {Exception.class})
     public int fileInsert(BlogFileDto fileDto) {
         return blogDao.fileInsert(fileDto);
     }
 
     @Override
+    @Transactional(rollbackFor = {Exception.class})
     public int blogInsert(BlogDto blogDto) {
         return blogDao.blogInsert(blogDto);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BlogListDto> blogList(int offset) {
         return blogDao.blogList(offset);
     }
 
-//    @Override
-//    public Page<Blog> findAllByHashTag(Pageable pageable, String hashTag) {
-//        return blogRepository.findAllByHashTag(pageable, hashTag);
-//    }
-//
-//    @Override
-//    public List<Blog> findByUserSeq(int userSeq) {
-//        return blogRepository.findByUserSeq(userSeq);
-//    }
-//
     @Override
+    @Transactional(readOnly = true)
     public BlogDetailDto blogDetail(int blogId) throws IOException {
         BlogDto blogDto = blogDao.blogDetail(blogId);
-        UserDto userDto = userDao.findUserByUserSeq(blogDto.getUserSeq());
         List<BlogFileDto> blogFileDto = blogDao.fileList(blogId);
 
         int size = blogFileDto.size();
@@ -67,8 +61,14 @@ public class BlogServiceImpl implements BlogService{
             inputStream.close();
         }
 
-        BlogDetailDto blogDetailDto = new BlogDetailDto(userDto.getUserName(), blogDto, imgList);
+        BlogDetailDto blogDetailDto = new BlogDetailDto(blogDto, imgList);
         return blogDetailDto;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public int blogCount() {
+        return blogDao.blogCount();
     }
 
 

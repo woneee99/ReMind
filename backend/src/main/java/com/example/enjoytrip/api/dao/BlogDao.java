@@ -12,4 +12,5 @@ public interface BlogDao {
     List<BlogListDto> blogList(int offset);
     BlogDto blogDetail(int blogId);
     List<BlogFileDto> fileList(int blogId);
+    int blogCount();
 }
