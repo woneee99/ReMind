@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public interface UserService {
     int register(UserDto userDto);
-    UserDto updateInfo(UserDto userDto);
+    int updateInfo(String userName, int userSeq);
     int withdraw(int userId);
 
     UserDto getUser(String userId);

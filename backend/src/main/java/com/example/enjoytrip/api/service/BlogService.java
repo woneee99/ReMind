@@ -13,6 +13,8 @@ public interface BlogService {
     int fileInsert(BlogFileDto fileDto);
     int blogInsert(BlogDto blogDto);
     List<BlogListDto> blogList(int offset);
+    List<BlogListDto> blogListWithHashTag(String hashTag, int offset);
     BlogDetailDto blogDetail(int blogId) throws IOException;
     int blogCount();
+    int blogCountWithHashTag(String hashTag);
 }

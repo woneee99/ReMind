@@ -43,6 +43,11 @@ public class BlogServiceImpl implements BlogService{
     }
 
     @Override
+    public List<BlogListDto> blogListWithHashTag(String hashTag, int offset) {
+        return blogDao.blogListWithHashTag(hashTag, offset);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public BlogDetailDto blogDetail(int blogId) throws IOException {
         BlogDto blogDto = blogDao.blogDetail(blogId);
@@ -69,6 +74,12 @@ public class BlogServiceImpl implements BlogService{
     @Transactional(readOnly = true)
     public int blogCount() {
         return blogDao.blogCount();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public int blogCountWithHashTag(String hashTag) {
+        return blogDao.blogCountWithHashTag(hashTag);
     }
 
 

@@ -30,27 +30,27 @@ public class BlogController {
     @GetMapping()
     public ResponseEntity<List<BlogListDto>> blogList(@RequestParam(required = false) String hashTag, int offset) throws IOException {
         List<BlogListDto> blogListDto = null;
+
         if(hashTag != null && hashTag.length() > 0) { // 해시태그가 있는 경우
             System.out.println(" here1 ");
+            blogListDto = blogService.blogListWithHashTag(hashTag, offset);
         }
         else { // 없는 경우
             System.out.println(" here2 ");
-            System.out.println("offset = " + offset);
             blogListDto = blogService.blogList(offset);
-            int size = blogListDto.size();
-            System.out.println("size = " + size);
-            for(int i=0; i<size; i++) {
-                BlogListDto listDto = blogListDto.get(i);
-                InputStream inputStream = new FileInputStream(uploadFolder + "/" + listDto.getFileName());
-                byte[] images = IOUtils.toByteArray(inputStream);
-                byte[] byteEnc64 = Base64.encodeBase64(images);
-                String imgStr = new String(byteEnc64 , "UTF-8");
-
-                blogListDto.get(i).setImages(imgStr);
-                inputStream.close();
-            }
         }
-        System.out.println("blogListDto = " + blogListDto);
+
+        int size = blogListDto.size();
+        for(int i=0; i<size; i++) {
+            BlogListDto listDto = blogListDto.get(i);
+            InputStream inputStream = new FileInputStream(uploadFolder + "/" + listDto.getFileName());
+            byte[] images = IOUtils.toByteArray(inputStream);
+            byte[] byteEnc64 = Base64.encodeBase64(images);
+            String imgStr = new String(byteEnc64 , "UTF-8");
+
+            blogListDto.get(i).setImages(imgStr);
+            inputStream.close();
+        }
         return ResponseEntity.ok().body(blogListDto);
     }
 
@@ -77,22 +77,22 @@ public class BlogController {
         return ResponseEntity.ok().body(blogService.blogCount());
     }
 
+    @GetMapping("/hashTagCount")
+    public ResponseEntity<Integer> getBlogCountWithHashTag(@RequestParam String hashTag) {
+        return ResponseEntity.ok().body(blogService.blogCountWithHashTag(hashTag));
+    }
 
     @PostMapping
     public ResponseEntity<Integer> blogInsert(BlogDto blogDto) {
         Authentication principal = SecurityContextHolder.getContext().getAuthentication();
         String username = principal.getName();
         UserDto user = userService.getUser(username);
-        System.out.println("blogDto = " + blogDto.getFileList().size());
-        System.out.println("blogDto = " + blogDto.getFileList());
 
         blogDto.setUserSeq(user.getUserSeq());
         int ret = blogService.blogInsert(blogDto);
-        System.out.println("blogDto = " + blogDto);
         for( MultipartFile file : blogDto.getFileList()) {
             String uploadFileName = file.getOriginalFilename();
             File saveFile = new File(uploadFolder, uploadFileName);
-
             try {
                 file.transferTo(saveFile);
                 BlogFileDto fileDto = new BlogFileDto();

@@ -10,7 +10,9 @@ public interface BlogDao {
     int fileInsert(BlogFileDto fileDto);
     int blogInsert(BlogDto blogDto);
     List<BlogListDto> blogList(int offset);
+    List<BlogListDto> blogListWithHashTag(String hashTag, int offset);
     BlogDto blogDetail(int blogId);
     List<BlogFileDto> fileList(int blogId);
     int blogCount();
+    int blogCountWithHashTag(String hashTag);
 }

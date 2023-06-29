@@ -8,7 +8,7 @@
 
             <form action="#" class="form-search d-flex align-items-stretch mb-3" data-aos="fade-up" data-aos-delay="200">
               <input type="text" v-model="hashTag" class="form-control" placeholder="# 해시 태그" />
-              <button type="submit" @click="getBoardListWithParam()" class="btn btn-primary">Search</button>
+              <button type="submit" @click="getBoardList(0, 0)" class="btn btn-primary">Search</button>
             </form>
           </div>
         </div>
@@ -66,35 +66,43 @@ export default {
       return "data:image/jpeg;base64," + this.blogList[index].images;
     },
     async getBoardList(nowIdx, offset) {
-      let response = await http.get("/api/v1/blog", {
-        params: {
-          offset: offset
-        }
-      });
-      let data = response.data;
-      console.log("dddd" + data);
+      let response = null;
+      console.log("ht: " + this.hashTag)
+      if(this.hashTag != "") {
+        response = await http.get("/api/v1/blog/", {
+          params: {
+            hashTag: this.hashTag,
+            offset: offset
+          },
+        });
+
+        let res = await http.get("/api/v1/blog/", {
+          params: {
+            hashTag: this.hashTag,
+            offset: offset
+          },
+        });
+        let { data } = res;
+        this.total = data;
+      }
+      else {
+        response = await http.get("/api/v1/blog", {
+          params: {
+            offset: offset
+          }
+        });
+      }
+      let { data } = response;
       this.nowIdx = nowIdx;
       this.offset = offset;
       this.blogList = data;
-      console.log(this.blogList);
-    },
-    async getBoardListWithParam() {
-      let response = await http.get("/api/v1/blog/list", {
-        params: {
-          hashTag: this.hashTag,
-        },
-      });
-
-      let data = response.data;
-      console.log(data);
-      this.blogList = data;
+      console.log(this.blogList.length)
     },
     async getImg() {
       console.log(typeof this.blogId);
       let response = await http.get("/api/v1/blog/" + this.blogId); // 블로그 가져오기
 
       let { data } = response;
-
       this.userName = data.userName;
       this.profileImageUrl = data.profileImageUrl;
       this.content = data.content;
@@ -113,15 +121,12 @@ export default {
     async getBoardCount() {
       let response = await http.get("/api/v1/blog/count");
       let { data } = response;
-      console.log("total: " + data)
       this.total = data;
-
     }
   },
   created() {
     this.getBoardList(0, 0);
     this.getBoardCount();
-
   },
 };
 </script>

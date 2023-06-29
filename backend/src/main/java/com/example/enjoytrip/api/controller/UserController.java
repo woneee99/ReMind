@@ -64,18 +64,11 @@ public class UserController {
     }
 
     @PutMapping("/myInfo")
-    public ResponseEntity<UserDto> updateInfo(@RequestBody UserDto userDto, HttpSession session){
-        UserDto dto = (UserDto) session.getAttribute("userDto");
-        if(dto == null) ResponseEntity.notFound().build();
-
-        userDto.setUserSeq(dto.getUserSeq());
-        userDto.setUserName(dto.getUserName());
-        userDto.setCreatedAt(dto.getCreatedAt());
-
-        UserDto resUser = userService.updateInfo(userDto);
-
-        session.setAttribute("userDto", resUser);
-        return ResponseEntity.ok().body(resUser);
+    public ResponseEntity<Integer> updateInfo(@RequestBody String name){
+        Authentication principal = SecurityContextHolder.getContext().getAuthentication();
+        String username = principal.getName();
+        UserDto userDto = userService.getUser(username);
+        return ResponseEntity.ok().body(userService.updateInfo(name, userDto.getUserSeq()));
     }
 
     @DeleteMapping("/myInfo")

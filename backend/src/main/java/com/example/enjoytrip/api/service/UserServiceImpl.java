@@ -113,11 +113,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = {Exception.class})
-    public UserDto updateInfo(UserDto userDto) {
-        userDto.setUserPassword(passwordEncoder.encode(userDto.getUserPassword()));
-        userDao.updateInfo(userDto);
-        userDto.setUpdatedAt(LocalDate.now().toString());
-        return userDto;
+    public int updateInfo(String userName, int userSeq){
+        return userDao.updateInfo(userName, userSeq);
     }
 
 

@@ -62,7 +62,6 @@
             <p>
               {{content}}
             </p>
-            <button type="submit" v-if="userInfo.userSeq == userSeq" @click="deleteBoard()" class="btn btn-primary" id="deleteBtn">delete</button>
           </div>
         </div>
       </div>
@@ -91,7 +90,6 @@ export default {
         return "data:image/jpeg;base64," + this.userInfo.profileImageUrl;
       },
       getImgSrc(index) {
-        console.log("who" + index);
         return "data:image/jpeg;base64," + this.images[index];
       },
       async getImg() {
@@ -110,7 +108,6 @@ export default {
         let response = await http.get("/api/v1/users/blogInfo/" + userSeq); 
         let { data } = response;
         this.userInfo = data;
-        console.log(data)
       },
       async getUser() {
         let token = localStorage.getItem("token");
@@ -121,7 +118,6 @@ export default {
         })
         let { data } = response;
         this.userSeq = data.userSeq;
-        console.log("lg: " + this.userSeq);
       }
     },
     created() {
@@ -136,6 +132,6 @@ export default {
 }
 
 #deleteBtn{
-  margin-right: 0;
+  
 }
 </style>

@@ -16,6 +16,19 @@
         limit #{offset}, 9;
     </select>
 
+    <select id="blogListWithHashTag" resultType="com.example.enjoytrip.api.dto.BlogListDto">
+        SELECT b.blog_id, u.userName, b.hashTag, b.createdAt, bf.fileName
+        FROM blog b
+                 inner join blog_file bf
+                            on b.blog_id = bf.blogId
+                 inner join users u
+                            on b.userSeq = u.userSeq
+        where b.hashTag = #{hashTag}
+        group by b.blog_id
+        order by b.blog_id desc
+        limit #{offset}, 9;
+    </select>
+
     <select id="blogDetail"
             parameterType="int" resultType="com.example.enjoytrip.api.dto.BlogDto">
         SELECT *
@@ -45,5 +58,11 @@
     <select id="blogCount" resultType="int">
         SELECT COUNT(*)
         FROM blog;
+    </select>
+
+    <select id="blogCountWithHashTag" resultType="int">
+        SELECT COUNT(*)
+        FROM blog
+        WHERE hashTag = #{hashTag};
     </select>
 </mapper>
