@@ -6,9 +6,9 @@
       <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
           <div class="carousel-item active">
-            <img :src="`${fileList[0]}`" class="d-block w-100" />
+            <img :src="`${fileUrl[0]}`" class="d-block w-100" />
           </div>
-          <div class="carousel-item" v-for="(file, index) in fileList.slice(1, fileList.length)" :key="index">
+          <div class="carousel-item" v-for="(file, index) in fileUrl.slice(1, fileUrl.length)" :key="index">
             <img :src="file" class="d-block w-100" />
           </div>
         </div>
@@ -71,6 +71,8 @@ export default {
   data() {
     return {
       fileList: this.$route.params.fileList,
+      fileUrl: [],
+      postFile: [],
       myTripList: [],
       selectTripIdx: 0,
       myTripLocationList: [],
@@ -91,16 +93,23 @@ export default {
     async getMyTripList() {
       let token = localStorage.getItem("token");
       console.log(token);
-      let response = await http.get("/api/v1/plan/my-plans", {
+      await http.get("/api/v1/plan/my-plans", {
         headers: {
           Authorization: "Bearer " + token,
         },
+      })
+      .then((response) => {
+        let { data } = response;
+        this.myTripList = data;
+        this.selectTripIdx = this.myTripList[0].planId;
+        this.boards = data;
+        this.getMyTripLocation();
+      })
+      .catch((error) => {
+        alert("다녀온 여행이 없습니다. ");
+        this.$router.push("/board");
+        console.error(error);
       });
-      let { data } = response;
-      this.myTripList = data;
-      this.selectTripIdx = this.myTripList[0].planId;
-      this.boards = data;
-      this.getMyTripLocation();
     },
     async getMyTripLocation() {
       let token = localStorage.getItem("token");
@@ -117,21 +126,24 @@ export default {
     },
     async postBlog() {
       let token = localStorage.getItem("token");
-      console.log(token);
-      console.log(this.fileList)
-      const val = {
-        planId: this.selectTripIdx,
-        tripPlanSpotId: this.locationIdx,
-        content: this.content,
-        hashTag: this.hashTag,
-        fileList: this.fileList,
-      };
-      console.log(val);
-      let response = await http.post("/api/v1/blog", val, {
+      
+      let formData = new FormData();
+      formData.append("planId", this.selectTripIdx);
+      formData.append("tripPlanSpotId", this.locationIdx);
+      formData.append("content", this.content);
+      formData.append("hashTag", this.hashTag);
+      for (let i = 0; i < this.fileList.length; i++) {
+        formData.append('fileList', this.fileList[i]);
+      }
+
+      const options = {
         headers: {
           Authorization: "Bearer " + token,
-        },
-      });
+          'Content-Type': 'multipart/form-data'
+        }
+      };
+
+      let response = await http.post("/api/v1/blog", formData, options);
       let { data } = response;
       console.log("data: " + data);
       if (data == 1) {
@@ -140,7 +152,6 @@ export default {
       } else alert("글 작성에 실패했습니다.");
     },
     selectTrip(event) {
-      console.log(event);
       let selectedOptionIndex = event.target.value;
       console.log(selectedOptionIndex);
       this.selectTripIdx = selectedOptionIndex;
@@ -152,6 +163,9 @@ export default {
     },
   },
   created() {
+    this.fileList.forEach(file => {
+      this.fileUrl.push(URL.createObjectURL(file));
+    });
     this.getMyTripList();
   },
 };

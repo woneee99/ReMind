@@ -1,8 +1,11 @@
 package com.example.enjoytrip.api.service;
 
 import com.example.enjoytrip.api.dao.UserDao;
+import com.example.enjoytrip.api.dto.BlogFileDto;
 import com.example.enjoytrip.api.dto.MailDto;
 import com.example.enjoytrip.api.dto.UserDto;
+import org.apache.commons.io.IOUtils;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -10,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.*;
 import java.time.LocalDate;
 
 import static com.example.enjoytrip.oauth2.entity.RoleType.USER;
@@ -26,11 +30,26 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private JavaMailSender mailSender;
 
+    private String uploadFolder = "C:\\upload";
 
     @Override
     @Transactional(readOnly = true)
     public UserDto getUser(String userId) {
         return userDao.findUser(userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserDto getUserInfo(int userSeq) throws IOException {
+        UserDto userDto = userDao.findUserByUserSeq(userSeq);
+        InputStream inputStream = new FileInputStream(uploadFolder + "/" + userDto.getProfileImageUrl());
+        byte[] images = IOUtils.toByteArray(inputStream);
+        byte[] byteEnc64 = Base64.encodeBase64(images);
+        String imgStr = new String(byteEnc64 , "UTF-8");
+        inputStream.close();
+        UserDto userInfoDto = new UserDto(userDto.getUserName(), imgStr);
+
+        return userInfoDto;
     }
 
     @Override
@@ -67,7 +86,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public int register(UserDto userDto) {
         userDto.setUserId(userDto.getUserEmail());
         userDto.setRoleType(USER);
@@ -75,22 +94,32 @@ public class UserServiceImpl implements UserService {
         if(userDto.getUserPassword() != null) {
             userDto.setUserPassword(passwordEncoder.encode(userDto.getUserPassword()));
         }
+        if(userDto.getProfilePostImage() == null) {
+            userDto.setProfileImageUrl("noProfile.png");
+        }
+        else {
+            String uploadFileName = userDto.getProfilePostImage().getOriginalFilename();
+            File file = new File(uploadFolder, uploadFileName);
+            try {
+                userDto.getProfilePostImage().transferTo(file);
+                userDto.setProfileImageUrl(uploadFileName);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         return userDao.register(userDto);
     }
 
 
     @Override
-    @Transactional
-    public UserDto updateInfo(UserDto userDto) {
-        userDto.setUserPassword(passwordEncoder.encode(userDto.getUserPassword()));
-        userDao.updateInfo(userDto);
-        userDto.setUpdatedAt(LocalDate.now().toString());
-        return userDto;
+    @Transactional(rollbackFor = {Exception.class})
+    public int updateInfo(String userName, int userSeq){
+        return userDao.updateInfo(userName, userSeq);
     }
 
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public int withdraw(int userId) {
         return userDao.withdraw(userId);
     }

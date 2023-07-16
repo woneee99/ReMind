@@ -13,4 +13,5 @@ public class BlogFileDto {
     private int blogFileId;
     private String fileName;
     private int blogId;
+    private byte[] images;
 }

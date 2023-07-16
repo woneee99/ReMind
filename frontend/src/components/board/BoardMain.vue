@@ -8,21 +8,21 @@
 
             <form action="#" class="form-search d-flex align-items-stretch mb-3" data-aos="fade-up" data-aos-delay="200">
               <input type="text" v-model="hashTag" class="form-control" placeholder="# 해시 태그" />
-              <button type="submit" @click="getBoardListWithParam()" class="btn btn-primary">Search</button>
+              <button type="submit" @click="getBoardList(0, 0)" class="btn btn-primary">Search</button>
             </form>
           </div>
         </div>
       </div>
     </section>
     <section id="service" class="services pt-0">
-      <div class="container" data-aos="fade-up" style="min-height: 300px">
+      <div class="container" data-aos="fade-up">
         <div class="row gy-4">
           <router-link to="/imgs"><img src="../../assets/plus.png" style="width: 50px; float: right" /></router-link>
           <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100" v-for="(blog, index) in blogList" :key="index">
-            <div class="card">
+            <div class="card" style="max-height: 500px">
               <!-- 여기 반복 -->
-              <div class="card-img">
-                <img :src="`${blog.thumbNail}`" alt="" class="img-fluid" />
+              <div class="card-img" style="max-height: 400px">
+                <img :src= "getImgSrc(index)" alt="" class="img-fluid" />
               </div>
               <h3>
                 <a href="#" @click.prevent="selectCard(blog.blogId)" class="stretched-link"> {{ blog.content }}</a>
@@ -34,8 +34,8 @@
         </div>
       </div>
       <div class="pagination justify-content-center">
-        <a href="" role="button" class="btn btn-lg bi bi-caret-left-square-fill"></a>
-        <a href="" role="button" class="btn btn-lg bi bi-caret-right-square-fill"></a>
+        <button v-if="nowIdx > 0" @click="getBoardList(nowIdx-1, offset-9)" class="btn btn-lg bi bi-caret-left-square-fill"></button>
+        <button v-if="(nowIdx+1)*9 < total" @click="getBoardList(nowIdx+1, offset+9)" class="btn btn-lg bi bi-caret-right-square-fill"></button>
       </div>
     </section>
   </div>
@@ -56,46 +56,61 @@ export default {
       previous: "",
       next: "",
       hashTag: "",
+      nowIdx: 0,
+      offset: 0,
+      total: 0
     };
   },
   methods: {
-    async getBoardList() {
-      let response = await http.get("/api/v1/blog/list");
-      let data = response.data;
-      console.log(data);
-      this.blogList = data;
-      console.log(this.blogList);
-      this.boards = data;
+    getImgSrc(index) {
+      return "data:image/jpeg;base64," + this.blogList[index].images;
     },
-    async getBoardListWithParam() {
-      let response = await http.get("/api/v1/blog/list", {
-        params: {
-          hashTag: this.hashTag,
-        },
-      });
+    async getBoardList(nowIdx, offset) {
+      let response = null;
+      console.log("ht: " + this.hashTag)
+      if(this.hashTag != "") {
+        response = await http.get("/api/v1/blog/", {
+          params: {
+            hashTag: this.hashTag,
+            offset: offset
+          },
+        });
 
-      let data = response.data;
-      console.log(data);
+        let res = await http.get("/api/v1/blog/", {
+          params: {
+            hashTag: this.hashTag,
+            offset: offset
+          },
+        });
+        let { data } = res;
+        this.total = data;
+      }
+      else {
+        response = await http.get("/api/v1/blog", {
+          params: {
+            offset: offset
+          }
+        });
+      }
+      let { data } = response;
+      this.nowIdx = nowIdx;
+      this.offset = offset;
       this.blogList = data;
-      console.log(this.blogList);
-      this.boards = data;
+      console.log(this.blogList.length)
     },
     async getImg() {
       console.log(typeof this.blogId);
       let response = await http.get("/api/v1/blog/" + this.blogId); // 블로그 가져오기
 
       let { data } = response;
-
       this.userName = data.userName;
       this.profileImageUrl = data.profileImageUrl;
       this.content = data.content;
       this.fileList = data.fileList;
-      this.boards = data;
       this.hashTag = data.hashTag;
     },
     selectCard(index) {
       console.log("BoardImgPreview : sendImg() ");
-      console.log(index);
       this.$router.push({
         name: "details",
         params: {
@@ -103,9 +118,15 @@ export default {
         },
       }); // Not Working
     },
+    async getBoardCount() {
+      let response = await http.get("/api/v1/blog/count");
+      let { data } = response;
+      this.total = data;
+    }
   },
   created() {
-    this.getBoardList();
+    this.getBoardList(0, 0);
+    this.getBoardCount();
   },
 };
 </script>

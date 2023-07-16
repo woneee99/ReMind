@@ -4,7 +4,9 @@ import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -20,4 +22,5 @@ public class BlogDto {
     private LocalDateTime createdAt;
 
     private List<MultipartFile> fileList;
+    private List<BlogFileDto> fileDto;
 }

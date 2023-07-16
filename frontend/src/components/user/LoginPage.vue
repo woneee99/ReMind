@@ -77,13 +77,13 @@ export default {
 
       await http.post('/api/v1/auth/login', param)
         .then(response => {
-          console.log("dd: " + response.data)
           localStorage.setItem("token", response.data);
           alert("로그인 성공")
           this.$emit('login-success', true);
           this.$router.push("/")
         })
         .catch(error => {
+          alert("등록된 아이디나 패스워드가 없습니다.");
           console.log("errr: " + error);
         });
 

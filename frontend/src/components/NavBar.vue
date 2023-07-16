@@ -80,9 +80,7 @@ export default {
           if (response.data == 1) {
             localStorage.removeItem("token");
             this.token = "";
-            // this.isLogin = false;
             this.$emit("login-success", false);
-            console.log(this.token);
           }
         })
         .catch((error) => {

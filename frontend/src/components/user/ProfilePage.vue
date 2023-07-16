@@ -13,10 +13,11 @@
             <div class="card">
               <div class="rounded-top text-white d-flex flex-row" style="background-color: #273f55; height: 200px">
                 <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px">
-                  <img :src="imageSrc" alt="Generic placeholder image" class="img-fluid img-thumbnail mt-4 mb-2" style="width: 150px; z-index: 1" />
+                  <img :src="imageSrc()" alt="Generic placeholder image" class="img-fluid img-thumbnail mt-4 mb-2" style="width: 150px; z-index: 1" />
                 </div>
                 <div class="ms-3" style="margin-top: 130px">
-                  <p class="fs-5 m-0">{{ name }}</p>
+                  <p class="fs-5 m-0" v-if="editingAbout==false">{{ name }}</p>
+                  <input type="text" v-else class="form-control" name="name" v-model="name" placeholder="이름" />
                   <p>{{ email }}</p>
                 </div>
               </div>
@@ -31,17 +32,6 @@
                 </template>
               </div>
               <div class="card-body p-4 text-black">
-                <!-- <div class="mb-5">
-                  <p class="lead fw-normal mb-1">About</p>
-                  <div class="p-4" style="background-color: #f8f9fa">
-                    <div v-if="!editingAbout">
-                      <p class="font-italic mb-1">{{ aboutText1 }}</p>
-                    </div>
-                    <div v-else>
-                      <textarea v-model="aboutText1" class="form-control" rows="5" placeholder="자기소개를 입력하세요"></textarea>
-                    </div>
-                  </div>
-                </div> -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
                   <p class="lead fw-normal mb-0">Recent Blogs</p>
                   <p class="mb-0"><a href="#!" class="text-muted">Show all</a></p>
@@ -71,15 +61,19 @@ export default {
   },
   data() {
     return {
-      imageSrc: null,
+      images: "",
       name: "",
       email: "",
       photoCount: "",
       recentBlogs: [],
+      token: "",
       editingAbout: false,
     };
   },
   methods: {
+    imageSrc() {
+      return "data:image/jpeg;base64," +  this.images;
+    },
     saveAbout() {
       this.editingAbout = false;
     },
@@ -94,10 +88,7 @@ export default {
         })
         .then((response) => {
           let { data } = response;
-          this.imageSrc = "https://play-lh.googleusercontent.com/38AGKCqmbjZ9OuWx4YjssAz3Y0DTWbiM5HB0ove1pNBq_o9mtWfGszjZNxZdwt_vgHo=s200";
-          if (data.profileImageUrl) {
-            this.imageSrc = data.profileImageUrl;
-          }
+          this.images = data.profileImageUrl;
           this.name = data.userName;
           this.email = data.userEmail;
           console.log(data);
@@ -105,7 +96,7 @@ export default {
         .catch((error) => {
           console.error(error);
         });
-      this.getMyBlog();
+      // this.getMyBlog();
     },
     async getMyBlog() {
       console.log(this.token);

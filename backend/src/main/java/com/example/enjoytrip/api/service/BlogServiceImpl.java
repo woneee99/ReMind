@@ -1,11 +1,18 @@
 package com.example.enjoytrip.api.service;
 
 import com.example.enjoytrip.api.dao.BlogDao;
-import com.example.enjoytrip.api.dto.BlogDto;
-import com.example.enjoytrip.api.dto.BlogFileDto;
+import com.example.enjoytrip.api.dao.UserDao;
+import com.example.enjoytrip.api.dto.*;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.IOUtils;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,63 +21,66 @@ import java.util.List;
 public class BlogServiceImpl implements BlogService{
 
     private final BlogDao blogDao;
+    private final UserDao userDao;
+    private String uploadFolder = "C:\\upload";
 
     @Override
+    @Transactional(rollbackFor = {Exception.class})
     public int fileInsert(BlogFileDto fileDto) {
         return blogDao.fileInsert(fileDto);
     }
 
     @Override
+    @Transactional(rollbackFor = {Exception.class})
     public int blogInsert(BlogDto blogDto) {
         return blogDao.blogInsert(blogDto);
     }
 
-//
-//    @Override
-//    public Page<Blog> findAll(Pageable pageable) {
-//        return blogRepository.findAll(pageable);
-//    }
-//
-//    @Override
-//    public Page<Blog> findAllByHashTag(Pageable pageable, String hashTag) {
-//        return blogRepository.findAllByHashTag(pageable, hashTag);
-//    }
-//
-//    @Override
-//    public List<Blog> findByUserSeq(int userSeq) {
-//        return blogRepository.findByUserSeq(userSeq);
-//    }
-//
-//    @Override
-//    public BlogDto blogDetail(int blogId) {
-//        BlogDto blogDto = new BlogDto();
-//        Blog blog = blogRepository.findByBlogId(blogId);
-//        blogDto.setBlogId(blog.getBlogId());
-//        blogDto.setContent(blog.getContent());
-//        blogDto.setLikeCount(blog.getLikeCount());
-//        blogDto.setCreatedAt(blog.getCreatedAt());
-//        blogDto.setUserSeq(blog.getUserSeq());
-//
-//        UserDto user = userDao.findUserByUserSeq(blog.getUserSeq());
-//        blogDto.setUserName(user.getUserName());
-//        blogDto.setProfileImageUrl(user.getProfileImageUrl());
-//
-////        List<HashTag> hashTagList = hashTagRepository.getHashTagByBlogId(blogId);
-////        blogDto.setHashTag(hashTagList);
-////        System.out.println("hashTagList.size() = " + hashTagList.size());
-//        List<BlogFile> fileList = blogFileRepository.findByBlogId(blog);
-//        System.out.println("fileList.sz = " + fileList.size());
-//
-//        List<String> list = new ArrayList<>();
-//        for(BlogFile bf : fileList) {
-//            list.add(bf.getBlogUrl());
-//        }
-//        blogDto.setFileList(list);
-//        return blogDto;
-//    }
+    @Override
+    @Transactional(readOnly = true)
+    public List<BlogListDto> blogList(int offset) {
+        return blogDao.blogList(offset);
+    }
 
-//    @Override
-//    public Optional<Blogs> blogDetail(int blogId) {
-//        return Optional.empty();
-//    }
+    @Override
+    public List<BlogListDto> blogListWithHashTag(String hashTag, int offset) {
+        return blogDao.blogListWithHashTag(hashTag, offset);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BlogDetailDto blogDetail(int blogId) throws IOException {
+        BlogDto blogDto = blogDao.blogDetail(blogId);
+        List<BlogFileDto> blogFileDto = blogDao.fileList(blogId);
+
+        int size = blogFileDto.size();
+        List<String> imgList = new ArrayList<>();
+        for(int i=0; i<size; i++) {
+            BlogFileDto fileDto = blogFileDto.get(i);
+            InputStream inputStream = new FileInputStream(uploadFolder + "/" + fileDto.getFileName());
+            byte[] images = IOUtils.toByteArray(inputStream);
+            byte[] byteEnc64 = Base64.encodeBase64(images);
+            String imgStr = new String(byteEnc64 , "UTF-8");
+
+            imgList.add(imgStr);
+            inputStream.close();
+        }
+
+        BlogDetailDto blogDetailDto = new BlogDetailDto(blogDto, imgList);
+        return blogDetailDto;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public int blogCount() {
+        return blogDao.blogCount();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public int blogCountWithHashTag(String hashTag) {
+        return blogDao.blogCountWithHashTag(hashTag);
+    }
+
+
 }

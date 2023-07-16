@@ -1,6 +1,6 @@
 <template>
   <main id="main">
-    <breadcrumb-section title="회원가입" description="임시 회원가입창" />
+    <breadcrumb-section title="회원가입" description="이메일 주소, 비밀번호, 이름은 필수 입력값입니다." />
     <section id="contact" class="contact">
       <div class="container" data-aos="fade-up">
           <div class="wrap-container">
@@ -64,22 +64,31 @@ export default {
   },
   methods: {
     selectImg(fileEvent) {
-      this.img = URL.createObjectURL(fileEvent.target.files[0])
+      this.img = fileEvent.target.files[0];
     },
     async register() {
+      if(this.email == "" || this.password == "" || this.name == "") {
+        alert("필수 입력 값을 작성해주세요");
+        return;
+      }
+      
       let formData = new FormData();
       formData.append("userEmail", this.email);
       formData.append("userPassword", this.password);
       formData.append("userName", this.name);
-      formData.append("profileImageUrl", this.img);
+      
+      console.log(this.img)
+      if(this.img != "") formData.append("profilePostImage", this.img);
       
       let options = {
         headers: { 'Content-Type': 'multipart/form-data'}
       }
       let response = await http.post("/api/v1/users/register", formData, options);
       let { data } = response;
-      console.log("data: " + data);
-      this.$router.push("/login")
+      if(data == 1) {
+        alert("회원가입에 성공했습니다.")
+        this.$router.push("/login")
+      }
     }
   },
   watch: {

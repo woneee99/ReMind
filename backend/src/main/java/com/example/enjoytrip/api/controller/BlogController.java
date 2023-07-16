@@ -3,6 +3,8 @@ package com.example.enjoytrip.api.controller;
 import com.example.enjoytrip.api.dto.*;
 import com.example.enjoytrip.api.service.BlogService;
 import com.example.enjoytrip.api.service.UserService;
+import org.apache.commons.io.IOUtils;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -10,7 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
+import java.io.*;
 import java.util.List;
 
 @RestController
@@ -23,23 +25,35 @@ public class BlogController {
     @Autowired
     private UserService userService;
 
+    private String uploadFolder = "C:\\upload";
 
-//    @GetMapping("/list")
-//    public ResponseEntity<List<BlogListDto>> blogList(@RequestParam(required = false) String hashTag) {
-//
-//        if(hashTag != null && hashTag.length() > 0) { // 해시태그가 있는 경우
-//            System.out.println(" here1 ");
-//
-//        }
-//        else { // 없는 경우
-//            System.out.println(" here2 ");
-//
-//        }
-//
-//
-//        return ResponseEntity.ok().body();
-//    }
-//
+    @GetMapping()
+    public ResponseEntity<List<BlogListDto>> blogList(@RequestParam(required = false) String hashTag, int offset) throws IOException {
+        List<BlogListDto> blogListDto = null;
+
+        if(hashTag != null && hashTag.length() > 0) { // 해시태그가 있는 경우
+            System.out.println(" here1 ");
+            blogListDto = blogService.blogListWithHashTag(hashTag, offset);
+        }
+        else { // 없는 경우
+            System.out.println(" here2 ");
+            blogListDto = blogService.blogList(offset);
+        }
+
+        int size = blogListDto.size();
+        for(int i=0; i<size; i++) {
+            BlogListDto listDto = blogListDto.get(i);
+            InputStream inputStream = new FileInputStream(uploadFolder + "/" + listDto.getFileName());
+            byte[] images = IOUtils.toByteArray(inputStream);
+            byte[] byteEnc64 = Base64.encodeBase64(images);
+            String imgStr = new String(byteEnc64 , "UTF-8");
+
+            blogListDto.get(i).setImages(imgStr);
+            inputStream.close();
+        }
+        return ResponseEntity.ok().body(blogListDto);
+    }
+
 //    @GetMapping("/myList")
 //    public ResponseEntity<List<BlogListDto>> myBlogList() {
 //        Authentication principal = SecurityContextHolder.getContext().getAuthentication();
@@ -52,40 +66,43 @@ public class BlogController {
 //        return ResponseEntity.ok().body(myList);
 //    }
 //
-//    @GetMapping("/{blogId}")
-//    public ResponseEntity<BlogDto> getBlog(@PathVariable(name = "blogId") int blogId) {
-//        BlogDto blogDto = blogService.blogDetail(blogId);
-//        System.out.println("blogDto.getContent() = " + blogDto.getContent());
-//        return ResponseEntity.ok().body(blogDto);
-//    }
+    @GetMapping("/{blogId}")
+    public ResponseEntity<BlogDetailDto> getBlog(@PathVariable(name = "blogId") int blogId) throws IOException {
+        BlogDetailDto blogDetailDto = blogService.blogDetail(blogId);
+        return ResponseEntity.ok().body(blogDetailDto);
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getBlogCount() {
+        return ResponseEntity.ok().body(blogService.blogCount());
+    }
+
+    @GetMapping("/hashTagCount")
+    public ResponseEntity<Integer> getBlogCountWithHashTag(@RequestParam String hashTag) {
+        return ResponseEntity.ok().body(blogService.blogCountWithHashTag(hashTag));
+    }
 
     @PostMapping
     public ResponseEntity<Integer> blogInsert(BlogDto blogDto) {
-
-        System.out.println("blog = " + blogDto.getContent());
         Authentication principal = SecurityContextHolder.getContext().getAuthentication();
         String username = principal.getName();
         UserDto user = userService.getUser(username);
 
         blogDto.setUserSeq(user.getUserSeq());
         int ret = blogService.blogInsert(blogDto);
-        String uploadFolder = "C:\\upload";
         for( MultipartFile file : blogDto.getFileList()) {
             String uploadFileName = file.getOriginalFilename();
             File saveFile = new File(uploadFolder, uploadFileName);
-
             try {
                 file.transferTo(saveFile);
                 BlogFileDto fileDto = new BlogFileDto();
                 fileDto.setFileName(uploadFileName);
                 fileDto.setBlogId(blogDto.getBlogId());
                 blogService.fileInsert(fileDto);
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-
         return ResponseEntity.ok().body(ret);
     }
 }

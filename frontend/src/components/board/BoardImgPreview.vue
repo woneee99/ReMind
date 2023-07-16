@@ -47,7 +47,7 @@ export default {
         if((fileArray.length + this.fileList.length) > 6) alert("이미지 등록은 6개까지 가능합니다.");
         else {
           fileArray.forEach(file => {
-              this.fileList.push(URL.createObjectURL(file));
+              this.fileList.push(file);
               const reader = new FileReader();
               reader.onload = (e) => {
                 const preview = this.createLi(e, file);
@@ -79,7 +79,6 @@ export default {
       },
       sendImg(){
         console.log('BoardImgPreview : sendImg() ')
-        console.log(this.fileList)
         this.$router.push( 
           { 
             name: 'posts', 
@@ -89,9 +88,6 @@ export default {
           } 
         ); // Not Working
       },
-    },
-    writeBtn() { 
-      console.log(this.fileList)
     }
 };
 </script>
